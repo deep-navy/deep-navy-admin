@@ -1,0 +1,32 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [develop, main]
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with: {ruby-version: "3.3", bundler-cache: true}
+      - run: bundle exec jekyll build --strict_front_matter
+      - uses: actions/upload-pages-artifact@v3
+        if: github.event_name == 'push' && github.ref_name == 'main'
+        with: {path: _site}
+  deploy:
+    if: github.event_name == 'push' && github.ref_name == 'main'
+    needs: ci
+    runs-on: ubuntu-latest
+    environment: {name: production, url: "${{ steps.deployment.outputs.page_url }}"}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
+
