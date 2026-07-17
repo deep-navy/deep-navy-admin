@@ -57,7 +57,7 @@ jobs:
             bundle exec jekyll build --strict_front_matter --config _config.yml,_config.development.yml --baseurl "${{ steps.pages.outputs.base_path }}"
           fi
       - name: Upload GitHub Pages artifact
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v5
         with:
           path: _site
 
@@ -75,4 +75,4 @@ jobs:
     steps:
       - name: Deploy branch build to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
