@@ -1,4 +1,6 @@
 url: https://admin.dev.deep.navy
-environment: development
-environment_label: Development
-api_origin: https://api.dev.deep.navy
+runtime:
+  environment: development
+  environment_label: Development
+  api_base_url: https://api.dev.deep.navy
+  session_max_age_seconds: 900

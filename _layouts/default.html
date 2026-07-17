@@ -3,21 +3,21 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="{{ site.description | escape }}">
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
     <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
     <meta name="referrer" content="no-referrer">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; connect-src 'self' {{ site.api_origin | escape }}; form-action 'none'; frame-ancestors 'none'; img-src 'self' data:; object-src 'none'; script-src 'self'; style-src 'self'">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; connect-src 'self'{% if site.runtime.api_base_url != '' %} {{ site.runtime.api_base_url | escape }}{% endif %}{% if site.runtime.cognito_domain != '' %} {{ site.runtime.cognito_domain | escape }}{% endif %}; form-action 'none'; frame-ancestors 'none'; img-src 'self' data:; object-src 'none'; script-src 'self'; style-src 'self'; worker-src 'none'{% if site.runtime.environment == 'production' %}; upgrade-insecure-requests{% endif %}">
     <meta http-equiv="Permissions-Policy" content="camera=(), geolocation=(), microphone=(), payment=(), usb=()">
-    <meta name="theme-color" content="#06131c">
+    <meta name="theme-color" content="#04131d">
+    <link rel="canonical" href="{{ page.url | absolute_url }}">
     <title>{{ page.title | default: site.title }} · {{ site.title }}</title>
+    <script src="{{ '/assets/js/callback-scrubber.js' | relative_url }}"></script>
     <link rel="stylesheet" href="{{ '/assets/css/admin.css' | relative_url }}">
-    <script src="{{ '/assets/js/admin.js' | relative_url }}" defer></script>
   </head>
   <body
-    data-api-origin="{{ site.api_origin | escape }}"
-    data-health-path="{{ site.health_path | escape }}"
-    data-readiness-path="{{ site.readiness_path | escape }}"
-    data-environment="{{ site.environment | escape }}"
+    data-auth-callback="{{ page.auth_callback | default: false }}"
+    data-environment="{{ site.runtime.environment | escape }}"
   >
     <a class="skip-link" href="#main-content">Skip to main content</a>
 
@@ -31,56 +31,30 @@
       </a>
 
       <div class="header-meta">
-        <span class="environment-chip environment-chip--{{ site.environment | escape }}">
+        <span class="environment-chip environment-chip--{{ site.runtime.environment | escape }}">
           <span class="environment-dot" aria-hidden="true"></span>
-          {{ site.environment_label }}
+          {{ site.runtime.environment_label | default: site.runtime.environment }}
         </span>
-        <span class="header-caption">Internal operations</span>
+        <div class="operator-summary" data-operator-summary hidden>
+          <span data-operator-name>Authenticated operator</span>
+          <span data-operator-role></span>
+        </div>
+        <button class="button button--quiet button--small" type="button" data-sign-out hidden>Sign out</button>
       </div>
     </header>
 
-    <div class="app-frame">
-      <aside class="side-rail" aria-label="Admin navigation">
-        <p class="side-label">Workspace</p>
-        <nav>
-          <a class="nav-link is-active" href="#overview" aria-current="page">
-            <span class="nav-icon" aria-hidden="true">01</span>
-            Overview
-          </a>
-          <a class="nav-link" href="#health">
-            <span class="nav-icon" aria-hidden="true">02</span>
-            Health
-          </a>
-          <a class="nav-link" href="#operations">
-            <span class="nav-icon" aria-hidden="true">03</span>
-            Operations
-          </a>
-          <a class="nav-link" href="#customers">
-            <span class="nav-icon" aria-hidden="true">04</span>
-            Customers
-          </a>
-          <a class="nav-link" href="#billing">
-            <span class="nav-icon" aria-hidden="true">05</span>
-            Billing
-          </a>
-        </nav>
-
-        <div class="rail-note">
-          <span class="eyebrow">Access status</span>
-          <strong>Authentication pending</strong>
-          <p>This shell contains no privileged data or actions.</p>
-        </div>
-      </aside>
-
-      <main id="main-content" tabindex="-1">
-        {{ content }}
-      </main>
-    </div>
+    <main id="main-content" tabindex="-1">
+      {{ content }}
+    </main>
 
     <footer class="site-footer">
       <span>Deep Navy internal operations</span>
-      <span>No customer or billing data is rendered by this shell.</span>
+      <span>Protected data is loaded only after API-verified operator access.</span>
     </footer>
+
+    <div class="toast" role="status" aria-live="polite" aria-atomic="true" data-toast hidden></div>
+    <script src="{{ '/assets/js/runtime-config.js' | relative_url }}"></script>
+    <script src="{{ '/assets/js/admin-api-client.js' | relative_url }}"></script>
+    <script src="{{ '/assets/js/admin.js' | relative_url }}" defer></script>
   </body>
 </html>
-
