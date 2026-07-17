@@ -2,5 +2,7 @@
 _site/
 .jekyll-cache/
 .sass-cache/
-vendor/
+vendor/bundle/
 .bundle/
+node_modules/
+_config.runtime.yml

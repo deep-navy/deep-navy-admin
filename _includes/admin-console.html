@@ -1,0 +1,164 @@
+<section class="access-stage" data-signed-out aria-labelledby="access-title">
+  <div class="access-card">
+    <span class="eyebrow">Restricted operations</span>
+    <h1 id="access-title">Founder access, verified twice.</h1>
+    <p class="access-copy">
+      Sign in through this environment’s Amazon Cognito managed login. The browser uses authorization code with PKCE, then the platform API verifies your identity and Founder or Admin role before any protected request is sent.
+    </p>
+
+    <div class="configuration-state" data-configuration-state data-tone="pending" aria-live="polite">
+      <span class="state-indicator" aria-hidden="true"></span>
+      <div>
+        <strong data-configuration-title>Checking access configuration</strong>
+        <p data-configuration-message>The portal is validating its public Cognito and API coordinates.</p>
+      </div>
+    </div>
+
+    <div class="auth-state" data-auth-state hidden aria-live="assertive">
+      <strong data-auth-title>Sign-in needs attention</strong>
+      <p data-auth-message></p>
+      <span class="request-reference" data-auth-request-reference hidden></span>
+    </div>
+
+    <div class="access-actions">
+      <button class="button button--primary button--large" type="button" data-sign-in disabled>
+        Continue securely <span aria-hidden="true">→</span>
+      </button>
+      <button class="button button--secondary" type="button" data-retry-sign-in hidden>Start again</button>
+    </div>
+
+    <ul class="access-assurances" aria-label="Session protections">
+      <li><strong>PKCE</strong><span>No Cognito client secret is present in this site.</span></li>
+      <li><strong>Memory only</strong><span>Access and ID tokens are never written to browser storage.</span></li>
+      <li><strong>15 minutes</strong><span>The browser session expires no later than the configured admin ceiling.</span></li>
+      <li><strong>Server authorized</strong><span>The UI is not the authorization boundary.</span></li>
+    </ul>
+  </div>
+</section>
+
+<div class="app-frame" data-authenticated hidden>
+  <aside class="side-rail" aria-label="Admin navigation">
+    <p class="side-label">Workspace</p>
+    <nav>
+      <a class="nav-link is-active" href="#overview" aria-current="page"><span class="nav-index" aria-hidden="true">01</span>Overview</a>
+      <a class="nav-link" href="#customers"><span class="nav-index" aria-hidden="true">02</span>Customers</a>
+      <a class="nav-link" href="#economics"><span class="nav-index" aria-hidden="true">03</span>Engineering Economics</a>
+      <a class="nav-link" href="#operations"><span class="nav-index" aria-hidden="true">04</span>Operations</a>
+      <a class="nav-link" href="#billing"><span class="nav-index" aria-hidden="true">05</span>Billing</a>
+    </nav>
+
+    <div class="rail-session">
+      <span class="eyebrow">Session policy</span>
+      <strong>Short-lived operator session</strong>
+      <p>Tokens live in this tab’s memory and the portal signs out at <span data-session-expiry>the session ceiling</span>.</p>
+    </div>
+  </aside>
+
+  <div class="workspace">
+    <section class="hero" id="overview" aria-labelledby="overview-title">
+      <div>
+        <p class="eyebrow">{{ site.runtime.environment_label | default: site.runtime.environment }} control plane</p>
+        <h1 id="overview-title">The business and the fleet, one accountable view.</h1>
+        <p class="hero-copy">Every number below is either returned by the admin API or marked unavailable. This portal never fills gaps with demo data.</p>
+      </div>
+      <div class="hero-action">
+        <button class="button button--primary" type="button" data-refresh-dashboard disabled>
+          <span class="button-indicator" aria-hidden="true"></span>
+          Refresh verified data
+        </button>
+        <p class="refresh-note" aria-live="polite">Observed <span data-observed-at>not yet</span></p>
+      </div>
+    </section>
+
+    <section class="data-state" data-admin-data-state data-tone="pending" aria-live="polite" aria-atomic="true">
+      <span class="state-indicator" aria-hidden="true"></span>
+      <div>
+        <strong data-admin-data-title>Loading authorized overview</strong>
+        <p data-admin-data-message>The portal is requesting the generated AdminService contract.</p>
+        <span class="request-reference" data-admin-request-reference hidden></span>
+      </div>
+    </section>
+
+    <section class="metric-grid" aria-label="Admin overview metrics">
+      <article class="metric-card"><span class="metric-kicker">MRR</span><strong class="metric-value" data-metric="mrr">—</strong><p>Monthly recurring revenue returned by AdminService.</p></article>
+      <article class="metric-card"><span class="metric-kicker">ARR</span><strong class="metric-value" data-metric="arr">—</strong><p>Annual recurring revenue returned by AdminService.</p></article>
+      <article class="metric-card"><span class="metric-kicker">Active customers</span><strong class="metric-value" data-metric="active-customers">—</strong><p>Customers currently counted as active by the platform.</p></article>
+      <article class="metric-card"><span class="metric-kicker">Active teams</span><strong class="metric-value" data-metric="active-teams">—</strong><p>Provisioned teams currently counted as active.</p></article>
+      <article class="metric-card"><span class="metric-kicker">Gross margin</span><strong class="metric-value" data-metric="gross-margin">—</strong><p>Aggregate margin; customer-level attribution needs a broader contract.</p></article>
+      <article class="metric-card"><span class="metric-kicker">Production incidents</span><strong class="metric-value" data-metric="incidents">—</strong><p>Incidents in the API-defined reporting window.</p></article>
+      <article class="metric-card"><span class="metric-kicker">PRs merged</span><strong class="metric-value" data-metric="prs-merged">—</strong><p>Merged pull requests in the API-defined reporting window.</p></article>
+      <article class="metric-card metric-card--unavailable"><span class="metric-kicker">NRR / churn</span><strong class="metric-value">Not contracted</strong><p>The current protobuf does not expose retention or churn.</p></article>
+    </section>
+
+    <section class="workspace-section" id="customers" aria-labelledby="customers-title">
+      <div class="section-heading">
+        <div><p class="eyebrow">Account operations</p><h2 id="customers-title">Customers</h2></div>
+        <span class="coverage-chip">Contract required</span>
+      </div>
+      <div class="gap-panel">
+        <div><span class="gap-index" aria-hidden="true">02</span><h3>No least-privilege customer projection exists yet</h3></div>
+        <p>The shared protobuf currently has no admin customer list or detail operation. Customer identities, repositories, support state, churn risk, and per-customer margins remain undisclosed until the API defines and authorizes an explicit projection.</p>
+      </div>
+    </section>
+
+    <section class="workspace-section" id="economics" aria-labelledby="economics-title">
+      <div class="section-heading">
+        <div><p class="eyebrow">Unit economics</p><h2 id="economics-title">Engineering Economics</h2></div>
+        <span class="coverage-chip coverage-chip--partial">Partial contract</span>
+      </div>
+      <div class="split-grid">
+        <article class="panel">
+          <span class="panel-kicker">Aggregate signal</span>
+          <h3>Gross margin</h3>
+          <strong class="panel-value" data-metric="gross-margin">—</strong>
+          <p>The current admin contract exposes only aggregate gross margin.</p>
+        </article>
+        <article class="panel panel--muted">
+          <span class="panel-kicker">Required expansion</span>
+          <h3>Attribution is not contracted</h3>
+          <p>Cost by customer, team, agent, initiative, model, provider, issue, and pull request requires new resource-oriented admin API methods.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="workspace-section" id="operations" aria-labelledby="operations-title">
+      <div class="section-heading">
+        <div><p class="eyebrow">Runtime signals</p><h2 id="operations-title">Operations</h2></div>
+        <span class="coverage-chip coverage-chip--partial">Public probes + partial contract</span>
+      </div>
+      <div class="table-shell">
+        <table>
+          <caption class="visually-hidden">Platform signals observed by this browser</caption>
+          <thead><tr><th scope="col">Signal</th><th scope="col">State</th><th scope="col">Evidence</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Platform liveness<span class="service-meta">GET /healthz</span></th><td><span class="status status--pending" data-probe-status="health"><span aria-hidden="true"></span>Waiting</span></td><td data-probe-detail="health">No request has completed.</td></tr>
+            <tr><th scope="row">Platform readiness<span class="service-meta">GET /readyz</span></th><td><span class="status status--pending" data-probe-status="readiness"><span aria-hidden="true"></span>Waiting</span></td><td data-probe-detail="readiness">No request has completed.</td></tr>
+            <tr><th scope="row">Production incidents</th><td><strong data-metric="incidents">—</strong></td><td>AdminService aggregate; reporting window is not yet explicit.</td></tr>
+            <tr><th scope="row">Fleet detail</th><td><span class="status status--neutral"><span aria-hidden="true"></span>Not contracted</span></td><td>No fleet, agent, heartbeat, storage, backup, or version projection exists in the shared API.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="workspace-section" id="billing" aria-labelledby="billing-title">
+      <div class="section-heading">
+        <div><p class="eyebrow">Revenue operations</p><h2 id="billing-title">Billing</h2></div>
+        <span class="coverage-chip coverage-chip--partial">Totals only</span>
+      </div>
+      <div class="split-grid">
+        <article class="panel"><span class="panel-kicker">Verified totals</span><h3>Recurring revenue</h3><dl class="detail-list"><div><dt>Monthly</dt><dd data-metric="mrr">—</dd></div><div><dt>Annual</dt><dd data-metric="arr">—</dd></div></dl></article>
+        <article class="panel panel--muted"><span class="panel-kicker">No unsafe shortcuts</span><h3>Reconciliation actions unavailable</h3><p>The current shared API does not expose subscriptions, invoices, payment failures, credit balances, or Stripe/local mismatches to administrators. No customer-scoped billing API is called as a substitute.</p></article>
+      </div>
+    </section>
+
+    <section class="workspace-section contract-section" aria-labelledby="contract-title">
+      <div class="section-heading"><div><p class="eyebrow">Release truth</p><h2 id="contract-title">Contract coverage</h2></div></div>
+      <ul class="coverage-list">
+        <li><span class="status status--positive"><span aria-hidden="true"></span>Consumed</span><strong>AuthService.GetCurrentUser</strong><p>Confirms the Cognito principal and server-synchronized platform roles.</p></li>
+        <li><span class="status status--pending"><span aria-hidden="true"></span>Consumed when deployed</span><strong>AdminService.GetAdminOverview</strong><p>Supplies the seven aggregate metrics shown above.</p></li>
+        <li><span class="status status--neutral"><span aria-hidden="true"></span>Absent</span><strong>Customer, fleet, economics detail, alerts, and billing reconciliation</strong><p>Require protobuf-first contracts plus server authorization and audit policy.</p></li>
+        <li><span class="status status--neutral"><span aria-hidden="true"></span>Absent</span><strong>Privileged mutations</strong><p>Require explicit confirmation semantics, idempotency, founder/admin authorization, and immutable audit records.</p></li>
+      </ul>
+    </section>
+  </div>
+</div>

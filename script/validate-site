@@ -9,20 +9,46 @@ pages_preview_site="$workspace/pages-preview"
 rm -rf "$workspace"
 mkdir -p "$development_site" "$production_site" "$pages_preview_site"
 
+npm run check
+ruby test/runtime_config_test.rb
+
+DEEP_NAVY_ENVIRONMENT=development \
+ADMIN_URL=https://admin.dev.deep.navy \
+ADMIN_API_BASE_URL=https://api.dev.deep.navy \
+ADMIN_COGNITO_DOMAIN=https://deep-navy-development.auth.us-west-2.amazoncognito.com \
+ADMIN_COGNITO_ISSUER=https://cognito-idp.us-west-2.amazonaws.com/us-west-2_development \
+ADMIN_COGNITO_CLIENT_ID=developmentclient123 \
+ruby scripts/write_runtime_config.rb "$workspace/development.runtime.yml"
+
+DEEP_NAVY_ENVIRONMENT=production \
+ADMIN_URL=https://admin.deep.navy \
+ADMIN_API_BASE_URL=https://api.deep.navy \
+ADMIN_COGNITO_DOMAIN=https://deep-navy-production.auth.us-west-2.amazoncognito.com \
+ADMIN_COGNITO_ISSUER=https://cognito-idp.us-west-2.amazonaws.com/us-west-2_production \
+ADMIN_COGNITO_CLIENT_ID=productionclient123 \
+ruby scripts/write_runtime_config.rb "$workspace/production.runtime.yml"
+
+DEEP_NAVY_ENVIRONMENT=development \
+ADMIN_URL=https://deep-navy.github.io/deep-navy-admin \
+ADMIN_API_BASE_URL=https://api.dev.deep.navy \
+ADMIN_COGNITO_DOMAIN=https://deep-navy-development.auth.us-west-2.amazoncognito.com \
+ADMIN_COGNITO_ISSUER=https://cognito-idp.us-west-2.amazonaws.com/us-west-2_development \
+ADMIN_COGNITO_CLIENT_ID=developmentclient123 \
+ruby scripts/write_runtime_config.rb "$workspace/pages-preview.runtime.yml"
+
 JEKYLL_ENV=development bundle exec jekyll build \
   --strict_front_matter \
-  --config _config.yml,_config.development.yml \
+  --config _config.yml,"$workspace/development.runtime.yml" \
   --destination "$development_site"
 
 JEKYLL_ENV=production bundle exec jekyll build \
   --strict_front_matter \
-  --config _config.yml,_config.production.yml \
+  --config _config.yml,"$workspace/production.runtime.yml" \
   --destination "$production_site"
 
 JEKYLL_ENV=development bundle exec jekyll build \
   --strict_front_matter \
-  --config _config.yml,_config.development.yml \
-  --baseurl /deep-navy-admin \
+  --config _config.yml,"$workspace/pages-preview.runtime.yml" \
   --destination "$pages_preview_site"
 
 ruby test/site_test.rb "$development_site" development https://api.dev.deep.navy

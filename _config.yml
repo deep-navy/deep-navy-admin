@@ -1,20 +1,38 @@
 title: Deep Navy Admin
-description: Internal Deep Navy operations shell
+description: Founder and administrator operations for Deep Navy
 url: ""
 baseurl: ""
 permalink: pretty
 
-# Safe local defaults. Deployments always merge an environment-specific config.
-environment: local
-environment_label: Local
-api_origin: http://localhost:8080
-health_path: /healthz
-readiness_path: /readyz
+# Safe local defaults. Deployments generate _config.runtime.yml exclusively
+# from public GitHub environment variables.
+runtime:
+  environment: local
+  environment_label: Local
+  api_base_url: ""
+  cognito_domain: ""
+  cognito_issuer: ""
+  cognito_client_id: ""
+  cognito_callback_url: ""
+  cognito_logout_url: ""
+  oauth_scopes:
+    - openid
+    - email
+    - profile
+  session_max_age_seconds: 900
+  build_revision: local
 
 exclude:
-  - README.md
-  - Gemfile
-  - Gemfile.lock
+  - node_modules
+  - src
+  - tsconfig.json
+  - package.json
+  - package-lock.json
+  - scripts
   - script
   - test
   - vendor
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - _config.runtime.yml
