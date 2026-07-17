@@ -1,2 +1,86 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>{{ page.title }} · {{ site.title }}</title></head><body><header>Deep Navy Admin</header><main>{{ content }}</main></body></html>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+    <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+    <meta name="referrer" content="no-referrer">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; connect-src 'self' {{ site.api_origin | escape }}; form-action 'none'; frame-ancestors 'none'; img-src 'self' data:; object-src 'none'; script-src 'self'; style-src 'self'">
+    <meta http-equiv="Permissions-Policy" content="camera=(), geolocation=(), microphone=(), payment=(), usb=()">
+    <meta name="theme-color" content="#06131c">
+    <title>{{ page.title | default: site.title }} · {{ site.title }}</title>
+    <link rel="stylesheet" href="{{ '/assets/css/admin.css' | relative_url }}">
+    <script src="{{ '/assets/js/admin.js' | relative_url }}" defer></script>
+  </head>
+  <body
+    data-api-origin="{{ site.api_origin | escape }}"
+    data-health-path="{{ site.health_path | escape }}"
+    data-readiness-path="{{ site.readiness_path | escape }}"
+    data-environment="{{ site.environment | escape }}"
+  >
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+    <header class="site-header">
+      <a class="brand" href="{{ '/' | relative_url }}" aria-label="Deep Navy Admin home">
+        <span class="brand-mark" aria-hidden="true">DN</span>
+        <span>
+          <span class="brand-name">Deep Navy</span>
+          <span class="brand-product">Admin</span>
+        </span>
+      </a>
+
+      <div class="header-meta">
+        <span class="environment-chip environment-chip--{{ site.environment | escape }}">
+          <span class="environment-dot" aria-hidden="true"></span>
+          {{ site.environment_label }}
+        </span>
+        <span class="header-caption">Internal operations</span>
+      </div>
+    </header>
+
+    <div class="app-frame">
+      <aside class="side-rail" aria-label="Admin navigation">
+        <p class="side-label">Workspace</p>
+        <nav>
+          <a class="nav-link is-active" href="#overview" aria-current="page">
+            <span class="nav-icon" aria-hidden="true">01</span>
+            Overview
+          </a>
+          <a class="nav-link" href="#health">
+            <span class="nav-icon" aria-hidden="true">02</span>
+            Health
+          </a>
+          <a class="nav-link" href="#operations">
+            <span class="nav-icon" aria-hidden="true">03</span>
+            Operations
+          </a>
+          <a class="nav-link" href="#customers">
+            <span class="nav-icon" aria-hidden="true">04</span>
+            Customers
+          </a>
+          <a class="nav-link" href="#billing">
+            <span class="nav-icon" aria-hidden="true">05</span>
+            Billing
+          </a>
+        </nav>
+
+        <div class="rail-note">
+          <span class="eyebrow">Access status</span>
+          <strong>Authentication pending</strong>
+          <p>This shell contains no privileged data or actions.</p>
+        </div>
+      </aside>
+
+      <main id="main-content" tabindex="-1">
+        {{ content }}
+      </main>
+    </div>
+
+    <footer class="site-footer">
+      <span>Deep Navy internal operations</span>
+      <span>No customer or billing data is rendered by this shell.</span>
+    </footer>
+  </body>
+</html>
 

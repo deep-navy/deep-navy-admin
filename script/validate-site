@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+workspace="${TMPDIR:-/tmp}/deep-navy-admin-validation"
+development_site="$workspace/development"
+production_site="$workspace/production"
+pages_preview_site="$workspace/pages-preview"
+
+rm -rf "$workspace"
+mkdir -p "$development_site" "$production_site" "$pages_preview_site"
+
+JEKYLL_ENV=development bundle exec jekyll build \
+  --strict_front_matter \
+  --config _config.yml,_config.development.yml \
+  --destination "$development_site"
+
+JEKYLL_ENV=production bundle exec jekyll build \
+  --strict_front_matter \
+  --config _config.yml,_config.production.yml \
+  --destination "$production_site"
+
+JEKYLL_ENV=development bundle exec jekyll build \
+  --strict_front_matter \
+  --config _config.yml,_config.development.yml \
+  --baseurl /deep-navy-admin \
+  --destination "$pages_preview_site"
+
+ruby test/site_test.rb "$development_site" development https://api.dev.deep.navy
+ruby test/site_test.rb "$production_site" production https://api.deep.navy
+ruby test/site_test.rb "$pages_preview_site" development https://api.dev.deep.navy /deep-navy-admin

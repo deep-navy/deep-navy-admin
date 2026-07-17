@@ -1,0 +1,4 @@
+url: https://admin.dev.deep.navy
+environment: development
+environment_label: Development
+api_origin: https://api.dev.deep.navy

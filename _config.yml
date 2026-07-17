@@ -1,5 +1,20 @@
 title: Deep Navy Admin
-description: Deep Navy founder operations
-url: https://admin.deep.navy
+description: Internal Deep Navy operations shell
+url: ""
+baseurl: ""
 permalink: pretty
 
+# Safe local defaults. Deployments always merge an environment-specific config.
+environment: local
+environment_label: Local
+api_origin: http://localhost:8080
+health_path: /healthz
+readiness_path: /readyz
+
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - script
+  - test
+  - vendor

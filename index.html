@@ -1,0 +1,282 @@
+---
+layout: default
+title: Operations
+---
+
+<section class="hero" id="overview" aria-labelledby="overview-title">
+  <div>
+    <p class="eyebrow">{{ site.environment_label }} control plane</p>
+    <h1 id="overview-title">Operations, with the wires exposed.</h1>
+    <p class="hero-copy">
+      This is the early-launch admin surface. It verifies public platform probes today and clearly marks every data source and privileged action that is not connected yet.
+    </p>
+  </div>
+  <div class="hero-action">
+    <button class="button button--primary" type="button" data-refresh-probes>
+      <span class="button-indicator" aria-hidden="true"></span>
+      Refresh service probes
+    </button>
+    <p class="refresh-note" aria-live="polite">
+      Last checked <span data-observed-at>not yet</span>
+    </p>
+  </div>
+</section>
+
+<aside class="launch-notice" aria-labelledby="launch-notice-title">
+  <span class="notice-icon" aria-hidden="true">!</span>
+  <div>
+    <h2 id="launch-notice-title">Privileged access is not connected</h2>
+    <p>
+      Cognito sign-in and server-side administrator authorization still need to be wired to this shell. Until then, it intentionally exposes no customer records, billing records, secrets, or mutating controls.
+    </p>
+  </div>
+</aside>
+
+<section class="metric-grid" aria-label="Launch status summary">
+  <article class="metric-card">
+    <div class="metric-heading">
+      <span class="metric-kicker">Admin shell</span>
+      <span class="status status--positive"><span aria-hidden="true"></span>Live</span>
+    </div>
+    <strong class="metric-value">Rendered</strong>
+    <p>The static operations surface is deployed and contains no sensitive data.</p>
+  </article>
+
+  <article class="metric-card">
+    <div class="metric-heading">
+      <span class="metric-kicker">Platform API</span>
+      <span class="status status--pending" data-probe-status="health"><span aria-hidden="true"></span>Checking</span>
+    </div>
+    <strong class="metric-value" data-probe-summary="health">Checking endpoint</strong>
+    <p data-probe-detail="health">Waiting for the public health probe.</p>
+  </article>
+
+  <article class="metric-card">
+    <div class="metric-heading">
+      <span class="metric-kicker">Admin identity</span>
+      <span class="status status--neutral"><span aria-hidden="true"></span>Not connected</span>
+    </div>
+    <strong class="metric-value">No session</strong>
+    <p>Cognito login, MFA, role checks, and session expiry are not wired into this frontend.</p>
+  </article>
+
+  <article class="metric-card">
+    <div class="metric-heading">
+      <span class="metric-kicker">Business data</span>
+      <span class="status status--neutral"><span aria-hidden="true"></span>Not connected</span>
+    </div>
+    <strong class="metric-value">No records</strong>
+    <p>Customer and Stripe-backed billing views are placeholders with no live data.</p>
+  </article>
+</section>
+
+<section class="workspace-section" id="health" aria-labelledby="health-title">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">Service visibility</p>
+      <h2 id="health-title">Health</h2>
+    </div>
+    <p>Browser-observed probes only. A successful response is not an end-to-end platform guarantee.</p>
+  </div>
+
+  <div class="table-shell">
+    <table>
+      <caption class="visually-hidden">Current component health and connection state</caption>
+      <thead>
+        <tr>
+          <th scope="col">Component</th>
+          <th scope="col">Signal</th>
+          <th scope="col">State</th>
+          <th scope="col">What this proves</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">
+            <span class="service-name">Admin shell</span>
+            <span class="service-meta">This static site</span>
+          </th>
+          <td>Page render</td>
+          <td><span class="status status--positive"><span aria-hidden="true"></span>Live</span></td>
+          <td>The frontend artifact loaded in this browser.</td>
+        </tr>
+        <tr>
+          <th scope="row">
+            <span class="service-name">Platform API</span>
+            <span class="service-meta">{{ site.api_origin }}{{ site.health_path }}</span>
+          </th>
+          <td>Liveness</td>
+          <td><span class="status status--pending" data-probe-status="health"><span aria-hidden="true"></span>Checking</span></td>
+          <td data-probe-detail="health">Waiting for the public health probe.</td>
+        </tr>
+        <tr>
+          <th scope="row">
+            <span class="service-name">Platform API</span>
+            <span class="service-meta">{{ site.api_origin }}{{ site.readiness_path }}</span>
+          </th>
+          <td>Readiness</td>
+          <td><span class="status status--pending" data-probe-status="readiness"><span aria-hidden="true"></span>Checking</span></td>
+          <td data-probe-detail="readiness">Waiting for the public readiness probe.</td>
+        </tr>
+        <tr>
+          <th scope="row">
+            <span class="service-name">Admin identity</span>
+            <span class="service-meta">Cognito and API authorization</span>
+          </th>
+          <td>Authenticated session</td>
+          <td><span class="status status--neutral"><span aria-hidden="true"></span>Not connected</span></td>
+          <td>No authentication or authorization claim is being verified here yet.</td>
+        </tr>
+        <tr>
+          <th scope="row">
+            <span class="service-name">Stripe integration</span>
+            <span class="service-meta">Webhook and account sync</span>
+          </th>
+          <td>Billing sync</td>
+          <td><span class="status status--neutral"><span aria-hidden="true"></span>Not connected</span></td>
+          <td>No Stripe requests are made and no billing records are displayed.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <noscript>
+    <p class="inline-notice">JavaScript is off, so the API probes cannot run. The shell itself remains available.</p>
+  </noscript>
+</section>
+
+<section class="workspace-section" id="operations" aria-labelledby="operations-title">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">Release context</p>
+      <h2 id="operations-title">Operations</h2>
+    </div>
+    <p>Deployment context is real; privileged controls and runbook integrations are not available yet.</p>
+  </div>
+
+  <div class="split-grid">
+    <article class="panel release-panel">
+      <div class="panel-heading">
+        <div>
+          <span class="panel-kicker">Current artifact</span>
+          <h3>{{ site.environment_label }} release</h3>
+        </div>
+        <span class="status status--positive"><span aria-hidden="true"></span>Configured</span>
+      </div>
+      <dl class="detail-list">
+        <div>
+          <dt>Environment</dt>
+          <dd>{{ site.environment }}</dd>
+        </div>
+        <div>
+          <dt>API origin</dt>
+          <dd>{{ site.api_origin }}</dd>
+        </div>
+        <div>
+          <dt>Source branch</dt>
+          <dd>{% if site.environment == "production" %}main{% elsif site.environment == "development" %}develop{% else %}local checkout{% endif %}</dd>
+        </div>
+        <div>
+          <dt>Build revision</dt>
+          <dd class="revision">{{ site.github.build_revision | default: "local build" }}</dd>
+        </div>
+      </dl>
+    </article>
+
+    <article class="panel">
+      <div class="panel-heading">
+        <div>
+          <span class="panel-kicker">Operator controls</span>
+          <h3>Actions</h3>
+        </div>
+        <span class="status status--neutral"><span aria-hidden="true"></span>Not wired</span>
+      </div>
+      <p class="panel-copy" id="actions-unavailable">
+        These controls are visible to define the launch surface, but they cannot issue requests.
+      </p>
+      <div class="button-stack" aria-describedby="actions-unavailable">
+        <button class="button button--secondary" type="button" disabled>View deployment history</button>
+        <button class="button button--secondary" type="button" disabled>Open incident</button>
+        <button class="button button--danger" type="button" disabled>Pause provisioning</button>
+      </div>
+    </article>
+  </div>
+</section>
+<section class="workspace-section" id="customers" aria-labelledby="customers-title">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">Account operations</p>
+      <h2 id="customers-title">Customers</h2>
+    </div>
+    <p>No customer API is queried and no customer record is rendered.</p>
+  </div>
+
+  <article class="empty-state">
+    <span class="empty-index" aria-hidden="true">00</span>
+    <div>
+      <span class="status status--neutral"><span aria-hidden="true"></span>Not connected</span>
+      <h3>Customer records will appear after authorization is enforced</h3>
+      <p>
+        The launch version needs a server-authorized customer list, repository installation status, team provisioning state, and an immutable audit trail before this area can become operational.
+      </p>
+    </div>
+  </article>
+
+  <ol class="readiness-list" aria-label="Customer operations wiring checklist">
+    <li>
+      <span class="check-index">01</span>
+      <div><strong>Enforce admin identity</strong><span>Cognito session, MFA, short expiry, and API-side role checks.</span></div>
+      <span class="status status--neutral"><span aria-hidden="true"></span>Pending</span>
+    </li>
+    <li>
+      <span class="check-index">02</span>
+      <div><strong>Connect account reads</strong><span>Server-authorized list and detail endpoints with least-privilege fields.</span></div>
+      <span class="status status--neutral"><span aria-hidden="true"></span>Pending</span>
+    </li>
+    <li>
+      <span class="check-index">03</span>
+      <div><strong>Record every operation</strong><span>Actor, target, reason, result, and correlation ID in the audit log.</span></div>
+      <span class="status status--neutral"><span aria-hidden="true"></span>Pending</span>
+    </li>
+  </ol>
+</section>
+
+<section class="workspace-section" id="billing" aria-labelledby="billing-title">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">Revenue operations</p>
+      <h2 id="billing-title">Billing</h2>
+    </div>
+    <p>Stripe-backed views and actions are deliberately absent until the integration is configured and verified.</p>
+  </div>
+
+  <div class="split-grid">
+    <article class="panel placeholder-panel">
+      <div class="panel-heading">
+        <div>
+          <span class="panel-kicker">Subscription data</span>
+          <h3>No live billing data</h3>
+        </div>
+        <span class="status status--neutral"><span aria-hidden="true"></span>Not connected</span>
+      </div>
+      <p class="panel-copy">
+        Plans, subscription states, invoices, payment failures, and entitlements are not loaded by this shell.
+      </p>
+      <div class="placeholder-lines" aria-hidden="true"><span></span><span></span><span></span></div>
+    </article>
+
+    <article class="panel placeholder-panel">
+      <div class="panel-heading">
+        <div>
+          <span class="panel-kicker">Billing actions</span>
+          <h3>No mutating controls</h3>
+        </div>
+        <span class="status status--neutral"><span aria-hidden="true"></span>Not wired</span>
+      </div>
+      <p class="panel-copy">
+        Refunds, credits, subscription changes, and portal access require verified Stripe configuration plus explicit authorization and auditing.
+      </p>
+      <button class="button button--secondary" type="button" disabled>Open Stripe customer</button>
+    </article>
+  </div>
+</section>

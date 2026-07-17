@@ -1,0 +1,4 @@
+url: https://admin.deep.navy
+environment: production
+environment_label: Production
+api_origin: https://api.deep.navy
