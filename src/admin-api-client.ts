@@ -26,7 +26,26 @@ export const SUPPORTED_PROCEDURES = Object.freeze([
 ] as const);
 
 type ProcedureName = (typeof SUPPORTED_PROCEDURES)[number];
+
+export const STREAM_PROCEDURES = Object.freeze([
+  "admin_runtimes_stream",
+  "admin_alerts_stream"
+] as const);
+type StreamName = (typeof STREAM_PROCEDURES)[number];
+
+// Streams live for the browser session, well beyond the unary default timeout.
+// The admin session ceiling is at most 15 minutes and its abort controller closes
+// the stream first, so this ceiling is only a safety net.
+const STREAM_TIMEOUT_MS = 16 * 60 * 1000;
+
 type InputRecord = Record<string, unknown>;
+
+function streamCursor(value: unknown): bigint {
+  if (typeof value === "bigint") return value >= 0n ? value : 0n;
+  if (typeof value === "string" && /^[0-9]+$/.test(value)) return BigInt(value);
+  if (typeof value === "number" && Number.isInteger(value) && value >= 0) return BigInt(value);
+  return 0n;
+}
 
 export interface AdminCallOptions {
   accessToken: string;
@@ -217,5 +236,50 @@ export function createAdminApi(options: AdminApiOptions) {
     }
   }
 
-  return Object.freeze({ request });
+  async function stream(name: StreamName, input: unknown, options: AdminCallOptions, onMessage: (message: unknown) => void): Promise<void> {
+    const payload = inputRecord(input);
+    const accessToken = options.accessToken.trim();
+    const requestId = options.requestId.trim();
+    if (!accessToken) throw new AdminClientError("Sign-in is required.", "unauthenticated", 401, requestId);
+    if (!requestId) throw new AdminClientError("A request ID is required.", "invalid_argument", 400, "");
+    if (typeof onMessage !== "function") throw new AdminClientError("A stream handler is required.", "invalid_argument", 400, requestId);
+
+    const afterSequence = streamCursor(payload.afterSequence);
+    const callOptions: CallOptions = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "X-Request-ID": requestId
+      },
+      signal: options.signal,
+      timeoutMs: STREAM_TIMEOUT_MS
+    };
+
+    try {
+      let iterable: AsyncIterable<unknown>;
+      switch (name) {
+        case "admin_runtimes_stream":
+          iterable = admin.streamAdminRuntimeInstances({ afterSequence }, callOptions);
+          break;
+        case "admin_alerts_stream":
+          iterable = admin.streamAdminAlerts({ afterSequence }, callOptions);
+          break;
+        default:
+          throw new AdminClientError("Unsupported administrator stream.", "invalid_argument", 400, requestId);
+      }
+      for await (const message of iterable) {
+        onMessage(message);
+      }
+    } catch (error) {
+      if (error instanceof AdminClientError) throw error;
+      const connectError = ConnectError.from(error);
+      if (connectError.code === Code.Canceled) return;
+      const responseRequestId = connectError.metadata.get("x-request-id") || requestId;
+      const safeMessage = connectError.code === Code.Unknown
+        ? "The browser could not reach the platform service."
+        : connectError.rawMessage.slice(0, 300) || "The platform service closed the administrator stream.";
+      throw new AdminClientError(safeMessage, codeName(connectError.code), httpStatus(connectError.code), responseRequestId);
+    }
+  }
+
+  return Object.freeze({ request, stream });
 }

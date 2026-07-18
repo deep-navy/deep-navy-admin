@@ -13,6 +13,32 @@ function parseRequestBody(body) {
   throw new TypeError(`Unexpected request body type: ${Object.prototype.toString.call(body)}`);
 }
 
+// Connect server-streaming frames each message with a 5-byte envelope
+// (1 flag byte + 4-byte big-endian length). Flag 0x02 marks end-of-stream.
+function connectEnvelope(flag, payload) {
+  const frame = new Uint8Array(5 + payload.length);
+  frame[0] = flag;
+  new DataView(frame.buffer).setUint32(1, payload.length, false);
+  frame.set(payload, 5);
+  return frame;
+}
+
+function connectStreamResponseBody(messages) {
+  const encoder = new TextEncoder();
+  const frames = messages.map((message) => connectEnvelope(0x00, encoder.encode(JSON.stringify(message))));
+  frames.push(connectEnvelope(0x02, encoder.encode(JSON.stringify({}))));
+  const total = frames.reduce((sum, frame) => sum + frame.length, 0);
+  const out = new Uint8Array(total);
+  let offset = 0;
+  for (const frame of frames) { out.set(frame, offset); offset += frame.length; }
+  return out;
+}
+
+function parseStreamRequestBody(body) {
+  const bytes = body instanceof Uint8Array ? body : new Uint8Array(body);
+  return JSON.parse(new TextDecoder().decode(bytes.subarray(5)));
+}
+
 test("the browser bundle exposes the pinned read-only admin launch procedures", () => {
   assert.equal(generated.PLATFORM_PROTOS_REVISION, "39ae22707fe8ac5185d1383dc088426af63cc5a1");
   assert.deepEqual([...generated.SUPPORTED_PROCEDURES], [
@@ -21,6 +47,46 @@ test("the browser bundle exposes the pinned read-only admin launch procedures", 
     "admin_fleet", "admin_runtimes", "admin_billing", "admin_billing_accounts",
     "admin_reconciliation_issues", "admin_alerts", "admin_audit_events"
   ]);
+});
+
+test("the browser bundle exposes the live admin streaming procedures", () => {
+  assert.deepEqual([...generated.STREAM_PROCEDURES], ["admin_runtimes_stream", "admin_alerts_stream"]);
+  const api = generated.createAdminApi({ baseUrl: "https://dev.api.deep.navy", fetch: async () => new Response(null, { status: 200 }) });
+  assert.equal(typeof api.stream, "function");
+});
+
+test("the generated client resumes the runtime stream past a cursor and delivers each decoded message", async () => {
+  const calls = [];
+  const messages = [];
+  const api = generated.createAdminApi({
+    baseUrl: "https://dev.api.deep.navy",
+    fetch: async (input, init) => {
+      calls.push({ input: String(input), body: parseStreamRequestBody(init.body), headers: new Headers(init.headers) });
+      return new Response(connectStreamResponseBody([
+        { runtimeInstance: { id: "runtime-1" }, changeType: "ADMIN_STREAM_CHANGE_TYPE_UPSERT", resourceId: "runtime-1", sequence: "7" }
+      ]), { status: 200, headers: { "Content-Type": "application/connect+json" } });
+    }
+  });
+  await api.stream("admin_runtimes_stream", { afterSequence: "5" }, { accessToken: "access-token", requestId: "stream-1" }, (message) => messages.push(message));
+  assert.equal(calls[0].input, "https://dev.api.deep.navy/deepnavy.v1.AdminService/StreamAdminRuntimeInstances");
+  assert.equal(calls[0].headers.get("authorization"), "Bearer access-token");
+  assert.equal(calls[0].headers.get("x-request-id"), "stream-1");
+  assert.equal(calls[0].body.afterSequence, "5");
+  assert.equal(messages.length, 1);
+  assert.equal(messages[0].resourceId, "runtime-1");
+  assert.equal(messages[0].sequence, 7n);
+  assert.equal(messages[0].runtimeInstance.id, "runtime-1");
+});
+
+test("the generated stream rejects an unauthenticated caller before opening a connection", async () => {
+  let fetched = false;
+  const api = generated.createAdminApi({ baseUrl: "https://dev.api.deep.navy", fetch: async () => { fetched = true; return new Response(null, { status: 200 }); } });
+  await assert.rejects(api.stream("admin_alerts_stream", { afterSequence: "0" }, { accessToken: "  ", requestId: "stream-2" }, () => {}), (error) => {
+    assert.equal(error.name, "AdminClientError");
+    assert.equal(error.code, "unauthenticated");
+    return true;
+  });
+  assert.equal(fetched, false);
 });
 
 test("the generated current-user request carries bearer identity without cookies or caching", async () => {

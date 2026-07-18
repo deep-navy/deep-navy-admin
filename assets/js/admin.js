@@ -52,7 +52,14 @@
     reliabilityNextPageToken: "",
     reliabilityPageTokens: new Set(),
     reliabilityLoading: false,
-    reliabilityLastPeriodStart: null
+    reliabilityLastPeriodStart: null,
+    runtimeInstances: new Map(),
+    runtimeCursor: 0n,
+    alertInstances: new Map(),
+    alertCursor: 0n,
+    streamController: null,
+    runtimeRenderQueued: false,
+    alertRenderQueued: false
   };
   const allowedRoles = new Set(["admin", "founder"]);
   const environment = stringValue(config.environment) || "local";
@@ -449,6 +456,7 @@
     state.sessionTimer = 0;
     if (state.refreshController) state.refreshController.abort();
     state.refreshController = null;
+    stopStreams();
   }
 
   function expireSession() {
@@ -1183,11 +1191,7 @@
     return projectionSummary(fleet);
   }
 
-  function renderRuntimes(response) {
-    const runtimes = Array.isArray(response?.runtimeInstances) ? response.runtimeInstances : [];
-    const body = tableBody("runtimes");
-    body.replaceChildren();
-    runtimes.forEach((runtime) => {
+  function runtimeInstanceRow(runtime) {
       if (!["complete", "partial", "stale"].includes(projectionAvailability(runtime))) throw new Error("invalid_runtime_projection_status");
       const runtimeState = projectionValue(runtime, "runtime_state", (value) => enumLabel(value, ["not reported", "ready", "degraded", "suspended", "failed"]), runtime?.runtimeState);
       const backupState = projectionValue(runtime, "backup_state", (value) => enumLabel(value, ["not reported", "current", "overdue", "failed", "never completed"]), runtime?.backupState);
@@ -1206,9 +1210,29 @@
       cell(row, `${backupState} / ${eventState}`);
       cell(row, `${projectionFieldAvailable(runtime, "openclaw_version") ? stringValue(runtime?.openclawVersion) || "—" : "—"} / ${projectionFieldAvailable(runtime, "operator_version") ? stringValue(runtime?.operatorVersion) || "—" : "—"} / ${projectionFieldAvailable(runtime, "organization_template_version") ? stringValue(runtime?.organizationTemplateVersion) || "—" : "—"}`);
       cell(row, projectionSummary(runtime));
-      body.append(row);
-    });
+      return row;
+  }
+
+  function renderRuntimeRows(runtimes) {
+    const body = tableBody("runtimes");
+    body.replaceChildren();
+    runtimes.forEach((runtime) => body.append(runtimeInstanceRow(runtime)));
     showTable("runtimes", runtimes.length);
+  }
+
+  function seedRuntimeStream(runtimes, snapshotSequence) {
+    state.runtimeInstances = new Map();
+    runtimes.forEach((runtime) => {
+      const id = stringValue(runtime?.id);
+      if (id) state.runtimeInstances.set(id, runtime);
+    });
+    state.runtimeCursor = toSequence(snapshotSequence);
+  }
+
+  function renderRuntimes(response) {
+    const runtimes = Array.isArray(response?.runtimeInstances) ? response.runtimeInstances : [];
+    seedRuntimeStream(runtimes, response?.snapshotSequence);
+    renderRuntimeRows([...state.runtimeInstances.values()]);
   }
 
   async function loadOperations(signal) {
@@ -1264,32 +1288,144 @@
     return false;
   }
 
-  function renderAlerts(response) {
-    const alerts = Array.isArray(response?.alerts) ? response.alerts : [];
+  const alertKinds = ["not reported", "gateway unavailable", "invalid OpenClaw configuration", "failed Stripe webhook", "failed GitHub webhook", "paid customer not provisioned", "subscription canceled while team running", "customer over included usage", "gross margin below threshold", "PVC near capacity", "backup overdue", "elevated model provider errors", "customer adoption decline", "trial nearing expiration"];
+
+  function alertRow(alert) {
+    if (!["complete", "partial", "stale"].includes(projectionAvailability(alert))) throw new Error("invalid_alert_projection_status");
+    const severity = projectionValue(alert, "severity", (value) => enumLabel(value, ["not reported", "informational", "warning", "critical"]), alert?.severity);
+    const row = document.createElement("tr");
+    const severityCell = cell(row, "", true); severityCell.replaceChildren(statusText(severity));
+    cell(row, projectionValue(alert, "kind", (value) => enumLabel(value, alertKinds), alert?.kind));
+    cell(row, `${stringValue(alert?.teamId) || "—"} / ${stringValue(alert?.organizationId) || "—"}`);
+    cell(row, projectionFieldAvailable(alert, "safe_summary") ? stringValue(alert?.safeSummary) : "—");
+    cell(row, projectionValue(alert, "occurrence_count", formatCount, alert?.occurrenceCount));
+    cell(row, projectionValue(alert, "last_detected_at", formatTimestamp, alert?.lastDetectedAt));
+    cell(row, projectionSummary(alert));
+    return row;
+  }
+
+  function renderAlertRows(alerts) {
     const body = tableBody("alerts");
     body.replaceChildren();
-    const kinds = ["not reported", "gateway unavailable", "invalid OpenClaw configuration", "failed Stripe webhook", "failed GitHub webhook", "paid customer not provisioned", "subscription canceled while team running", "customer over included usage", "gross margin below threshold", "PVC near capacity", "backup overdue", "elevated model provider errors", "customer adoption decline", "trial nearing expiration"];
+    alerts.forEach((alert) => body.append(alertRow(alert)));
+    showTable("alerts", alerts.length);
+  }
+
+  function seedAlertStream(alerts, snapshotSequence) {
+    state.alertInstances = new Map();
     alerts.forEach((alert) => {
-      if (!["complete", "partial", "stale"].includes(projectionAvailability(alert))) throw new Error("invalid_alert_projection_status");
-      const severity = projectionValue(alert, "severity", (value) => enumLabel(value, ["not reported", "informational", "warning", "critical"]), alert?.severity);
-      const row = document.createElement("tr");
-      const severityCell = cell(row, "", true); severityCell.replaceChildren(statusText(severity));
-      cell(row, projectionValue(alert, "kind", (value) => enumLabel(value, kinds), alert?.kind));
-      cell(row, `${stringValue(alert?.teamId) || "—"} / ${stringValue(alert?.organizationId) || "—"}`);
-      cell(row, projectionFieldAvailable(alert, "safe_summary") ? stringValue(alert?.safeSummary) : "—");
-      cell(row, projectionValue(alert, "occurrence_count", formatCount, alert?.occurrenceCount));
-      cell(row, projectionValue(alert, "last_detected_at", formatTimestamp, alert?.lastDetectedAt));
-      cell(row, projectionSummary(alert));
-      body.append(row);
+      const id = stringValue(alert?.id);
+      if (id) state.alertInstances.set(id, alert);
     });
-    const unavailableKinds = Array.isArray(response?.unavailableKinds) ? response.unavailableKinds.map((kind) => enumLabel(kind, kinds)) : [];
+    state.alertCursor = toSequence(snapshotSequence);
+  }
+
+  function renderAlerts(response) {
+    const alerts = Array.isArray(response?.alerts) ? response.alerts : [];
+    seedAlertStream(alerts, response?.snapshotSequence);
+    renderAlertRows([...state.alertInstances.values()]);
+    const unavailableKinds = Array.isArray(response?.unavailableKinds) ? response.unavailableKinds.map((kind) => enumLabel(kind, alertKinds)) : [];
     const coverage = [];
     if (unavailableKinds.length) coverage.push(`Unavailable alert producers: ${unavailableKinds.join(", ")}.`);
     coverage.push(response?.resolvedAlertHistoryAvailable === true
       ? "Resolved-alert history is covered by this projection."
       : "Only current open alerts are trustworthy; resolved-alert history is unavailable.");
     document.querySelectorAll("[data-alert-coverage]").forEach((element) => { element.textContent = coverage.join(" "); });
-    showTable("alerts", alerts.length);
+  }
+
+  // --- Live streaming (runtime instances + alerts) ---
+  // The unary load seeds each table and its cursor (SnapshotSequence). The stream
+  // then delivers only sequence-ordered deltas past that cursor, applied to the
+  // maintained id->resource map and re-rendered. A transient error reconnects from
+  // the last cursor; an auth failure ends the session. Streams stop on sign-out,
+  // session expiry, and each manual refresh (which reseeds and restarts them).
+  const streamBaseBackoff = 2000;
+  const streamMaxBackoff = 30000;
+
+  function toSequence(value) {
+    if (typeof value === "bigint") return value >= 0n ? value : 0n;
+    if (typeof value === "number" && Number.isInteger(value) && value >= 0) return BigInt(value);
+    if (typeof value === "string" && /^[0-9]+$/.test(value)) return BigInt(value);
+    return 0n;
+  }
+
+  function streamDelay(ms, signal) {
+    return new Promise((resolve) => {
+      if (signal.aborted) { resolve(); return; }
+      const timer = window.setTimeout(resolve, ms);
+      signal.addEventListener("abort", () => { window.clearTimeout(timer); resolve(); }, { once: true });
+    });
+  }
+
+  function applyStreamUpsert(map, resource, message, cursorKey) {
+    const resourceId = stringValue(message?.resourceId);
+    if (!resourceId) return false;
+    const sequence = toSequence(message?.sequence);
+    if (sequence > state[cursorKey]) state[cursorKey] = sequence;
+    if (resource) map.set(resourceId, resource); else map.delete(resourceId);
+    return true;
+  }
+
+  function applyRuntimeUpsert(message) {
+    if (applyStreamUpsert(state.runtimeInstances, message?.runtimeInstance, message, "runtimeCursor")) scheduleRuntimeRender();
+  }
+
+  function applyAlertUpsert(message) {
+    if (applyStreamUpsert(state.alertInstances, message?.alert, message, "alertCursor")) scheduleAlertRender();
+  }
+
+  function scheduleRuntimeRender() {
+    if (state.runtimeRenderQueued) return;
+    state.runtimeRenderQueued = true;
+    window.requestAnimationFrame(() => {
+      state.runtimeRenderQueued = false;
+      try { renderRuntimeRows([...state.runtimeInstances.values()]); }
+      catch { clearTable("runtimes", "Runtime projection unavailable. Public health probes remain separate below."); }
+    });
+  }
+
+  function scheduleAlertRender() {
+    if (state.alertRenderQueued) return;
+    state.alertRenderQueued = true;
+    window.requestAnimationFrame(() => {
+      state.alertRenderQueued = false;
+      try { renderAlertRows([...state.alertInstances.values()]); }
+      catch { clearTable("alerts", "Alert projection unavailable. No alert state was inferred from probes."); }
+    });
+  }
+
+  async function runStream(streamName, cursorKey, controller, apply) {
+    let backoff = streamBaseBackoff;
+    while (state.authorized && !controller.signal.aborted && Date.now() < state.deadline) {
+      try {
+        await adminApi.stream(streamName,
+          { afterSequence: state[cursorKey].toString() },
+          { accessToken: state.accessToken, requestId: requestId(), signal: controller.signal },
+          apply);
+        backoff = streamBaseBackoff;
+      } catch (error) {
+        if (controller.signal.aborted) return;
+        const code = stringValue(error?.code);
+        if (code === "unauthenticated" || code === "permission_denied") { expireSession(); return; }
+      }
+      if (controller.signal.aborted || !state.authorized || Date.now() >= state.deadline) return;
+      await streamDelay(backoff, controller.signal);
+      backoff = Math.min(backoff * 2, streamMaxBackoff);
+    }
+  }
+
+  function stopStreams() {
+    if (state.streamController) state.streamController.abort();
+    state.streamController = null;
+  }
+
+  function startStreams() {
+    stopStreams();
+    if (!state.authorized || !state.accessToken || !adminApi || typeof adminApi.stream !== "function") return;
+    const controller = new AbortController();
+    state.streamController = controller;
+    void runStream("admin_runtimes_stream", "runtimeCursor", controller, applyRuntimeUpsert);
+    void runStream("admin_alerts_stream", "alertCursor", controller, applyAlertUpsert);
   }
 
   async function loadAlerts(signal) {
@@ -1535,6 +1671,15 @@
       return;
     }
     if (state.refreshController) state.refreshController.abort();
+    stopStreams();
+    // Reset the stream projections before reloading. A successful unary seed
+    // repopulates the map and advances the cursor to its snapshot sequence; a
+    // failed seed leaves the cursor at 0 so the stream re-delivers the full
+    // snapshot from scratch rather than resuming past a stale cursor.
+    state.runtimeInstances = new Map();
+    state.runtimeCursor = 0n;
+    state.alertInstances = new Map();
+    state.alertCursor = 0n;
     closeCustomerDetail();
     state.refreshController = new AbortController();
     ui.refresh.disabled = true;
@@ -1553,6 +1698,9 @@
         probe("readiness", "/readyz", state.refreshController.signal)
       ]);
       if (!state.authorized) return;
+      // The unary loads have seeded the runtime and alert maps plus their
+      // cursors; open the live streams to apply sequence-ordered deltas past them.
+      startStreams();
       const protectedSuccesses = results.slice(0, 7).filter(Boolean).length;
       if (protectedSuccesses === 7) {
         setDataState("positive", "All authorized projections loaded", "Overview, customers, economics, fleet, billing, alerts, and audit were returned by the shared API.");
