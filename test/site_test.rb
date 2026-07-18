@@ -33,11 +33,17 @@ expectations = {
   "skip link" => %(class="skip-link"),
   "overview" => %(id="overview"),
   "customers" => %(id="customers"),
+  "customer detail" => %(id="customer-detail"),
+  "customer reliability history" => %(data-customer-reliability-rows),
   "economics" => %(id="economics"),
   "operations" => %(id="operations"),
   "billing" => %(id="billing"),
+  "billing upgrades" => %(data-billing-metric="upgrades"),
+  "billing downgrades" => %(data-billing-metric="downgrades"),
+  "usage overage credits" => "Overage credits",
+  "usage overage premium" => "Overage premium",
   "server authorization statement" => "The UI is not the authorization boundary",
-  "missing-contract honesty" => "No least-privilege customer projection exists yet",
+  "privileged-control honesty" => "Privileged controls stay unavailable until they are auditable",
   "generated client" => %(src="#{expected_base_path}/assets/js/admin-api-client.js"),
   "stylesheet base path" => %(href="#{expected_base_path}/assets/css/admin.css"),
   "application script" => %(src="#{expected_base_path}/assets/js/admin.js")
@@ -62,7 +68,7 @@ abort "robots.txt must disallow all crawlers" unless robots.match?(/User-agent:\
 abort "runtime environment missing" unless runtime.include?(%("environment":"#{expected_environment}")) || runtime.include?(%("environment":"#{expected_environment}"))
 abort "runtime config must not contain a secret field" if runtime.match?(/client_secret|private_key|api_key|stripe_secret|access_token|refresh_token/i)
 
-forbidden_origin = expected_environment == "production" ? "https://api.dev.deep.navy" : '"environment":"production"'
+forbidden_origin = expected_environment == "production" ? "https://dev.api.deep.navy" : '"environment":"production"'
 abort "environment configuration leaked into #{expected_environment} build" if index_html.include?(forbidden_origin) || runtime.include?(forbidden_origin)
 
 puts "validated protected #{expected_environment} admin build at #{site}"

@@ -42,123 +42,115 @@
     <nav>
       <a class="nav-link is-active" href="#overview" aria-current="page"><span class="nav-index" aria-hidden="true">01</span>Overview</a>
       <a class="nav-link" href="#customers"><span class="nav-index" aria-hidden="true">02</span>Customers</a>
-      <a class="nav-link" href="#economics"><span class="nav-index" aria-hidden="true">03</span>Engineering Economics</a>
+      <a class="nav-link" href="#economics"><span class="nav-index" aria-hidden="true">03</span>Economics</a>
       <a class="nav-link" href="#operations"><span class="nav-index" aria-hidden="true">04</span>Operations</a>
       <a class="nav-link" href="#billing"><span class="nav-index" aria-hidden="true">05</span>Billing</a>
     </nav>
-
-    <div class="rail-session">
-      <span class="eyebrow">Session policy</span>
-      <strong>Short-lived operator session</strong>
-      <p>Tokens live in this tab’s memory and the portal signs out at <span data-session-expiry>the session ceiling</span>.</p>
-    </div>
+    <div class="rail-session"><span class="eyebrow">Session policy</span><strong>Short-lived operator session</strong><p>Tokens live in this tab’s memory and the portal signs out at <span data-session-expiry>the session ceiling</span>.</p></div>
   </aside>
 
   <div class="workspace">
     <section class="hero" id="overview" aria-labelledby="overview-title">
-      <div>
-        <p class="eyebrow">{{ site.runtime.environment_label | default: site.runtime.environment }} control plane</p>
-        <h1 id="overview-title">The business and the fleet, one accountable view.</h1>
-        <p class="hero-copy">Every number below is either returned by the admin API or marked unavailable. This portal never fills gaps with demo data.</p>
-      </div>
-      <div class="hero-action">
-        <button class="button button--primary" type="button" data-refresh-dashboard disabled>
-          <span class="button-indicator" aria-hidden="true"></span>
-          Refresh verified data
-        </button>
-        <p class="refresh-note" aria-live="polite">Observed <span data-observed-at>not yet</span></p>
-      </div>
+      <div><p class="eyebrow">{{ site.runtime.environment_label | default: site.runtime.environment }} control plane</p><h1 id="overview-title">One ledger for the business and the fleet.</h1><p class="hero-copy">Every value is returned by the shared admin API or left unavailable. No demo records, browser-side accounting, or provider secrets.</p></div>
+      <div class="hero-action"><button class="button button--primary" type="button" data-refresh-dashboard disabled><span class="button-indicator" aria-hidden="true"></span>Refresh verified data</button><p class="refresh-note" aria-live="polite">Browser refresh <span data-observed-at>not yet</span><br>Overview projection <span data-overview-source>not yet loaded</span></p></div>
     </section>
 
-    <section class="data-state" data-admin-data-state data-tone="pending" aria-live="polite" aria-atomic="true">
-      <span class="state-indicator" aria-hidden="true"></span>
-      <div>
-        <strong data-admin-data-title>Loading authorized overview</strong>
-        <p data-admin-data-message>The portal is requesting the generated AdminService contract.</p>
-        <span class="request-reference" data-admin-request-reference hidden></span>
-      </div>
-    </section>
+    <section class="data-state" data-admin-data-state data-tone="pending" aria-live="polite" aria-atomic="true"><span class="state-indicator" aria-hidden="true"></span><div><strong data-admin-data-title>Loading authorized operations data</strong><p data-admin-data-message>The portal is requesting generated AdminService resources.</p><span class="request-reference" data-admin-request-reference hidden></span></div></section>
 
     <section class="metric-grid" aria-label="Admin overview metrics">
-      <article class="metric-card"><span class="metric-kicker">MRR</span><strong class="metric-value" data-metric="mrr">—</strong><p>Monthly recurring revenue returned by AdminService.</p></article>
-      <article class="metric-card"><span class="metric-kicker">ARR</span><strong class="metric-value" data-metric="arr">—</strong><p>Annual recurring revenue returned by AdminService.</p></article>
-      <article class="metric-card"><span class="metric-kicker">Active customers</span><strong class="metric-value" data-metric="active-customers">—</strong><p>Customers currently counted as active by the platform.</p></article>
-      <article class="metric-card"><span class="metric-kicker">Active teams</span><strong class="metric-value" data-metric="active-teams">—</strong><p>Provisioned teams currently counted as active.</p></article>
-      <article class="metric-card"><span class="metric-kicker">Gross margin</span><strong class="metric-value" data-metric="gross-margin">—</strong><p>Aggregate margin; customer-level attribution needs a broader contract.</p></article>
-      <article class="metric-card"><span class="metric-kicker">Production incidents</span><strong class="metric-value" data-metric="incidents">—</strong><p>Incidents in the API-defined reporting window.</p></article>
-      <article class="metric-card"><span class="metric-kicker">PRs merged</span><strong class="metric-value" data-metric="prs-merged">—</strong><p>Merged pull requests in the API-defined reporting window.</p></article>
-      <article class="metric-card metric-card--unavailable"><span class="metric-kicker">NRR / churn</span><strong class="metric-value">Not contracted</strong><p>The current protobuf does not expose retention or churn.</p></article>
+      <article class="metric-card"><span class="metric-kicker">MRR</span><strong class="metric-value" data-metric="mrr">—</strong><p>Monthly recurring revenue.</p></article>
+      <article class="metric-card"><span class="metric-kicker">ARR</span><strong class="metric-value" data-metric="arr">—</strong><p>Annual recurring revenue.</p></article>
+      <article class="metric-card"><span class="metric-kicker">Active customers</span><strong class="metric-value" data-metric="active-customers">—</strong><p>Current paying or trialing accounts.</p></article>
+      <article class="metric-card"><span class="metric-kicker">Active teams</span><strong class="metric-value" data-metric="active-teams">—</strong><p>Entitled engineering teams.</p></article>
+      <article class="metric-card"><span class="metric-kicker">Gross margin</span><strong class="metric-value" data-metric="gross-margin">—</strong><p>Recognized revenue less fully-loaded direct cost.</p></article>
+      <article class="metric-card"><span class="metric-kicker">NRR</span><strong class="metric-value" data-metric="nrr">—</strong><p>Net revenue retention when measurable.</p></article>
+      <article class="metric-card"><span class="metric-kicker">Customer churn</span><strong class="metric-value" data-metric="churn">—</strong><p>Measured customer churn for the period.</p></article>
+      <article class="metric-card"><span class="metric-kicker">New customers</span><strong class="metric-value" data-metric="new-customers">—</strong><p>Accounts activated during the period.</p></article>
+      <article class="metric-card"><span class="metric-kicker">Active agents</span><strong class="metric-value" data-metric="active-agents">—</strong><p>Agents currently executing work.</p></article>
+      <article class="metric-card"><span class="metric-kicker">Open alerts</span><strong class="metric-value" data-metric="open-alerts">—</strong><p>Operational and commercial alerts.</p></article>
+      <article class="metric-card"><span class="metric-kicker">At-risk customers</span><strong class="metric-value" data-metric="at-risk-customers">—</strong><p>Accounts requiring intervention.</p></article>
+      <article class="metric-card"><span class="metric-kicker">Churned customers</span><strong class="metric-value" data-metric="churned-customers">—</strong><p>Accounts lost during the reporting period.</p></article>
+      <article class="metric-card"><span class="metric-kicker">Production incidents</span><strong class="metric-value" data-metric="incidents">—</strong><p>Verified customer-impacting incidents this period.</p></article>
+      <article class="metric-card"><span class="metric-kicker">PRs merged</span><strong class="metric-value" data-metric="prs-merged">—</strong><p>Verified delivery output this period.</p></article>
     </section>
 
     <section class="workspace-section" id="customers" aria-labelledby="customers-title">
-      <div class="section-heading">
-        <div><p class="eyebrow">Account operations</p><h2 id="customers-title">Customers</h2></div>
-        <span class="coverage-chip">Contract required</span>
-      </div>
-      <div class="gap-panel">
-        <div><span class="gap-index" aria-hidden="true">02</span><h3>No least-privilege customer projection exists yet</h3></div>
-        <p>The shared protobuf currently has no admin customer list or detail operation. Customer identities, repositories, support state, churn risk, and per-customer margins remain undisclosed until the API defines and authorizes an explicit projection.</p>
-      </div>
+      <div class="section-heading"><div><p class="eyebrow">Account operations</p><h2 id="customers-title">Customers</h2></div><span class="section-state" data-section-state="customers">Waiting</span></div>
+      <div class="table-shell"><table><caption class="visually-hidden">Authorized customer accounts</caption><thead><tr><th scope="col">Customer</th><th scope="col">Plan / billing</th><th scope="col">Teams</th><th scope="col">Users / repositories</th><th scope="col">Agent activity</th><th scope="col">Credits used</th><th scope="col">Direct cost</th><th scope="col">Revenue</th><th scope="col">Gross profit</th><th scope="col">Margin</th><th scope="col">Reliability</th><th scope="col">Health / support</th><th scope="col">Projection</th><th scope="col">Detail</th></tr></thead><tbody data-customer-rows></tbody></table><p class="data-table-empty" data-table-empty="customers">No authorized customer rows loaded.</p></div>
+      <section id="customer-detail" class="customer-detail" data-customer-detail hidden aria-labelledby="customer-detail-title" tabindex="-1">
+        <div class="customer-detail-heading"><div><p class="eyebrow">Authorized account detail</p><h3 id="customer-detail-title" data-customer-detail-title>Customer detail</h3></div><button class="button button--quiet" type="button" data-customer-detail-close>Close detail</button></div>
+        <p class="projection-note" data-customer-detail-state role="status">Choose a customer to request its current AdminService projection and daily reliability history.</p>
+        <dl class="customer-detail-grid">
+          <div><dt>Plan / billing</dt><dd data-customer-detail-field="plan">—</dd></div>
+          <div><dt>Health</dt><dd data-customer-detail-field="health">—</dd></div>
+          <div><dt>Support</dt><dd data-customer-detail-field="support">—</dd></div>
+          <div><dt>Churn risk</dt><dd data-customer-detail-field="churn">—</dd></div>
+          <div><dt>Teams / users / repositories</dt><dd data-customer-detail-field="account-counts">—</dd></div>
+          <div><dt>Active / idle / blocked / failed agents</dt><dd data-customer-detail-field="agents">—</dd></div>
+          <div><dt>Current sessions</dt><dd data-customer-detail-field="sessions">—</dd></div>
+          <div><dt>Active initiatives</dt><dd data-customer-detail-field="initiatives">—</dd></div>
+          <div><dt>Pending approvals</dt><dd data-customer-detail-field="approvals">—</dd></div>
+          <div><dt>Pull requests merged</dt><dd data-customer-detail-field="pull-requests">—</dd></div>
+          <div><dt>Last agent activity</dt><dd data-customer-detail-field="last-activity">—</dd></div>
+          <div><dt>Current reliability</dt><dd data-customer-detail-field="reliability">—</dd></div>
+          <div><dt>Monthly recurring revenue</dt><dd data-customer-detail-field="mrr">—</dd></div>
+          <div><dt>Credits / direct cost</dt><dd data-customer-detail-field="economics">—</dd></div>
+          <div><dt>Projection</dt><dd data-customer-detail-field="projection">—</dd></div>
+        </dl>
+        <div class="customer-reliability-heading"><div><h4>Daily reliability history</h4><p data-customer-reliability-state>Not loaded.</p></div><button class="button button--quiet" type="button" data-customer-reliability-more hidden>Load more history</button></div>
+        <div class="table-shell"><table><caption class="visually-hidden">Selected customer daily reliability history</caption><thead><tr><th scope="col">UTC period</th><th scope="col">Gateway availability</th><th scope="col">Production incidents</th><th scope="col">Last incident</th><th scope="col">Generated</th></tr></thead><tbody data-customer-reliability-rows></tbody></table><p class="data-table-empty" data-table-empty="customer-reliability">No reliability history loaded.</p></div>
+      </section>
     </section>
 
     <section class="workspace-section" id="economics" aria-labelledby="economics-title">
-      <div class="section-heading">
-        <div><p class="eyebrow">Unit economics</p><h2 id="economics-title">Engineering Economics</h2></div>
-        <span class="coverage-chip coverage-chip--partial">Partial contract</span>
+      <div class="section-heading"><div><p class="eyebrow">Unit economics</p><h2 id="economics-title">Engineering economics</h2></div><span class="section-state" data-section-state="economics">Waiting</span></div>
+      <div class="split-grid economics-summary">
+        <article class="panel"><span class="panel-kicker">Fully-loaded direct cost</span><strong class="panel-value" data-economics-metric="direct-cost">—</strong><p>Model, compute, storage, network, and attributable tooling.</p></article>
+        <article class="panel"><span class="panel-kicker">Recognized revenue</span><strong class="panel-value" data-economics-metric="revenue">—</strong><p>Revenue recognized in the same reporting period.</p></article>
+        <article class="panel"><span class="panel-kicker">Gross profit</span><strong class="panel-value" data-economics-metric="gross-profit">—</strong><p>Recognized revenue minus direct cost.</p></article>
+        <article class="panel"><span class="panel-kicker">Gross margin</span><strong class="panel-value" data-economics-metric="gross-margin">—</strong><p>Unavailable when revenue is zero or unreconciled.</p></article>
       </div>
-      <div class="split-grid">
-        <article class="panel">
-          <span class="panel-kicker">Aggregate signal</span>
-          <h3>Gross margin</h3>
-          <strong class="panel-value" data-metric="gross-margin">—</strong>
-          <p>The current admin contract exposes only aggregate gross margin.</p>
-        </article>
-        <article class="panel panel--muted">
-          <span class="panel-kicker">Required expansion</span>
-          <h3>Attribution is not contracted</h3>
-          <p>Cost by customer, team, agent, initiative, model, provider, issue, and pull request requires new resource-oriented admin API methods.</p>
-        </article>
-      </div>
+      <h3 class="table-title">Per-team price and cost ledger</h3>
+      <div class="table-shell"><table><caption class="visually-hidden">Per-team engineering economics</caption><thead><tr><th scope="col">Team</th><th scope="col">Credits consumed</th><th scope="col">Credits remaining</th><th scope="col">Direct cost</th><th scope="col">Revenue</th><th scope="col">Gross profit</th><th scope="col">Margin</th><th scope="col">Model requests</th></tr></thead><tbody data-team-economics-rows></tbody></table><p class="data-table-empty" data-table-empty="team-economics">No team economics rows loaded.</p></div>
     </section>
 
     <section class="workspace-section" id="operations" aria-labelledby="operations-title">
-      <div class="section-heading">
-        <div><p class="eyebrow">Runtime signals</p><h2 id="operations-title">Operations</h2></div>
-        <span class="coverage-chip coverage-chip--partial">Public probes + partial contract</span>
+      <div class="section-heading"><div><p class="eyebrow">Runtime signals</p><h2 id="operations-title">Operations</h2></div><span class="section-state" data-section-state="operations">Waiting</span></div>
+      <div class="split-grid">
+        <article class="panel"><span class="panel-kicker">Platform endpoints</span><dl class="detail-list"><div><dt>Liveness</dt><dd><span class="status status--pending" data-probe-status="health"><span aria-hidden="true"></span>Waiting</span></dd></div><div><dt>Readiness</dt><dd><span class="status status--pending" data-probe-status="readiness"><span aria-hidden="true"></span>Waiting</span></dd></div></dl></article>
+        <article class="panel"><span class="panel-kicker">Fleet</span><dl class="detail-list"><div><dt>Runtime instances</dt><dd data-fleet-metric="instances">—</dd></div><div><dt>Ready</dt><dd data-fleet-metric="ready">—</dd></div><div><dt>Degraded</dt><dd data-fleet-metric="degraded">—</dd></div><div><dt>Suspended / failed</dt><dd data-fleet-metric="stopped">—</dd></div><div><dt>Stale heartbeat</dt><dd data-fleet-metric="stale-heartbeat">—</dd></div><div><dt>Backup overdue</dt><dd data-fleet-metric="backup-overdue">—</dd></div><div><dt>Event stream unavailable</dt><dd data-fleet-metric="event-stream-unavailable">—</dd></div><div><dt>Active / blocked / failed agents</dt><dd data-fleet-metric="agent-states">—</dd></div><div><dt>Current sessions</dt><dd data-fleet-metric="sessions">—</dd></div></dl></article>
       </div>
-      <div class="table-shell">
-        <table>
-          <caption class="visually-hidden">Platform signals observed by this browser</caption>
-          <thead><tr><th scope="col">Signal</th><th scope="col">State</th><th scope="col">Evidence</th></tr></thead>
-          <tbody>
-            <tr><th scope="row">Platform liveness<span class="service-meta">GET /healthz</span></th><td><span class="status status--pending" data-probe-status="health"><span aria-hidden="true"></span>Waiting</span></td><td data-probe-detail="health">No request has completed.</td></tr>
-            <tr><th scope="row">Platform readiness<span class="service-meta">GET /readyz</span></th><td><span class="status status--pending" data-probe-status="readiness"><span aria-hidden="true"></span>Waiting</span></td><td data-probe-detail="readiness">No request has completed.</td></tr>
-            <tr><th scope="row">Production incidents</th><td><strong data-metric="incidents">—</strong></td><td>AdminService aggregate; reporting window is not yet explicit.</td></tr>
-            <tr><th scope="row">Fleet detail</th><td><span class="status status--neutral"><span aria-hidden="true"></span>Not contracted</span></td><td>No fleet, agent, heartbeat, storage, backup, or version projection exists in the shared API.</td></tr>
-          </tbody>
-        </table>
-      </div>
+      <h3 class="table-title">Team runtimes</h3>
+      <div class="table-shell"><table><caption class="visually-hidden">OpenClaw runtime instances</caption><thead><tr><th scope="col">Team / instance</th><th scope="col">State</th><th scope="col">Runtime health</th><th scope="col">Agents</th><th scope="col">Sessions</th><th scope="col">Heartbeat / tool call</th><th scope="col">Model</th><th scope="col">Workspace</th><th scope="col">Backup / events</th><th scope="col">Versions</th><th scope="col">Projection</th></tr></thead><tbody data-runtime-rows></tbody></table><p class="data-table-empty" data-table-empty="runtimes">No runtime instances loaded.</p></div>
+      <h3 class="table-title">Open alerts</h3>
+      <p class="projection-note" data-alert-coverage>No alert coverage has been loaded.</p>
+      <div class="table-shell"><table><caption class="visually-hidden">Open operations and commercial alerts</caption><thead><tr><th scope="col">Severity</th><th scope="col">Signal</th><th scope="col">Team / customer</th><th scope="col">Safe summary</th><th scope="col">Occurrences</th><th scope="col">Last detected</th><th scope="col">Projection</th></tr></thead><tbody data-alert-rows></tbody></table><p class="data-table-empty" data-table-empty="alerts">No open alerts loaded.</p></div>
     </section>
 
     <section class="workspace-section" id="billing" aria-labelledby="billing-title">
-      <div class="section-heading">
-        <div><p class="eyebrow">Revenue operations</p><h2 id="billing-title">Billing</h2></div>
-        <span class="coverage-chip coverage-chip--partial">Totals only</span>
+      <div class="section-heading"><div><p class="eyebrow">Revenue operations</p><h2 id="billing-title">Billing and reconciliation</h2></div><span class="section-state" data-section-state="billing">Waiting</span></div>
+      <div class="metric-grid billing-metrics">
+        <article class="metric-card"><span class="metric-kicker">Active subscriptions</span><strong class="metric-value" data-billing-metric="active">—</strong></article>
+        <article class="metric-card"><span class="metric-kicker">Trials</span><strong class="metric-value" data-billing-metric="trialing">—</strong></article>
+        <article class="metric-card"><span class="metric-kicker">Upgrades</span><strong class="metric-value" data-billing-metric="upgrades">—</strong></article>
+        <article class="metric-card"><span class="metric-kicker">Downgrades</span><strong class="metric-value" data-billing-metric="downgrades">—</strong></article>
+        <article class="metric-card"><span class="metric-kicker">Cancellations</span><strong class="metric-value" data-billing-metric="cancellations">—</strong></article>
+        <article class="metric-card"><span class="metric-kicker">Failed payments</span><strong class="metric-value" data-billing-metric="failed-payments">—</strong></article>
+        <article class="metric-card"><span class="metric-kicker">Past-due invoices</span><strong class="metric-value" data-billing-metric="past-due">—</strong></article>
+        <article class="metric-card"><span class="metric-kicker">Over included usage</span><strong class="metric-value" data-billing-metric="over-included">—</strong></article>
+        <article class="metric-card"><span class="metric-kicker">Customer credit balance</span><strong class="metric-value" data-billing-metric="credit-balance">—</strong></article>
+        <article class="metric-card"><span class="metric-kicker">Renewals in 30 days</span><strong class="metric-value" data-billing-metric="renewals">—</strong></article>
+        <article class="metric-card"><span class="metric-kicker">Open mismatches</span><strong class="metric-value" data-billing-metric="mismatches">—</strong></article>
+        <article class="metric-card"><span class="metric-kicker">Paid, no team</span><strong class="metric-value" data-billing-metric="paid-no-team">—</strong></article>
+        <article class="metric-card"><span class="metric-kicker">Team, invalid subscription</span><strong class="metric-value" data-billing-metric="team-no-subscription">—</strong></article>
       </div>
-      <div class="split-grid">
-        <article class="panel"><span class="panel-kicker">Verified totals</span><h3>Recurring revenue</h3><dl class="detail-list"><div><dt>Monthly</dt><dd data-metric="mrr">—</dd></div><div><dt>Annual</dt><dd data-metric="arr">—</dd></div></dl></article>
-        <article class="panel panel--muted"><span class="panel-kicker">No unsafe shortcuts</span><h3>Reconciliation actions unavailable</h3><p>The current shared API does not expose subscriptions, invoices, payment failures, credit balances, or Stripe/local mismatches to administrators. No customer-scoped billing API is called as a substitute.</p></article>
-      </div>
-    </section>
-
-    <section class="workspace-section contract-section" aria-labelledby="contract-title">
-      <div class="section-heading"><div><p class="eyebrow">Release truth</p><h2 id="contract-title">Contract coverage</h2></div></div>
-      <ul class="coverage-list">
-        <li><span class="status status--positive"><span aria-hidden="true"></span>Consumed</span><strong>AuthService.GetCurrentUser</strong><p>Confirms the Cognito principal and server-synchronized platform roles.</p></li>
-        <li><span class="status status--pending"><span aria-hidden="true"></span>Consumed when deployed</span><strong>AdminService.GetAdminOverview</strong><p>Supplies the seven aggregate metrics shown above.</p></li>
-        <li><span class="status status--neutral"><span aria-hidden="true"></span>Absent</span><strong>Customer, fleet, economics detail, alerts, and billing reconciliation</strong><p>Require protobuf-first contracts plus server authorization and audit policy.</p></li>
-        <li><span class="status status--neutral"><span aria-hidden="true"></span>Absent</span><strong>Privileged mutations</strong><p>Require explicit confirmation semantics, idempotency, founder/admin authorization, and immutable audit records.</p></li>
-      </ul>
+      <h3 class="table-title">Customer billing accounts</h3>
+      <div class="table-shell"><table><caption class="visually-hidden">Customer subscription and credit accounts</caption><thead><tr><th scope="col">Customer</th><th scope="col">Plan / status</th><th scope="col">Payment</th><th scope="col">Reconciliation</th><th scope="col">MRR</th><th scope="col">Credits balance / used</th><th scope="col">Overage credits</th><th scope="col">Overage premium</th><th scope="col">Provisioned / entitled</th><th scope="col">Renewal</th><th scope="col">Projection</th></tr></thead><tbody data-billing-account-rows></tbody></table><p class="data-table-empty" data-table-empty="billing-accounts">No billing accounts loaded.</p></div>
+      <h3 class="table-title">Team execution capacity</h3>
+      <div class="table-shell"><table><caption class="visually-hidden">Current paid-period team credit controls</caption><thead><tr><th scope="col">Customer / team</th><th scope="col">Ledger available</th><th scope="col">Open reservations</th><th scope="col">Period consumed</th><th scope="col">Hard limit</th><th scope="col">Budget remaining</th><th scope="col">Spendable now</th><th scope="col">Execution</th><th scope="col">Paid period</th><th scope="col">Projection</th></tr></thead><tbody data-team-credit-control-rows></tbody></table><p class="data-table-empty" data-table-empty="team-credit-controls">No current team credit controls loaded.</p></div>
+      <h3 class="table-title">Reconciliation issues</h3>
+      <div class="table-shell"><table><caption class="visually-hidden">Billing reconciliation issues</caption><thead><tr><th scope="col">Kind</th><th scope="col">Customer / team</th><th scope="col">Safe summary</th><th scope="col">State</th><th scope="col">Detected</th></tr></thead><tbody data-reconciliation-rows></tbody></table><p class="data-table-empty" data-table-empty="reconciliation">No open reconciliation issues loaded.</p></div>
+      <div class="gap-panel control-gap"><div><span class="gap-index" aria-hidden="true">!</span><h3>Privileged controls stay unavailable until they are auditable</h3></div><p>Suspend, resume, delete, and reconciliation mutations need explicit confirmation, idempotency, server-side founder authorization, and immutable audit records. This portal will not route around that boundary with customer-scoped methods.</p></div>
     </section>
   </div>
 </div>
