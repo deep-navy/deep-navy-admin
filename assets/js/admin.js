@@ -136,7 +136,7 @@
   }
 
   function createAdminApi() {
-    if (!apiBaseUrl || generated?.PLATFORM_PROTOS_REVISION !== "1a950c9fc437d1d186caa40fb3efbcdc86eedd65" || typeof generated.createAdminApi !== "function") return null;
+    if (!apiBaseUrl || generated?.PLATFORM_PROTOS_REVISION !== "39ae22707fe8ac5185d1383dc088426af63cc5a1" || typeof generated.createAdminApi !== "function") return null;
     try {
       return generated.createAdminApi({ baseUrl: apiBaseUrl, defaultTimeoutMs: 12_000 });
     } catch {
@@ -1341,6 +1341,7 @@
     const values = {
       active: projectionValue(billing, "active_subscriptions", formatCount, billing.activeSubscriptions),
       trialing: projectionValue(billing, "trialing_subscriptions", formatCount, billing.trialingSubscriptions),
+      collected: projectionValue(billing, "collected_revenue", formatOptionalMoney, billing.collectedRevenue),
       upgrades: projectionValue(billing, "upgrades", formatCount, billing.upgrades),
       downgrades: projectionValue(billing, "downgrades", formatCount, billing.downgrades),
       cancellations: projectionValue(billing, "cancellations", formatCount, billing.cancellations),
@@ -1378,6 +1379,7 @@
       const paymentCell = cell(row, ""); paymentCell.replaceChildren(statusText(payment));
       const reconciliationCell = cell(row, ""); reconciliationCell.replaceChildren(statusText(reconciliation));
       cell(row, projectionValue(account, "monthly_recurring_revenue", formatOptionalMoney, account?.monthlyRecurringRevenue));
+      cell(row, projectionValue(account, "collected_revenue", formatOptionalMoney, account?.collectedRevenue));
       cell(row, `${projectionValue(account, "credit_balance_micros", formatCredits, account?.creditBalanceMicros)} / ${projectionValue(account, "credits_used_micros", formatCredits, account?.creditsUsedMicros)}`);
       cell(row, projectionValue(account, "usage_overage_credit_micros", formatNonNegativeCredits, account?.usageOverageCreditMicros));
       cell(row, projectionValue(account, "usage_overage_amount", (value) => value ? formatNonNegativeMoney(value) : "No overage", account?.usageOverageAmount));
