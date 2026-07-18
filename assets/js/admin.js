@@ -136,7 +136,7 @@
   }
 
   function createAdminApi() {
-    if (!apiBaseUrl || generated?.PLATFORM_PROTOS_REVISION !== "fa01d7cc4c68c1e7ee606a44677ad70d16f4c563" || typeof generated.createAdminApi !== "function") return null;
+    if (!apiBaseUrl || generated?.PLATFORM_PROTOS_REVISION !== "1a950c9fc437d1d186caa40fb3efbcdc86eedd65" || typeof generated.createAdminApi !== "function") return null;
     try {
       return generated.createAdminApi({ baseUrl: apiBaseUrl, defaultTimeoutMs: 12_000 });
     } catch {
@@ -486,7 +486,7 @@
     ui.overviewSource.forEach((element) => { element.textContent = "not yet loaded"; });
     document.querySelectorAll("[data-alert-coverage]").forEach((element) => { element.textContent = "No alert coverage has been loaded."; });
     document.querySelectorAll("[data-economics-metric], [data-fleet-metric], [data-billing-metric]").forEach((element) => { element.textContent = "—"; });
-    ["customers", "team-economics", "runtimes", "alerts", "billing-accounts", "team-credit-controls", "reconciliation"].forEach(clearTable);
+    ["customers", "team-economics", "runtimes", "alerts", "billing-accounts", "team-credit-controls", "reconciliation", "audit"].forEach(clearTable);
     ["customers", "economics", "operations", "billing"].forEach((name) => setSectionState(name, "Waiting", "neutral"));
     closeCustomerDetail();
   }
@@ -669,7 +669,8 @@
       "billing-accounts": "[data-billing-account-rows]",
       "team-credit-controls": "[data-team-credit-control-rows]",
       "customer-reliability": "[data-customer-reliability-rows]",
-      reconciliation: "[data-reconciliation-rows]"
+      reconciliation: "[data-reconciliation-rows]",
+      audit: "[data-audit-rows]"
     };
     return document.querySelector(selectors[name] || "[data-missing-table]");
   }
@@ -1303,6 +1304,37 @@
     }
   }
 
+  function renderAudit(response) {
+    const events = Array.isArray(response?.events) ? response.events : [];
+    const body = tableBody("audit");
+    body.replaceChildren();
+    events.forEach((event) => {
+      const row = document.createElement("tr");
+      cell(row, formatTimestamp(event?.occurredAt), true);
+      cell(row, stringValue(event?.actorLabel) || stringValue(event?.actorUserId) || "—");
+      cell(row, stringValue(event?.action));
+      cell(row, `${stringValue(event?.resourceType) || "—"} / ${stringValue(event?.resourceId) || "—"}`);
+      cell(row, stringValue(event?.organizationId) || "—");
+      cell(row, stringValue(event?.sourceIp) || "—");
+      cell(row, stringValue(event?.requestId) || "—");
+      body.append(row);
+    });
+    showTable("audit", events.length);
+    setSectionState("audit", events.length ? "Loaded" : "Empty", events.length ? "positive" : "neutral");
+  }
+
+  async function loadAudit(signal) {
+    try {
+      renderAudit(await adminListRequest("admin_audit_events", "events", {}, signal));
+      return true;
+    } catch (error) {
+      clearTable("audit", "Audit projection unavailable. Absence of a row is not evidence that no action occurred.");
+      setSectionState("audit", "Unavailable", "negative", safeClientMessage(error, "Audit data is unavailable."));
+      if (stringValue(error?.code) === "unauthenticated") expireSession();
+      return false;
+    }
+  }
+
   function renderBillingSummary(billingResponse) {
     const billing = billingResponse?.billing;
     if (!billing || !["complete", "partial", "stale"].includes(projectionAvailability(billing))) throw new Error("invalid_billing");
@@ -1506,7 +1538,7 @@
     ui.refresh.disabled = true;
     ui.refresh.classList.add("is-refreshing");
     try {
-      setDataState("pending", "Loading authorized operations data", "Requesting current business, customer, economics, fleet, billing, and alert projections.");
+      setDataState("pending", "Loading authorized operations data", "Requesting current business, customer, economics, fleet, billing, alert, and audit projections.");
       const results = await Promise.all([
         loadOverview(state.refreshController.signal),
         loadCustomers(state.refreshController.signal),
@@ -1514,15 +1546,16 @@
         loadOperations(state.refreshController.signal),
         loadBilling(state.refreshController.signal),
         loadAlerts(state.refreshController.signal),
+        loadAudit(state.refreshController.signal),
         probe("health", "/healthz", state.refreshController.signal),
         probe("readiness", "/readyz", state.refreshController.signal)
       ]);
       if (!state.authorized) return;
-      const protectedSuccesses = results.slice(0, 6).filter(Boolean).length;
-      if (protectedSuccesses === 6) {
-        setDataState("positive", "All authorized projections loaded", "Overview, customers, economics, fleet, billing, and alerts were returned by the shared API.");
+      const protectedSuccesses = results.slice(0, 7).filter(Boolean).length;
+      if (protectedSuccesses === 7) {
+        setDataState("positive", "All authorized projections loaded", "Overview, customers, economics, fleet, billing, alerts, and audit were returned by the shared API.");
       } else if (protectedSuccesses > 0) {
-        setDataState("neutral", "Authorized data loaded with gaps", `${protectedSuccesses} of 6 protected projections returned trustworthy data. Unavailable sections remain empty.`);
+        setDataState("neutral", "Authorized data loaded with gaps", `${protectedSuccesses} of 7 protected projections returned trustworthy data. Unavailable sections remain empty.`);
       } else {
         setDataState("negative", "Admin projections unavailable", "The shared API returned no trustworthy protected dashboard projection. No substitute data was displayed.");
       }

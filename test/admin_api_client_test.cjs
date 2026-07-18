@@ -14,11 +14,12 @@ function parseRequestBody(body) {
 }
 
 test("the browser bundle exposes the pinned read-only admin launch procedures", () => {
-  assert.equal(generated.PLATFORM_PROTOS_REVISION, "fa01d7cc4c68c1e7ee606a44677ad70d16f4c563");
+  assert.equal(generated.PLATFORM_PROTOS_REVISION, "1a950c9fc437d1d186caa40fb3efbcdc86eedd65");
   assert.deepEqual([...generated.SUPPORTED_PROCEDURES], [
-    "current_user", "admin_overview", "admin_customers", "admin_economics",
-    "admin_team_economics", "admin_fleet", "admin_runtimes", "admin_billing",
-    "admin_billing_accounts", "admin_reconciliation_issues", "admin_alerts"
+    "current_user", "admin_overview", "admin_customers", "admin_customer",
+    "admin_customer_reliability", "admin_economics", "admin_team_economics",
+    "admin_fleet", "admin_runtimes", "admin_billing", "admin_billing_accounts",
+    "admin_reconciliation_issues", "admin_alerts", "admin_audit_events"
   ]);
 });
 
