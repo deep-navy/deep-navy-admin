@@ -7,7 +7,7 @@ import {
 } from "../vendor/platform-protos/deepnavy/v1/admin_pb.js";
 import { AuthService } from "../vendor/platform-protos/deepnavy/v1/auth_pb.js";
 
-export const PLATFORM_PROTOS_REVISION = "fa01d7cc4c68c1e7ee606a44677ad70d16f4c563";
+export const PLATFORM_PROTOS_REVISION = "1a950c9fc437d1d186caa40fb3efbcdc86eedd65";
 export const SUPPORTED_PROCEDURES = Object.freeze([
   "current_user",
   "admin_overview",
@@ -21,7 +21,8 @@ export const SUPPORTED_PROCEDURES = Object.freeze([
   "admin_billing",
   "admin_billing_accounts",
   "admin_reconciliation_issues",
-  "admin_alerts"
+  "admin_alerts",
+  "admin_audit_events"
 ] as const);
 
 type ProcedureName = (typeof SUPPORTED_PROCEDURES)[number];
@@ -202,6 +203,8 @@ export function createAdminApi(options: AdminApiOptions) {
           return await admin.listAdminBillingReconciliationIssues({ page: pageRequest(payload.page) }, callOptions);
         case "admin_alerts":
           return await admin.listAdminAlerts({ page: pageRequest(payload.page) }, callOptions);
+        case "admin_audit_events":
+          return await admin.listAdminAuditEvents({ page: pageRequest(payload.page) }, callOptions);
       }
     } catch (error) {
       if (error instanceof AdminClientError) throw error;
