@@ -2,19 +2,95 @@
 // @generated from file deepnavy/v1/admin.proto (package deepnavy.v1, syntax proto3)
 /* eslint-disable */
 
-import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
-import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
-import type { Money } from "./common_pb.js";
+import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
+import { enumDesc, fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
+import type { BillingPlan, Subscription, SubscriptionStatus, TeamCreditControl } from "./billing_pb.js";
+import { file_deepnavy_v1_billing } from "./billing_pb.js";
+import type { Environment, Money, PageRequest, PageResponse, ReportingPeriod } from "./common_pb.js";
 import { file_deepnavy_v1_common } from "./common_pb.js";
+import type { EconomicsSummary } from "./economics_pb.js";
+import { file_deepnavy_v1_economics } from "./economics_pb.js";
+import type { Organization } from "./organizations_pb.js";
+import { file_deepnavy_v1_organizations } from "./organizations_pb.js";
+import type { RuntimeHealthReason } from "./provisioning_pb.js";
+import { file_deepnavy_v1_provisioning } from "./provisioning_pb.js";
+import type { Timestamp } from "@bufbuild/protobuf/wkt";
+import { file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
 import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file deepnavy/v1/admin.proto.
  */
 export const file_deepnavy_v1_admin: GenFile = /*@__PURE__*/
-  fileDesc("ChdkZWVwbmF2eS92MS9hZG1pbi5wcm90bxILZGVlcG5hdnkudjEi/gEKDUFkbWluT3ZlcnZpZXcSNQoZbW9udGhseV9yZWN1cnJpbmdfcmV2ZW51ZRgBIAEoCzISLmRlZXBuYXZ5LnYxLk1vbmV5EjQKGGFubnVhbF9yZWN1cnJpbmdfcmV2ZW51ZRgCIAEoCzISLmRlZXBuYXZ5LnYxLk1vbmV5EhgKEGFjdGl2ZV9jdXN0b21lcnMYAyABKAMSFAoMYWN0aXZlX3RlYW1zGAQgASgDEhQKDGdyb3NzX21hcmdpbhgFIAEoARIcChRwcm9kdWN0aW9uX2luY2lkZW50cxgGIAEoAxIcChRwdWxsX3JlcXVlc3RzX21lcmdlZBgHIAEoAyIZChdHZXRBZG1pbk92ZXJ2aWV3UmVxdWVzdCJIChhHZXRBZG1pbk92ZXJ2aWV3UmVzcG9uc2USLAoIb3ZlcnZpZXcYASABKAsyGi5kZWVwbmF2eS52MS5BZG1pbk92ZXJ2aWV3Mm8KDEFkbWluU2VydmljZRJfChBHZXRBZG1pbk92ZXJ2aWV3EiQuZGVlcG5hdnkudjEuR2V0QWRtaW5PdmVydmlld1JlcXVlc3QaJS5kZWVwbmF2eS52MS5HZXRBZG1pbk92ZXJ2aWV3UmVzcG9uc2VCRFpCZ2l0aHViLmNvbS9kZWVwLW5hdnkvcGxhdGZvcm0tcHJvdG9zL2dlbi9nby9kZWVwbmF2eS92MTtkZWVwbmF2eXYxYgZwcm90bzM", [file_deepnavy_v1_common]);
+  fileDesc("ChdkZWVwbmF2eS92MS9hZG1pbi5wcm90bxILZGVlcG5hdnkudjEiVwoQQWRtaW5FcnJvckRldGFpbBItCgZyZWFzb24YASABKA4yHS5kZWVwbmF2eS52MS5BZG1pbkVycm9yUmVhc29uEhQKDHNhZmVfbWVzc2FnZRgCIAEoCSKrAQoVQWRtaW5Qcm9qZWN0aW9uU3RhdHVzEj4KDGF2YWlsYWJpbGl0eRgBIAEoDjIoLmRlZXBuYXZ5LnYxLkFkbWluUHJvamVjdGlvbkF2YWlsYWJpbGl0eRIaChJ1bmF2YWlsYWJsZV9maWVsZHMYAiADKAkSNgoSc291cmNlX29ic2VydmVkX2F0GAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCLsBQoNQWRtaW5PdmVydmlldxI1Chltb250aGx5X3JlY3VycmluZ19yZXZlbnVlGAEgASgLMhIuZGVlcG5hdnkudjEuTW9uZXkSNAoYYW5udWFsX3JlY3VycmluZ19yZXZlbnVlGAIgASgLMhIuZGVlcG5hdnkudjEuTW9uZXkSGAoQYWN0aXZlX2N1c3RvbWVycxgDIAEoAxIUCgxhY3RpdmVfdGVhbXMYBCABKAMSGAoMZ3Jvc3NfbWFyZ2luGAUgASgBQgIYARIcChRwcm9kdWN0aW9uX2luY2lkZW50cxgGIAEoAxIcChRwdWxsX3JlcXVlc3RzX21lcmdlZBgHIAEoAxI2ChByZXBvcnRpbmdfcGVyaW9kGAggASgLMhwuZGVlcG5hdnkudjEuUmVwb3J0aW5nUGVyaW9kEjAKDGdlbmVyYXRlZF9hdBgJIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASFQoNbmV3X2N1c3RvbWVycxgKIAEoAxIZChFjaHVybmVkX2N1c3RvbWVycxgLIAEoAxIoChtuZXRfcmV2ZW51ZV9yZXRlbnRpb25fcmF0aW8YDCABKAFIAIgBARIfChdjdXJyZW50bHlfYWN0aXZlX2FnZW50cxgNIAEoAxITCgtvcGVuX2FsZXJ0cxgOIAEoAxIZChFhdF9yaXNrX2N1c3RvbWVycxgPIAEoAxIfChJncm9zc19tYXJnaW5fcmF0aW8YECABKAFIAYgBARIhChRjdXN0b21lcl9jaHVybl9yYXRpbxgRIAEoAUgCiAEBEj0KEXByb2plY3Rpb25fc3RhdHVzGBIgASgLMiIuZGVlcG5hdnkudjEuQWRtaW5Qcm9qZWN0aW9uU3RhdHVzQh4KHF9uZXRfcmV2ZW51ZV9yZXRlbnRpb25fcmF0aW9CFQoTX2dyb3NzX21hcmdpbl9yYXRpb0IXChVfY3VzdG9tZXJfY2h1cm5fcmF0aW8iUQoXR2V0QWRtaW5PdmVydmlld1JlcXVlc3QSNgoQcmVwb3J0aW5nX3BlcmlvZBgBIAEoCzIcLmRlZXBuYXZ5LnYxLlJlcG9ydGluZ1BlcmlvZCJIChhHZXRBZG1pbk92ZXJ2aWV3UmVzcG9uc2USLAoIb3ZlcnZpZXcYASABKAsyGi5kZWVwbmF2eS52MS5BZG1pbk92ZXJ2aWV3ItwCChVBZG1pbkN1c3RvbWVyQWN0aXZpdHkSFQoNYWN0aXZlX2FnZW50cxgBIAEoAxITCgtpZGxlX2FnZW50cxgCIAEoAxIWCg5ibG9ja2VkX2FnZW50cxgDIAEoAxIVCg1mYWlsZWRfYWdlbnRzGAQgASgDEhgKEGN1cnJlbnRfc2Vzc2lvbnMYBSABKAMSGgoSYWN0aXZlX2luaXRpYXRpdmVzGAYgASgDEhkKEXBlbmRpbmdfYXBwcm92YWxzGAcgASgDEhwKFHB1bGxfcmVxdWVzdHNfbWVyZ2VkGAggASgDEjoKFmxhc3RfYWdlbnRfYWN0aXZpdHlfYXQYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEj0KEXByb2plY3Rpb25fc3RhdHVzGAogASgLMiIuZGVlcG5hdnkudjEuQWRtaW5Qcm9qZWN0aW9uU3RhdHVzIq0CChhBZG1pbkN1c3RvbWVyUmVsaWFiaWxpdHkSNgoQcmVwb3J0aW5nX3BlcmlvZBgBIAEoCzIcLmRlZXBuYXZ5LnYxLlJlcG9ydGluZ1BlcmlvZBInChpnYXRld2F5X2F2YWlsYWJpbGl0eV9yYXRpbxgCIAEoAUgAiAEBEhwKFHByb2R1Y3Rpb25faW5jaWRlbnRzGAMgASgDEjQKEGxhc3RfaW5jaWRlbnRfYXQYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEj0KEXByb2plY3Rpb25fc3RhdHVzGAUgASgLMiIuZGVlcG5hdnkudjEuQWRtaW5Qcm9qZWN0aW9uU3RhdHVzQh0KG19nYXRld2F5X2F2YWlsYWJpbGl0eV9yYXRpbyKaBwoNQWRtaW5DdXN0b21lchIvCgxvcmdhbml6YXRpb24YASABKAsyGS5kZWVwbmF2eS52MS5Pcmdhbml6YXRpb24SJgoEcGxhbhgCIAEoCzIYLmRlZXBuYXZ5LnYxLkJpbGxpbmdQbGFuEi8KDHN1YnNjcmlwdGlvbhgDIAEoCzIZLmRlZXBuYXZ5LnYxLlN1YnNjcmlwdGlvbhI1Chltb250aGx5X3JlY3VycmluZ19yZXZlbnVlGAQgASgLMhIuZGVlcG5hdnkudjEuTW9uZXkSMAoJZWNvbm9taWNzGAUgASgLMh0uZGVlcG5hdnkudjEuRWNvbm9taWNzU3VtbWFyeRISCgp0ZWFtX2NvdW50GAYgASgDEhgKEHJlcG9zaXRvcnlfY291bnQYByABKAMSEgoKdXNlcl9jb3VudBgIIAEoAxI0CghhY3Rpdml0eRgJIAEoCzIiLmRlZXBuYXZ5LnYxLkFkbWluQ3VzdG9tZXJBY3Rpdml0eRI6CgtyZWxpYWJpbGl0eRgKIAEoCzIlLmRlZXBuYXZ5LnYxLkFkbWluQ3VzdG9tZXJSZWxpYWJpbGl0eRI7CgxoZWFsdGhfc3RhdGUYCyABKA4yJS5kZWVwbmF2eS52MS5BZG1pbkN1c3RvbWVySGVhbHRoU3RhdGUSNQoNc3VwcG9ydF9zdGF0ZRgMIAEoDjIeLmRlZXBuYXZ5LnYxLkFkbWluU3VwcG9ydFN0YXRlEjoKEGNodXJuX3Jpc2tfbGV2ZWwYDSABKA4yIC5kZWVwbmF2eS52MS5BZG1pbkNodXJuUmlza0xldmVsEjYKEHJlcG9ydGluZ19wZXJpb2QYDiABKAsyHC5kZWVwbmF2eS52MS5SZXBvcnRpbmdQZXJpb2QSMAoMZ2VuZXJhdGVkX2F0GA8gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBI1Cg1wYXltZW50X3N0YXRlGBAgASgOMh4uZGVlcG5hdnkudjEuQWRtaW5QYXltZW50U3RhdGUSUgocYmlsbGluZ19yZWNvbmNpbGlhdGlvbl9zdGF0ZRgRIAEoDjIsLmRlZXBuYXZ5LnYxLkFkbWluQmlsbGluZ1JlY29uY2lsaWF0aW9uU3RhdGUSPQoRcHJvamVjdGlvbl9zdGF0dXMYEiABKAsyIi5kZWVwbmF2eS52MS5BZG1pblByb2plY3Rpb25TdGF0dXMisgIKGUxpc3RBZG1pbkN1c3RvbWVyc1JlcXVlc3QSJgoEcGFnZRgBIAEoCzIYLmRlZXBuYXZ5LnYxLlBhZ2VSZXF1ZXN0EjwKE3N1YnNjcmlwdGlvbl9zdGF0dXMYAiABKA4yHy5kZWVwbmF2eS52MS5TdWJzY3JpcHRpb25TdGF0dXMSOwoMaGVhbHRoX3N0YXRlGAMgASgOMiUuZGVlcG5hdnkudjEuQWRtaW5DdXN0b21lckhlYWx0aFN0YXRlEjoKEGNodXJuX3Jpc2tfbGV2ZWwYBCABKA4yIC5kZWVwbmF2eS52MS5BZG1pbkNodXJuUmlza0xldmVsEjYKEHJlcG9ydGluZ19wZXJpb2QYBSABKAsyHC5kZWVwbmF2eS52MS5SZXBvcnRpbmdQZXJpb2QidAoaTGlzdEFkbWluQ3VzdG9tZXJzUmVzcG9uc2USLQoJY3VzdG9tZXJzGAEgAygLMhouZGVlcG5hdnkudjEuQWRtaW5DdXN0b21lchInCgRwYWdlGAIgASgLMhkuZGVlcG5hdnkudjEuUGFnZVJlc3BvbnNlImoKF0dldEFkbWluQ3VzdG9tZXJSZXF1ZXN0EhcKD29yZ2FuaXphdGlvbl9pZBgBIAEoCRI2ChByZXBvcnRpbmdfcGVyaW9kGAIgASgLMhwuZGVlcG5hdnkudjEuUmVwb3J0aW5nUGVyaW9kIkgKGEdldEFkbWluQ3VzdG9tZXJSZXNwb25zZRIsCghjdXN0b21lchgBIAEoCzIaLmRlZXBuYXZ5LnYxLkFkbWluQ3VzdG9tZXIi/gIKHkFkbWluQ3VzdG9tZXJSZWxpYWJpbGl0eVJlY29yZBIXCg9vcmdhbml6YXRpb25faWQYASABKAkSNgoQcmVwb3J0aW5nX3BlcmlvZBgCIAEoCzIcLmRlZXBuYXZ5LnYxLlJlcG9ydGluZ1BlcmlvZBInChpnYXRld2F5X2F2YWlsYWJpbGl0eV9yYXRpbxgDIAEoAUgAiAEBEhwKFHByb2R1Y3Rpb25faW5jaWRlbnRzGAQgASgDEjQKEGxhc3RfaW5jaWRlbnRfYXQYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjAKDGdlbmVyYXRlZF9hdBgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASPQoRcHJvamVjdGlvbl9zdGF0dXMYByABKAsyIi5kZWVwbmF2eS52MS5BZG1pblByb2plY3Rpb25TdGF0dXNCHQobX2dhdGV3YXlfYXZhaWxhYmlsaXR5X3JhdGlvIqUBCipMaXN0QWRtaW5DdXN0b21lclJlbGlhYmlsaXR5UmVjb3Jkc1JlcXVlc3QSFwoPb3JnYW5pemF0aW9uX2lkGAEgASgJEjYKEHJlcG9ydGluZ19wZXJpb2QYAiABKAsyHC5kZWVwbmF2eS52MS5SZXBvcnRpbmdQZXJpb2QSJgoEcGFnZRgDIAEoCzIYLmRlZXBuYXZ5LnYxLlBhZ2VSZXF1ZXN0IqABCitMaXN0QWRtaW5DdXN0b21lclJlbGlhYmlsaXR5UmVjb3Jkc1Jlc3BvbnNlEkgKE3JlbGlhYmlsaXR5X3JlY29yZHMYASADKAsyKy5kZWVwbmF2eS52MS5BZG1pbkN1c3RvbWVyUmVsaWFiaWxpdHlSZWNvcmQSJwoEcGFnZRgCIAEoCzIZLmRlZXBuYXZ5LnYxLlBhZ2VSZXNwb25zZSLiBgoOQWRtaW5FY29ub21pY3MSNgoQcmVwb3J0aW5nX3BlcmlvZBgBIAEoCzIcLmRlZXBuYXZ5LnYxLlJlcG9ydGluZ1BlcmlvZBIuCgdzdW1tYXJ5GAIgASgLMh0uZGVlcG5hdnkudjEuRWNvbm9taWNzU3VtbWFyeRIYChBhY3RpdmVfY3VzdG9tZXJzGAMgASgDEhsKE2FjdGl2YXRlZF9jdXN0b21lcnMYBCABKAMSFAoMYWN0aXZlX3RlYW1zGAUgASgDEhgKEGNvbXBsZXRlZF9pc3N1ZXMYBiABKAMSHAoUbWVyZ2VkX3B1bGxfcmVxdWVzdHMYByABKAMSGgoSYWN0aXZlX2luaXRpYXRpdmVzGAggASgDEhsKE21vZGVsX3JlcXVlc3RfY291bnQYCSABKAMSGgoSbW9kZWxfaW5wdXRfdG9rZW5zGAogASgDEhsKE21vZGVsX291dHB1dF90b2tlbnMYCyABKAMSMAoUY29zdF9wZXJfYWN0aXZlX3RlYW0YDCABKAsyEi5kZWVwbmF2eS52MS5Nb25leRI0Chhjb3N0X3Blcl9jb21wbGV0ZWRfaXNzdWUYDSABKAsyEi5kZWVwbmF2eS52MS5Nb25leRI4Chxjb3N0X3Blcl9tZXJnZWRfcHVsbF9yZXF1ZXN0GA4gASgLMhIuZGVlcG5hdnkudjEuTW9uZXkSNgoaY29zdF9wZXJfYWN0aXZlX2luaXRpYXRpdmUYDyABKAsyEi5kZWVwbmF2eS52MS5Nb25leRI3Chtjb3N0X3Blcl9hY3RpdmF0ZWRfY3VzdG9tZXIYECABKAsyEi5kZWVwbmF2eS52MS5Nb25leRIzChdyZXZlbnVlX3Blcl9hY3RpdmVfdGVhbRgRIAEoCzISLmRlZXBuYXZ5LnYxLk1vbmV5EjgKHGdyb3NzX3Byb2ZpdF9wZXJfYWN0aXZlX3RlYW0YEiABKAsyEi5kZWVwbmF2eS52MS5Nb25leRIwCgxnZW5lcmF0ZWRfYXQYEyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEj0KEXByb2plY3Rpb25fc3RhdHVzGBQgASgLMiIuZGVlcG5hdnkudjEuQWRtaW5Qcm9qZWN0aW9uU3RhdHVzIuoCChNBZG1pbkVjb25vbWljc1NsaWNlEjcKCWRpbWVuc2lvbhgBIAEoDjIkLmRlZXBuYXZ5LnYxLkFkbWluRWNvbm9taWNzRGltZW5zaW9uEhQKDGRpbWVuc2lvbl9pZBgCIAEoCRIUCgxkaXNwbGF5X25hbWUYAyABKAkSLgoHc3VtbWFyeRgEIAEoCzIdLmRlZXBuYXZ5LnYxLkVjb25vbWljc1N1bW1hcnkSGwoTbW9kZWxfcmVxdWVzdF9jb3VudBgFIAEoAxIaChJtb2RlbF9pbnB1dF90b2tlbnMYBiABKAMSGwoTbW9kZWxfb3V0cHV0X3Rva2VucxgHIAEoAxI2ChByZXBvcnRpbmdfcGVyaW9kGAggASgLMhwuZGVlcG5hdnkudjEuUmVwb3J0aW5nUGVyaW9kEjAKDGdlbmVyYXRlZF9hdBgJIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiUgoYR2V0QWRtaW5FY29ub21pY3NSZXF1ZXN0EjYKEHJlcG9ydGluZ19wZXJpb2QYASABKAsyHC5kZWVwbmF2eS52MS5SZXBvcnRpbmdQZXJpb2QiSwoZR2V0QWRtaW5FY29ub21pY3NSZXNwb25zZRIuCgllY29ub21pY3MYASABKAsyGy5kZWVwbmF2eS52MS5BZG1pbkVjb25vbWljcyLkAQofTGlzdEFkbWluRWNvbm9taWNzU2xpY2VzUmVxdWVzdBI3CglkaW1lbnNpb24YASABKA4yJC5kZWVwbmF2eS52MS5BZG1pbkVjb25vbWljc0RpbWVuc2lvbhIXCg9vcmdhbml6YXRpb25faWQYAiABKAkSDwoHdGVhbV9pZBgDIAEoCRI2ChByZXBvcnRpbmdfcGVyaW9kGAQgASgLMhwuZGVlcG5hdnkudjEuUmVwb3J0aW5nUGVyaW9kEiYKBHBhZ2UYBSABKAsyGC5kZWVwbmF2eS52MS5QYWdlUmVxdWVzdCKHAQogTGlzdEFkbWluRWNvbm9taWNzU2xpY2VzUmVzcG9uc2USOgoQZWNvbm9taWNzX3NsaWNlcxgBIAMoCzIgLmRlZXBuYXZ5LnYxLkFkbWluRWNvbm9taWNzU2xpY2USJwoEcGFnZRgCIAEoCzIZLmRlZXBuYXZ5LnYxLlBhZ2VSZXNwb25zZSLpAwoKQWRtaW5GbGVldBIZChFydW50aW1lX2luc3RhbmNlcxgBIAEoAxIXCg9yZWFkeV9pbnN0YW5jZXMYAiABKAMSGgoSZGVncmFkZWRfaW5zdGFuY2VzGAMgASgDEhsKE3N1c3BlbmRlZF9pbnN0YW5jZXMYBCABKAMSGAoQZmFpbGVkX2luc3RhbmNlcxgFIAEoAxIVCg1hY3RpdmVfYWdlbnRzGAYgASgDEhMKC2lkbGVfYWdlbnRzGAcgASgDEhYKDmJsb2NrZWRfYWdlbnRzGAggASgDEhUKDWZhaWxlZF9hZ2VudHMYCSABKAMSGAoQY3VycmVudF9zZXNzaW9ucxgKIAEoAxIgChhiYWNrdXBfb3ZlcmR1ZV9pbnN0YW5jZXMYCyABKAMSKgoiZXZlbnRfc3RyZWFtX3VuYXZhaWxhYmxlX2luc3RhbmNlcxgMIAEoAxIvCgtvYnNlcnZlZF9hdBgNIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASPQoRcHJvamVjdGlvbl9zdGF0dXMYDiABKAsyIi5kZWVwbmF2eS52MS5BZG1pblByb2plY3Rpb25TdGF0dXMSIQoZc3RhbGVfaGVhcnRiZWF0X2luc3RhbmNlcxgPIAEoAyLoCQoUQWRtaW5SdW50aW1lSW5zdGFuY2USCgoCaWQYASABKAkSFwoPb3JnYW5pemF0aW9uX2lkGAIgASgJEg8KB3RlYW1faWQYAyABKAkSLQoLZW52aXJvbm1lbnQYBCABKA4yGC5kZWVwbmF2eS52MS5FbnZpcm9ubWVudBI1Cg1ydW50aW1lX3N0YXRlGAUgASgOMh4uZGVlcG5hdnkudjEuQWRtaW5SdW50aW1lU3RhdGUSHgoWb3BlbmNsYXdfaW5zdGFuY2VfbmFtZRgGIAEoCRI2ChJnYXRld2F5X3N0YXJ0ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjUKEWxhc3RfaGVhcnRiZWF0X2F0GAggASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBI1ChFsYXN0X3Rvb2xfY2FsbF9hdBgJIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASFQoNYWN0aXZlX2FnZW50cxgKIAEoAxITCgtpZGxlX2FnZW50cxgLIAEoAxIWCg5ibG9ja2VkX2FnZW50cxgMIAEoAxIVCg1mYWlsZWRfYWdlbnRzGA0gASgDEhgKEGN1cnJlbnRfc2Vzc2lvbnMYDiABKAMSHQoVY3VycmVudF9tb2RlbF9hbGlhc2VzGA8gAygJEiMKG3dvcmtzcGFjZV92b2x1bWVfdXNlZF9ieXRlcxgQIAEoBBInCh93b3Jrc3BhY2Vfdm9sdW1lX2NhcGFjaXR5X2J5dGVzGBEgASgEEjMKDGJhY2t1cF9zdGF0ZRgSIAEoDjIdLmRlZXBuYXZ5LnYxLkFkbWluQmFja3VwU3RhdGUSPQoZbGFzdF9zdWNjZXNzZnVsX2JhY2t1cF9hdBgTIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASPgoSZXZlbnRfc3RyZWFtX3N0YXRlGBQgASgOMiIuZGVlcG5hdnkudjEuQWRtaW5FdmVudFN0cmVhbVN0YXRlEjEKDWxhc3RfZXZlbnRfYXQYFSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhgKEG9wZW5jbGF3X3ZlcnNpb24YFiABKAkSGAoQb3BlcmF0b3JfdmVyc2lvbhgXIAEoCRIlCh1vcmdhbml6YXRpb25fdGVtcGxhdGVfdmVyc2lvbhgYIAEoCRIvCgtvYnNlcnZlZF9hdBgZIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASEAoIc2VxdWVuY2UYGiABKAMSPQoRcHJvamVjdGlvbl9zdGF0dXMYGyABKAsyIi5kZWVwbmF2eS52MS5BZG1pblByb2plY3Rpb25TdGF0dXMSPwoVcnVudGltZV9oZWFsdGhfcmVhc29uGBwgASgOMiAuZGVlcG5hdnkudjEuUnVudGltZUhlYWx0aFJlYXNvbhIVCg1nYXRld2F5X3JlYWR5GB0gASgIEhkKEXJlYWR5X2FnZW50X2NvdW50GB4gASgFEhoKEmRlc2lyZWRfZ2VuZXJhdGlvbhgfIAEoAxIbChNvYnNlcnZlZF9nZW5lcmF0aW9uGCAgASgDEhwKFGt1YmVybmV0ZXNfbmFtZXNwYWNlGCEgASgJIhYKFEdldEFkbWluRmxlZXRSZXF1ZXN0Ij8KFUdldEFkbWluRmxlZXRSZXNwb25zZRImCgVmbGVldBgBIAEoCzIXLmRlZXBuYXZ5LnYxLkFkbWluRmxlZXQi2gEKIExpc3RBZG1pblJ1bnRpbWVJbnN0YW5jZXNSZXF1ZXN0EiYKBHBhZ2UYASABKAsyGC5kZWVwbmF2eS52MS5QYWdlUmVxdWVzdBItCgtlbnZpcm9ubWVudBgCIAEoDjIYLmRlZXBuYXZ5LnYxLkVudmlyb25tZW50EjUKDXJ1bnRpbWVfc3RhdGUYAyABKA4yHi5kZWVwbmF2eS52MS5BZG1pblJ1bnRpbWVTdGF0ZRIXCg9vcmdhbml6YXRpb25faWQYBCABKAkSDwoHdGVhbV9pZBgFIAEoCSKlAQohTGlzdEFkbWluUnVudGltZUluc3RhbmNlc1Jlc3BvbnNlEjwKEXJ1bnRpbWVfaW5zdGFuY2VzGAEgAygLMiEuZGVlcG5hdnkudjEuQWRtaW5SdW50aW1lSW5zdGFuY2USJwoEcGFnZRgCIAEoCzIZLmRlZXBuYXZ5LnYxLlBhZ2VSZXNwb25zZRIZChFzbmFwc2hvdF9zZXF1ZW5jZRgDIAEoAyKVAQoiU3RyZWFtQWRtaW5SdW50aW1lSW5zdGFuY2VzUmVxdWVzdBIWCg5hZnRlcl9zZXF1ZW5jZRgBIAEoAxItCgtlbnZpcm9ubWVudBgCIAEoDjIYLmRlZXBuYXZ5LnYxLkVudmlyb25tZW50EhcKD29yZ2FuaXphdGlvbl9pZBgDIAEoCRIPCgd0ZWFtX2lkGAQgASgJIsIBCiNTdHJlYW1BZG1pblJ1bnRpbWVJbnN0YW5jZXNSZXNwb25zZRI7ChBydW50aW1lX2luc3RhbmNlGAEgASgLMiEuZGVlcG5hdnkudjEuQWRtaW5SdW50aW1lSW5zdGFuY2USNwoLY2hhbmdlX3R5cGUYAiABKA4yIi5kZWVwbmF2eS52MS5BZG1pblN0cmVhbUNoYW5nZVR5cGUSEwoLcmVzb3VyY2VfaWQYAyABKAkSEAoIc2VxdWVuY2UYBCABKAMi5wQKDEFkbWluQmlsbGluZxI2ChByZXBvcnRpbmdfcGVyaW9kGAEgASgLMhwuZGVlcG5hdnkudjEuUmVwb3J0aW5nUGVyaW9kEhwKFGFjdGl2ZV9zdWJzY3JpcHRpb25zGAIgASgDEh4KFnRyaWFsaW5nX3N1YnNjcmlwdGlvbnMYAyABKAMSEAoIdXBncmFkZXMYBCABKAMSEgoKZG93bmdyYWRlcxgFIAEoAxIVCg1jYW5jZWxsYXRpb25zGAYgASgDEhcKD2ZhaWxlZF9wYXltZW50cxgHIAEoAxIZChFwYXN0X2R1ZV9pbnZvaWNlcxgIIAEoAxIlCh1jdXN0b21lcnNfb3Zlcl9pbmNsdWRlZF91c2FnZRgJIAEoAxIjCht0b3RhbF9jcmVkaXRfYmFsYW5jZV9taWNyb3MYCiABKAMSJgoedXBjb21pbmdfcmVuZXdhbHNfbmV4dF8zMF9kYXlzGAsgASgDEiIKGm9wZW5fcmVjb25jaWxpYXRpb25faXNzdWVzGAwgASgDEjAKKHBhaWRfY3VzdG9tZXJzX3dpdGhvdXRfcHJvdmlzaW9uZWRfdGVhbXMYDSABKAMSNQotcHJvdmlzaW9uZWRfdGVhbXNfd2l0aG91dF92YWxpZF9zdWJzY3JpcHRpb25zGA4gASgDEjAKDGdlbmVyYXRlZF9hdBgPIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASPQoRcHJvamVjdGlvbl9zdGF0dXMYECABKAsyIi5kZWVwbmF2eS52MS5BZG1pblByb2plY3Rpb25TdGF0dXMiyQYKE0FkbWluQmlsbGluZ0FjY291bnQSLwoMb3JnYW5pemF0aW9uGAEgASgLMhkuZGVlcG5hdnkudjEuT3JnYW5pemF0aW9uEiYKBHBsYW4YAiABKAsyGC5kZWVwbmF2eS52MS5CaWxsaW5nUGxhbhIvCgxzdWJzY3JpcHRpb24YAyABKAsyGS5kZWVwbmF2eS52MS5TdWJzY3JpcHRpb24SNQoNcGF5bWVudF9zdGF0ZRgEIAEoDjIeLmRlZXBuYXZ5LnYxLkFkbWluUGF5bWVudFN0YXRlEkoKFHJlY29uY2lsaWF0aW9uX3N0YXRlGAUgASgOMiwuZGVlcG5hdnkudjEuQWRtaW5CaWxsaW5nUmVjb25jaWxpYXRpb25TdGF0ZRI1Chltb250aGx5X3JlY3VycmluZ19yZXZlbnVlGAYgASgLMhIuZGVlcG5hdnkudjEuTW9uZXkSHQoVY3JlZGl0X2JhbGFuY2VfbWljcm9zGAcgASgDEhsKE2NyZWRpdHNfdXNlZF9taWNyb3MYCCABKAMSIwobdXNhZ2Vfb3ZlcmFnZV9jcmVkaXRfbWljcm9zGAkgASgDEh4KFnByb3Zpc2lvbmVkX3RlYW1fY291bnQYCiABKAMSGwoTZW50aXRsZWRfdGVhbV9jb3VudBgLIAEoAxI3ChN1cGNvbWluZ19yZW5ld2FsX2F0GAwgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBI2ChByZXBvcnRpbmdfcGVyaW9kGA0gASgLMhwuZGVlcG5hdnkudjEuUmVwb3J0aW5nUGVyaW9kEjAKDGdlbmVyYXRlZF9hdBgOIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASMAoUdXNhZ2Vfb3ZlcmFnZV9hbW91bnQYDyABKAsyEi5kZWVwbmF2eS52MS5Nb25leRI9ChFwcm9qZWN0aW9uX3N0YXR1cxgQIAEoCzIiLmRlZXBuYXZ5LnYxLkFkbWluUHJvamVjdGlvblN0YXR1cxI8ChR0ZWFtX2NyZWRpdF9jb250cm9scxgRIAMoCzIeLmRlZXBuYXZ5LnYxLlRlYW1DcmVkaXRDb250cm9sIpoDCh9BZG1pbkJpbGxpbmdSZWNvbmNpbGlhdGlvbklzc3VlEgoKAmlkGAEgASgJEj4KBGtpbmQYAiABKA4yMC5kZWVwbmF2eS52MS5BZG1pbkJpbGxpbmdSZWNvbmNpbGlhdGlvbklzc3VlS2luZBJACgVzdGF0ZRgDIAEoDjIxLmRlZXBuYXZ5LnYxLkFkbWluQmlsbGluZ1JlY29uY2lsaWF0aW9uSXNzdWVTdGF0ZRIXCg9vcmdhbml6YXRpb25faWQYBCABKAkSDwoHdGVhbV9pZBgFIAEoCRIXCg9zdWJzY3JpcHRpb25faWQYBiABKAkSFAoMc2FmZV9zdW1tYXJ5GAcgASgJEi8KC2RldGVjdGVkX2F0GAggASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgp1cGRhdGVkX2F0GAkgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIvCgtyZXNvbHZlZF9hdBgKIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiUAoWR2V0QWRtaW5CaWxsaW5nUmVxdWVzdBI2ChByZXBvcnRpbmdfcGVyaW9kGAEgASgLMhwuZGVlcG5hdnkudjEuUmVwb3J0aW5nUGVyaW9kIkUKF0dldEFkbWluQmlsbGluZ1Jlc3BvbnNlEioKB2JpbGxpbmcYASABKAsyGS5kZWVwbmF2eS52MS5BZG1pbkJpbGxpbmciwgIKH0xpc3RBZG1pbkJpbGxpbmdBY2NvdW50c1JlcXVlc3QSJgoEcGFnZRgBIAEoCzIYLmRlZXBuYXZ5LnYxLlBhZ2VSZXF1ZXN0EjwKE3N1YnNjcmlwdGlvbl9zdGF0dXMYAiABKA4yHy5kZWVwbmF2eS52MS5TdWJzY3JpcHRpb25TdGF0dXMSNQoNcGF5bWVudF9zdGF0ZRgDIAEoDjIeLmRlZXBuYXZ5LnYxLkFkbWluUGF5bWVudFN0YXRlEkoKFHJlY29uY2lsaWF0aW9uX3N0YXRlGAQgASgOMiwuZGVlcG5hdnkudjEuQWRtaW5CaWxsaW5nUmVjb25jaWxpYXRpb25TdGF0ZRI2ChByZXBvcnRpbmdfcGVyaW9kGAUgASgLMhwuZGVlcG5hdnkudjEuUmVwb3J0aW5nUGVyaW9kIocBCiBMaXN0QWRtaW5CaWxsaW5nQWNjb3VudHNSZXNwb25zZRI6ChBiaWxsaW5nX2FjY291bnRzGAEgAygLMiAuZGVlcG5hdnkudjEuQWRtaW5CaWxsaW5nQWNjb3VudBInCgRwYWdlGAIgASgLMhkuZGVlcG5hdnkudjEuUGFnZVJlc3BvbnNlIoECCitMaXN0QWRtaW5CaWxsaW5nUmVjb25jaWxpYXRpb25Jc3N1ZXNSZXF1ZXN0EiYKBHBhZ2UYASABKAsyGC5kZWVwbmF2eS52MS5QYWdlUmVxdWVzdBI+CgRraW5kGAIgASgOMjAuZGVlcG5hdnkudjEuQWRtaW5CaWxsaW5nUmVjb25jaWxpYXRpb25Jc3N1ZUtpbmQSQAoFc3RhdGUYAyABKA4yMS5kZWVwbmF2eS52MS5BZG1pbkJpbGxpbmdSZWNvbmNpbGlhdGlvbklzc3VlU3RhdGUSFwoPb3JnYW5pemF0aW9uX2lkGAQgASgJEg8KB3RlYW1faWQYBSABKAkipAEKLExpc3RBZG1pbkJpbGxpbmdSZWNvbmNpbGlhdGlvbklzc3Vlc1Jlc3BvbnNlEksKFXJlY29uY2lsaWF0aW9uX2lzc3VlcxgBIAMoCzIsLmRlZXBuYXZ5LnYxLkFkbWluQmlsbGluZ1JlY29uY2lsaWF0aW9uSXNzdWUSJwoEcGFnZRgCIAEoCzIZLmRlZXBuYXZ5LnYxLlBhZ2VSZXNwb25zZSL5BAoKQWRtaW5BbGVydBIKCgJpZBgBIAEoCRIpCgRraW5kGAIgASgOMhsuZGVlcG5hdnkudjEuQWRtaW5BbGVydEtpbmQSMQoIc2V2ZXJpdHkYAyABKA4yHy5kZWVwbmF2eS52MS5BZG1pbkFsZXJ0U2V2ZXJpdHkSKwoFc3RhdGUYBCABKA4yHC5kZWVwbmF2eS52MS5BZG1pbkFsZXJ0U3RhdGUSLQoLZW52aXJvbm1lbnQYBSABKA4yGC5kZWVwbmF2eS52MS5FbnZpcm9ubWVudBIXCg9vcmdhbml6YXRpb25faWQYBiABKAkSDwoHdGVhbV9pZBgHIAEoCRIbChNydW50aW1lX2luc3RhbmNlX2lkGAggASgJEhQKDHNhZmVfc3VtbWFyeRgJIAEoCRIYChBvY2N1cnJlbmNlX2NvdW50GAogASgDEjUKEWZpcnN0X2RldGVjdGVkX2F0GAsgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBI0ChBsYXN0X2RldGVjdGVkX2F0GAwgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIvCgtyZXNvbHZlZF9hdBgNIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASEAoIc2VxdWVuY2UYDiABKAMSPQoRcHJvamVjdGlvbl9zdGF0dXMYDyABKAsyIi5kZWVwbmF2eS52MS5BZG1pblByb2plY3Rpb25TdGF0dXMSPwoVcnVudGltZV9oZWFsdGhfcmVhc29uGBAgASgOMiAuZGVlcG5hdnkudjEuUnVudGltZUhlYWx0aFJlYXNvbiKkAgoWTGlzdEFkbWluQWxlcnRzUmVxdWVzdBImCgRwYWdlGAEgASgLMhguZGVlcG5hdnkudjEuUGFnZVJlcXVlc3QSKQoEa2luZBgCIAEoDjIbLmRlZXBuYXZ5LnYxLkFkbWluQWxlcnRLaW5kEjEKCHNldmVyaXR5GAMgASgOMh8uZGVlcG5hdnkudjEuQWRtaW5BbGVydFNldmVyaXR5EisKBXN0YXRlGAQgASgOMhwuZGVlcG5hdnkudjEuQWRtaW5BbGVydFN0YXRlEi0KC2Vudmlyb25tZW50GAUgASgOMhguZGVlcG5hdnkudjEuRW52aXJvbm1lbnQSFwoPb3JnYW5pemF0aW9uX2lkGAYgASgJEg8KB3RlYW1faWQYByABKAki6AEKF0xpc3RBZG1pbkFsZXJ0c1Jlc3BvbnNlEicKBmFsZXJ0cxgBIAMoCzIXLmRlZXBuYXZ5LnYxLkFkbWluQWxlcnQSJwoEcGFnZRgCIAEoCzIZLmRlZXBuYXZ5LnYxLlBhZ2VSZXNwb25zZRIZChFzbmFwc2hvdF9zZXF1ZW5jZRgDIAEoAxI2ChF1bmF2YWlsYWJsZV9raW5kcxgEIAMoDjIbLmRlZXBuYXZ5LnYxLkFkbWluQWxlcnRLaW5kEigKIHJlc29sdmVkX2FsZXJ0X2hpc3RvcnlfYXZhaWxhYmxlGAUgASgIIrYBChhTdHJlYW1BZG1pbkFsZXJ0c1JlcXVlc3QSFgoOYWZ0ZXJfc2VxdWVuY2UYASABKAMSKQoEa2luZBgCIAEoDjIbLmRlZXBuYXZ5LnYxLkFkbWluQWxlcnRLaW5kEi0KC2Vudmlyb25tZW50GAMgASgOMhguZGVlcG5hdnkudjEuRW52aXJvbm1lbnQSFwoPb3JnYW5pemF0aW9uX2lkGAQgASgJEg8KB3RlYW1faWQYBSABKAkiowEKGVN0cmVhbUFkbWluQWxlcnRzUmVzcG9uc2USJgoFYWxlcnQYASABKAsyFy5kZWVwbmF2eS52MS5BZG1pbkFsZXJ0EjcKC2NoYW5nZV90eXBlGAIgASgOMiIuZGVlcG5hdnkudjEuQWRtaW5TdHJlYW1DaGFuZ2VUeXBlEhMKC3Jlc291cmNlX2lkGAMgASgJEhAKCHNlcXVlbmNlGAQgASgDKoUDChBBZG1pbkVycm9yUmVhc29uEiIKHkFETUlOX0VSUk9SX1JFQVNPTl9VTlNQRUNJRklFRBAAEiUKIUFETUlOX0VSUk9SX1JFQVNPTl9OT1RfQVVUSE9SSVpFRBABEi8KK0FETUlOX0VSUk9SX1JFQVNPTl9JTlZBTElEX1JFUE9SVElOR19QRVJJT0QQAhIlCiFBRE1JTl9FUlJPUl9SRUFTT05fSU5WQUxJRF9GSUxURVIQAxIlCiFBRE1JTl9FUlJPUl9SRUFTT05fQ1VSU09SX0VYUElSRUQQBBInCiNBRE1JTl9FUlJPUl9SRUFTT05fREFUQV9VTkFWQUlMQUJMRRAFEiYKIkFETUlOX0VSUk9SX1JFQVNPTl9VTkFVVEhFTlRJQ0FURUQQBhIrCidBRE1JTl9FUlJPUl9SRUFTT05fSU5WQUxJRF9QQUdFX1JFUVVFU1QQBxIpCiVBRE1JTl9FUlJPUl9SRUFTT05fUkVTT1VSQ0VfTk9UX0ZPVU5EEAgq9AEKGEFkbWluQ3VzdG9tZXJIZWFsdGhTdGF0ZRIrCidBRE1JTl9DVVNUT01FUl9IRUFMVEhfU1RBVEVfVU5TUEVDSUZJRUQQABInCiNBRE1JTl9DVVNUT01FUl9IRUFMVEhfU1RBVEVfSEVBTFRIWRABEi8KK0FETUlOX0NVU1RPTUVSX0hFQUxUSF9TVEFURV9ORUVEU19BVFRFTlRJT04QAhInCiNBRE1JTl9DVVNUT01FUl9IRUFMVEhfU1RBVEVfQVRfUklTSxADEigKJEFETUlOX0NVU1RPTUVSX0hFQUxUSF9TVEFURV9DUklUSUNBTBAEKpcBChFBZG1pblN1cHBvcnRTdGF0ZRIjCh9BRE1JTl9TVVBQT1JUX1NUQVRFX1VOU1BFQ0lGSUVEEAASHAoYQURNSU5fU1VQUE9SVF9TVEFURV9OT05FEAESHAoYQURNSU5fU1VQUE9SVF9TVEFURV9PUEVOEAISIQodQURNSU5fU1VQUE9SVF9TVEFURV9FU0NBTEFURUQQAyrGAQoTQWRtaW5DaHVyblJpc2tMZXZlbBImCiJBRE1JTl9DSFVSTl9SSVNLX0xFVkVMX1VOU1BFQ0lGSUVEEAASHgoaQURNSU5fQ0hVUk5fUklTS19MRVZFTF9MT1cQARIhCh1BRE1JTl9DSFVSTl9SSVNLX0xFVkVMX01FRElVTRACEh8KG0FETUlOX0NIVVJOX1JJU0tfTEVWRUxfSElHSBADEiMKH0FETUlOX0NIVVJOX1JJU0tfTEVWRUxfQ1JJVElDQUwQBCrVAwoXQWRtaW5FY29ub21pY3NEaW1lbnNpb24SKQolQURNSU5fRUNPTk9NSUNTX0RJTUVOU0lPTl9VTlNQRUNJRklFRBAAEioKJkFETUlOX0VDT05PTUlDU19ESU1FTlNJT05fT1JHQU5JWkFUSU9OEAESIgoeQURNSU5fRUNPTk9NSUNTX0RJTUVOU0lPTl9URUFNEAISIwofQURNSU5fRUNPTk9NSUNTX0RJTUVOU0lPTl9BR0VOVBADEigKJEFETUlOX0VDT05PTUlDU19ESU1FTlNJT05fQUdFTlRfUk9MRRAEEiMKH0FETUlOX0VDT05PTUlDU19ESU1FTlNJT05fTU9ERUwQBRImCiJBRE1JTl9FQ09OT01JQ1NfRElNRU5TSU9OX1BST1ZJREVSEAYSKAokQURNSU5fRUNPTk9NSUNTX0RJTUVOU0lPTl9JTklUSUFUSVZFEAcSIwofQURNSU5fRUNPTk9NSUNTX0RJTUVOU0lPTl9JU1NVRRAIEioKJkFETUlOX0VDT05PTUlDU19ESU1FTlNJT05fUFVMTF9SRVFVRVNUEAkSKAokQURNSU5fRUNPTk9NSUNTX0RJTUVOU0lPTl9SRVBPU0lUT1JZEAoqvAEKEUFkbWluUnVudGltZVN0YXRlEiMKH0FETUlOX1JVTlRJTUVfU1RBVEVfVU5TUEVDSUZJRUQQABIdChlBRE1JTl9SVU5USU1FX1NUQVRFX1JFQURZEAESIAocQURNSU5fUlVOVElNRV9TVEFURV9ERUdSQURFRBACEiEKHUFETUlOX1JVTlRJTUVfU1RBVEVfU1VTUEVOREVEEAMSHgoaQURNSU5fUlVOVElNRV9TVEFURV9GQUlMRUQQBCq9AQoQQWRtaW5CYWNrdXBTdGF0ZRIiCh5BRE1JTl9CQUNLVVBfU1RBVEVfVU5TUEVDSUZJRUQQABIeChpBRE1JTl9CQUNLVVBfU1RBVEVfQ1VSUkVOVBABEh4KGkFETUlOX0JBQ0tVUF9TVEFURV9PVkVSRFVFEAISHQoZQURNSU5fQkFDS1VQX1NUQVRFX0ZBSUxFRBADEiYKIkFETUlOX0JBQ0tVUF9TVEFURV9ORVZFUl9DT01QTEVURUQQBCq3AQoVQWRtaW5FdmVudFN0cmVhbVN0YXRlEigKJEFETUlOX0VWRU5UX1NUUkVBTV9TVEFURV9VTlNQRUNJRklFRBAAEiQKIEFETUlOX0VWRU5UX1NUUkVBTV9TVEFURV9DVVJSRU5UEAESJAogQURNSU5fRVZFTlRfU1RSRUFNX1NUQVRFX0xBR0dJTkcQAhIoCiRBRE1JTl9FVkVOVF9TVFJFQU1fU1RBVEVfVU5BVkFJTEFCTEUQAyrGAQoRQWRtaW5QYXltZW50U3RhdGUSIwofQURNSU5fUEFZTUVOVF9TVEFURV9VTlNQRUNJRklFRBAAEh8KG0FETUlOX1BBWU1FTlRfU1RBVEVfQ1VSUkVOVBABEh4KGkFETUlOX1BBWU1FTlRfU1RBVEVfRkFJTEVEEAISIAocQURNSU5fUEFZTUVOVF9TVEFURV9QQVNUX0RVRRADEikKJUFETUlOX1BBWU1FTlRfU1RBVEVfTk9fUEFZTUVOVF9NRVRIT0QQBCq4AQofQWRtaW5CaWxsaW5nUmVjb25jaWxpYXRpb25TdGF0ZRIyCi5BRE1JTl9CSUxMSU5HX1JFQ09OQ0lMSUFUSU9OX1NUQVRFX1VOU1BFQ0lGSUVEEAASLgoqQURNSU5fQklMTElOR19SRUNPTkNJTElBVElPTl9TVEFURV9NQVRDSEVEEAESMQotQURNSU5fQklMTElOR19SRUNPTkNJTElBVElPTl9TVEFURV9NSVNNQVRDSEVEEAIq0gMKI0FkbWluQmlsbGluZ1JlY29uY2lsaWF0aW9uSXNzdWVLaW5kEjcKM0FETUlOX0JJTExJTkdfUkVDT05DSUxJQVRJT05fSVNTVUVfS0lORF9VTlNQRUNJRklFRBAAEkcKQ0FETUlOX0JJTExJTkdfUkVDT05DSUxJQVRJT05fSVNTVUVfS0lORF9TVFJJUEVfTE9DQUxfU1RBVEVfTUlTTUFUQ0gQARJJCkVBRE1JTl9CSUxMSU5HX1JFQ09OQ0lMSUFUSU9OX0lTU1VFX0tJTkRfUEFJRF9DVVNUT01FUl9OT1RfUFJPVklTSU9ORUQQAhJXClNBRE1JTl9CSUxMSU5HX1JFQ09OQ0lMSUFUSU9OX0lTU1VFX0tJTkRfUFJPVklTSU9ORURfVEVBTV9XSVRIT1VUX1ZBTElEX1NVQlNDUklQVElPThADEkEKPUFETUlOX0JJTExJTkdfUkVDT05DSUxJQVRJT05fSVNTVUVfS0lORF9VU0FHRV9MRURHRVJfTUlTTUFUQ0gQBBJCCj5BRE1JTl9CSUxMSU5HX1JFQ09OQ0lMSUFUSU9OX0lTU1VFX0tJTkRfQ1JFRElUX0xFREdFUl9NSVNNQVRDSBAFKsoBCiRBZG1pbkJpbGxpbmdSZWNvbmNpbGlhdGlvbklzc3VlU3RhdGUSOAo0QURNSU5fQklMTElOR19SRUNPTkNJTElBVElPTl9JU1NVRV9TVEFURV9VTlNQRUNJRklFRBAAEjEKLUFETUlOX0JJTExJTkdfUkVDT05DSUxJQVRJT05fSVNTVUVfU1RBVEVfT1BFThABEjUKMUFETUlOX0JJTExJTkdfUkVDT05DSUxJQVRJT05fSVNTVUVfU1RBVEVfUkVTT0xWRUQQAiqnAQoSQWRtaW5BbGVydFNldmVyaXR5EiQKIEFETUlOX0FMRVJUX1NFVkVSSVRZX1VOU1BFQ0lGSUVEEAASJgoiQURNSU5fQUxFUlRfU0VWRVJJVFlfSU5GT1JNQVRJT05BTBABEiAKHEFETUlOX0FMRVJUX1NFVkVSSVRZX1dBUk5JTkcQAhIhCh1BRE1JTl9BTEVSVF9TRVZFUklUWV9DUklUSUNBTBADKnAKD0FkbWluQWxlcnRTdGF0ZRIhCh1BRE1JTl9BTEVSVF9TVEFURV9VTlNQRUNJRklFRBAAEhoKFkFETUlOX0FMRVJUX1NUQVRFX09QRU4QARIeChpBRE1JTl9BTEVSVF9TVEFURV9SRVNPTFZFRBACKqMFCg5BZG1pbkFsZXJ0S2luZBIgChxBRE1JTl9BTEVSVF9LSU5EX1VOU1BFQ0lGSUVEEAASKAokQURNSU5fQUxFUlRfS0lORF9HQVRFV0FZX1VOQVZBSUxBQkxFEAESMwovQURNSU5fQUxFUlRfS0lORF9JTlZBTElEX09QRU5DTEFXX0NPTkZJR1VSQVRJT04QAhIqCiZBRE1JTl9BTEVSVF9LSU5EX0ZBSUxFRF9TVFJJUEVfV0VCSE9PSxADEioKJkFETUlOX0FMRVJUX0tJTkRfRkFJTEVEX0dJVEhVQl9XRUJIT09LEAQSMgouQURNSU5fQUxFUlRfS0lORF9QQUlEX0NVU1RPTUVSX05PVF9QUk9WSVNJT05FRBAFEj0KOUFETUlOX0FMRVJUX0tJTkRfU1VCU0NSSVBUSU9OX0NBTkNFTEVEX1dISUxFX1RFQU1fUlVOTklORxAGEjEKLUFETUlOX0FMRVJUX0tJTkRfQ1VTVE9NRVJfT1ZFUl9JTkNMVURFRF9VU0FHRRAHEjEKLUFETUlOX0FMRVJUX0tJTkRfR1JPU1NfTUFSR0lOX0JFTE9XX1RIUkVTSE9MRBAIEiYKIkFETUlOX0FMRVJUX0tJTkRfUFZDX05FQVJfQ0FQQUNJVFkQCRIjCh9BRE1JTl9BTEVSVF9LSU5EX0JBQ0tVUF9PVkVSRFVFEAoSMwovQURNSU5fQUxFUlRfS0lORF9FTEVWQVRFRF9NT0RFTF9QUk9WSURFUl9FUlJPUlMQCxIuCipBRE1JTl9BTEVSVF9LSU5EX0NVU1RPTUVSX0FET1BUSU9OX0RFQ0xJTkUQDBItCilBRE1JTl9BTEVSVF9LSU5EX1RSSUFMX05FQVJJTkdfRVhQSVJBVElPThANKosBChVBZG1pblN0cmVhbUNoYW5nZVR5cGUSKAokQURNSU5fU1RSRUFNX0NIQU5HRV9UWVBFX1VOU1BFQ0lGSUVEEAASIwofQURNSU5fU1RSRUFNX0NIQU5HRV9UWVBFX1VQU0VSVBABEiMKH0FETUlOX1NUUkVBTV9DSEFOR0VfVFlQRV9SRU1PVkUQAir7AQobQWRtaW5Qcm9qZWN0aW9uQXZhaWxhYmlsaXR5Ei0KKUFETUlOX1BST0pFQ1RJT05fQVZBSUxBQklMSVRZX1VOU1BFQ0lGSUVEEAASKgomQURNSU5fUFJPSkVDVElPTl9BVkFJTEFCSUxJVFlfQ09NUExFVEUQARIpCiVBRE1JTl9QUk9KRUNUSU9OX0FWQUlMQUJJTElUWV9QQVJUSUFMEAISLQopQURNSU5fUFJPSkVDVElPTl9BVkFJTEFCSUxJVFlfVU5BVkFJTEFCTEUQAxInCiNBRE1JTl9QUk9KRUNUSU9OX0FWQUlMQUJJTElUWV9TVEFMRRAEMsEMCgxBZG1pblNlcnZpY2USXwoQR2V0QWRtaW5PdmVydmlldxIkLmRlZXBuYXZ5LnYxLkdldEFkbWluT3ZlcnZpZXdSZXF1ZXN0GiUuZGVlcG5hdnkudjEuR2V0QWRtaW5PdmVydmlld1Jlc3BvbnNlEmUKEkxpc3RBZG1pbkN1c3RvbWVycxImLmRlZXBuYXZ5LnYxLkxpc3RBZG1pbkN1c3RvbWVyc1JlcXVlc3QaJy5kZWVwbmF2eS52MS5MaXN0QWRtaW5DdXN0b21lcnNSZXNwb25zZRJfChBHZXRBZG1pbkN1c3RvbWVyEiQuZGVlcG5hdnkudjEuR2V0QWRtaW5DdXN0b21lclJlcXVlc3QaJS5kZWVwbmF2eS52MS5HZXRBZG1pbkN1c3RvbWVyUmVzcG9uc2USmAEKI0xpc3RBZG1pbkN1c3RvbWVyUmVsaWFiaWxpdHlSZWNvcmRzEjcuZGVlcG5hdnkudjEuTGlzdEFkbWluQ3VzdG9tZXJSZWxpYWJpbGl0eVJlY29yZHNSZXF1ZXN0GjguZGVlcG5hdnkudjEuTGlzdEFkbWluQ3VzdG9tZXJSZWxpYWJpbGl0eVJlY29yZHNSZXNwb25zZRJiChFHZXRBZG1pbkVjb25vbWljcxIlLmRlZXBuYXZ5LnYxLkdldEFkbWluRWNvbm9taWNzUmVxdWVzdBomLmRlZXBuYXZ5LnYxLkdldEFkbWluRWNvbm9taWNzUmVzcG9uc2USdwoYTGlzdEFkbWluRWNvbm9taWNzU2xpY2VzEiwuZGVlcG5hdnkudjEuTGlzdEFkbWluRWNvbm9taWNzU2xpY2VzUmVxdWVzdBotLmRlZXBuYXZ5LnYxLkxpc3RBZG1pbkVjb25vbWljc1NsaWNlc1Jlc3BvbnNlElYKDUdldEFkbWluRmxlZXQSIS5kZWVwbmF2eS52MS5HZXRBZG1pbkZsZWV0UmVxdWVzdBoiLmRlZXBuYXZ5LnYxLkdldEFkbWluRmxlZXRSZXNwb25zZRJ6ChlMaXN0QWRtaW5SdW50aW1lSW5zdGFuY2VzEi0uZGVlcG5hdnkudjEuTGlzdEFkbWluUnVudGltZUluc3RhbmNlc1JlcXVlc3QaLi5kZWVwbmF2eS52MS5MaXN0QWRtaW5SdW50aW1lSW5zdGFuY2VzUmVzcG9uc2USggEKG1N0cmVhbUFkbWluUnVudGltZUluc3RhbmNlcxIvLmRlZXBuYXZ5LnYxLlN0cmVhbUFkbWluUnVudGltZUluc3RhbmNlc1JlcXVlc3QaMC5kZWVwbmF2eS52MS5TdHJlYW1BZG1pblJ1bnRpbWVJbnN0YW5jZXNSZXNwb25zZTABElwKD0dldEFkbWluQmlsbGluZxIjLmRlZXBuYXZ5LnYxLkdldEFkbWluQmlsbGluZ1JlcXVlc3QaJC5kZWVwbmF2eS52MS5HZXRBZG1pbkJpbGxpbmdSZXNwb25zZRJ3ChhMaXN0QWRtaW5CaWxsaW5nQWNjb3VudHMSLC5kZWVwbmF2eS52MS5MaXN0QWRtaW5CaWxsaW5nQWNjb3VudHNSZXF1ZXN0Gi0uZGVlcG5hdnkudjEuTGlzdEFkbWluQmlsbGluZ0FjY291bnRzUmVzcG9uc2USmwEKJExpc3RBZG1pbkJpbGxpbmdSZWNvbmNpbGlhdGlvbklzc3VlcxI4LmRlZXBuYXZ5LnYxLkxpc3RBZG1pbkJpbGxpbmdSZWNvbmNpbGlhdGlvbklzc3Vlc1JlcXVlc3QaOS5kZWVwbmF2eS52MS5MaXN0QWRtaW5CaWxsaW5nUmVjb25jaWxpYXRpb25Jc3N1ZXNSZXNwb25zZRJcCg9MaXN0QWRtaW5BbGVydHMSIy5kZWVwbmF2eS52MS5MaXN0QWRtaW5BbGVydHNSZXF1ZXN0GiQuZGVlcG5hdnkudjEuTGlzdEFkbWluQWxlcnRzUmVzcG9uc2USZAoRU3RyZWFtQWRtaW5BbGVydHMSJS5kZWVwbmF2eS52MS5TdHJlYW1BZG1pbkFsZXJ0c1JlcXVlc3QaJi5kZWVwbmF2eS52MS5TdHJlYW1BZG1pbkFsZXJ0c1Jlc3BvbnNlMAFCRFpCZ2l0aHViLmNvbS9kZWVwLW5hdnkvcGxhdGZvcm0tcHJvdG9zL2dlbi9nby9kZWVwbmF2eS92MTtkZWVwbmF2eXYxYgZwcm90bzM", [file_deepnavy_v1_billing, file_deepnavy_v1_common, file_deepnavy_v1_economics, file_deepnavy_v1_organizations, file_deepnavy_v1_provisioning, file_google_protobuf_timestamp]);
 
 /**
+ * AdminErrorDetail is attached to non-OK Connect/gRPC statuses. safe_message
+ * may be displayed to an administrator, but must never include secrets,
+ * provider payloads or identifiers, SQL, Kubernetes credentials, or customer
+ * data outside the administrator's authorized scope.
+ *
+ * @generated from message deepnavy.v1.AdminErrorDetail
+ */
+export type AdminErrorDetail = Message<"deepnavy.v1.AdminErrorDetail"> & {
+  /**
+   * @generated from field: deepnavy.v1.AdminErrorReason reason = 1;
+   */
+  reason: AdminErrorReason;
+
+  /**
+   * @generated from field: string safe_message = 2;
+   */
+  safeMessage: string;
+};
+
+/**
+ * Describes the message deepnavy.v1.AdminErrorDetail.
+ * Use `create(AdminErrorDetailSchema)` to create a new message.
+ */
+export const AdminErrorDetailSchema: GenMessage<AdminErrorDetail> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 0);
+
+/**
+ * @generated from message deepnavy.v1.AdminProjectionStatus
+ */
+export type AdminProjectionStatus = Message<"deepnavy.v1.AdminProjectionStatus"> & {
+  /**
+   * @generated from field: deepnavy.v1.AdminProjectionAvailability availability = 1;
+   */
+  availability: AdminProjectionAvailability;
+
+  /**
+   * Exact snake_case protobuf field names in the containing message. This list
+   * is empty for COMPLETE and must not name identity, period, or generated_at.
+   *
+   * @generated from field: repeated string unavailable_fields = 2;
+   */
+  unavailableFields: string[];
+
+  /**
+   * source_observed_at is the oldest observation contributing to the current
+   * projection and lets clients communicate freshness without provider data.
+   *
+   * @generated from field: google.protobuf.Timestamp source_observed_at = 3;
+   */
+  sourceObservedAt?: Timestamp | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.AdminProjectionStatus.
+ * Use `create(AdminProjectionStatusSchema)` to create a new message.
+ */
+export const AdminProjectionStatusSchema: GenMessage<AdminProjectionStatus> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 1);
+
+/**
+ * AdminOverview is the top-level founder snapshot. All Money values use one
+ * ISO-4217 reporting currency; a server must reject mixed-currency aggregation
+ * unless it applies and audits an explicit conversion policy. Point-in-time
+ * counts and recurring revenue are measured at reporting_period.ended_at;
+ * event counts cover the period.
+ *
  * @generated from message deepnavy.v1.AdminOverview
  */
 export type AdminOverview = Message<"deepnavy.v1.AdminOverview"> & {
@@ -39,7 +115,11 @@ export type AdminOverview = Message<"deepnavy.v1.AdminOverview"> & {
   activeTeams: bigint;
 
   /**
-   * @generated from field: double gross_margin = 5;
+   * gross_margin is a ratio, where 1.0 means 100%. It is zero when the ratio
+   * is unavailable; new clients should use gross_margin_ratio for presence.
+   *
+   * @generated from field: double gross_margin = 5 [deprecated = true];
+   * @deprecated
    */
   grossMargin: number;
 
@@ -52,6 +132,70 @@ export type AdminOverview = Message<"deepnavy.v1.AdminOverview"> & {
    * @generated from field: int64 pull_requests_merged = 7;
    */
   pullRequestsMerged: bigint;
+
+  /**
+   * @generated from field: deepnavy.v1.ReportingPeriod reporting_period = 8;
+   */
+  reportingPeriod?: ReportingPeriod | undefined;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp generated_at = 9;
+   */
+  generatedAt?: Timestamp | undefined;
+
+  /**
+   * @generated from field: int64 new_customers = 10;
+   */
+  newCustomers: bigint;
+
+  /**
+   * @generated from field: int64 churned_customers = 11;
+   */
+  churnedCustomers: bigint;
+
+  /**
+   * Ratios use 1.0 for 100% and may exceed 1.0. Absence means the denominator
+   * was zero or the measurement was not trustworthy for this period.
+   *
+   * @generated from field: optional double net_revenue_retention_ratio = 12;
+   */
+  netRevenueRetentionRatio?: number | undefined;
+
+  /**
+   * @generated from field: int64 currently_active_agents = 13;
+   */
+  currentlyActiveAgents: bigint;
+
+  /**
+   * @generated from field: int64 open_alerts = 14;
+   */
+  openAlerts: bigint;
+
+  /**
+   * @generated from field: int64 at_risk_customers = 15;
+   */
+  atRiskCustomers: bigint;
+
+  /**
+   * Ratios use 1.0 for 100% and may be negative. Absence means revenue was zero
+   * or the measurement was not trustworthy for this period.
+   *
+   * @generated from field: optional double gross_margin_ratio = 16;
+   */
+  grossMarginRatio?: number | undefined;
+
+  /**
+   * customer_churn_ratio is in [0.0, 1.0]. Absence means there was no starting
+   * customer cohort or the measurement was not trustworthy for this period.
+   *
+   * @generated from field: optional double customer_churn_ratio = 17;
+   */
+  customerChurnRatio?: number | undefined;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminProjectionStatus projection_status = 18;
+   */
+  projectionStatus?: AdminProjectionStatus | undefined;
 };
 
 /**
@@ -59,12 +203,18 @@ export type AdminOverview = Message<"deepnavy.v1.AdminOverview"> & {
  * Use `create(AdminOverviewSchema)` to create a new message.
  */
 export const AdminOverviewSchema: GenMessage<AdminOverview> = /*@__PURE__*/
-  messageDesc(file_deepnavy_v1_admin, 0);
+  messageDesc(file_deepnavy_v1_admin, 2);
 
 /**
  * @generated from message deepnavy.v1.GetAdminOverviewRequest
  */
 export type GetAdminOverviewRequest = Message<"deepnavy.v1.GetAdminOverviewRequest"> & {
+  /**
+   * Empty selects the UTC calendar month containing request time.
+   *
+   * @generated from field: deepnavy.v1.ReportingPeriod reporting_period = 1;
+   */
+  reportingPeriod?: ReportingPeriod | undefined;
 };
 
 /**
@@ -72,7 +222,7 @@ export type GetAdminOverviewRequest = Message<"deepnavy.v1.GetAdminOverviewReque
  * Use `create(GetAdminOverviewRequestSchema)` to create a new message.
  */
 export const GetAdminOverviewRequestSchema: GenMessage<GetAdminOverviewRequest> = /*@__PURE__*/
-  messageDesc(file_deepnavy_v1_admin, 1);
+  messageDesc(file_deepnavy_v1_admin, 3);
 
 /**
  * @generated from message deepnavy.v1.GetAdminOverviewResponse
@@ -89,19 +239,2763 @@ export type GetAdminOverviewResponse = Message<"deepnavy.v1.GetAdminOverviewResp
  * Use `create(GetAdminOverviewResponseSchema)` to create a new message.
  */
 export const GetAdminOverviewResponseSchema: GenMessage<GetAdminOverviewResponse> = /*@__PURE__*/
-  messageDesc(file_deepnavy_v1_admin, 2);
+  messageDesc(file_deepnavy_v1_admin, 4);
 
 /**
+ * @generated from message deepnavy.v1.AdminCustomerActivity
+ */
+export type AdminCustomerActivity = Message<"deepnavy.v1.AdminCustomerActivity"> & {
+  /**
+   * @generated from field: int64 active_agents = 1;
+   */
+  activeAgents: bigint;
+
+  /**
+   * @generated from field: int64 idle_agents = 2;
+   */
+  idleAgents: bigint;
+
+  /**
+   * @generated from field: int64 blocked_agents = 3;
+   */
+  blockedAgents: bigint;
+
+  /**
+   * @generated from field: int64 failed_agents = 4;
+   */
+  failedAgents: bigint;
+
+  /**
+   * @generated from field: int64 current_sessions = 5;
+   */
+  currentSessions: bigint;
+
+  /**
+   * @generated from field: int64 active_initiatives = 6;
+   */
+  activeInitiatives: bigint;
+
+  /**
+   * @generated from field: int64 pending_approvals = 7;
+   */
+  pendingApprovals: bigint;
+
+  /**
+   * @generated from field: int64 pull_requests_merged = 8;
+   */
+  pullRequestsMerged: bigint;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp last_agent_activity_at = 9;
+   */
+  lastAgentActivityAt?: Timestamp | undefined;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminProjectionStatus projection_status = 10;
+   */
+  projectionStatus?: AdminProjectionStatus | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.AdminCustomerActivity.
+ * Use `create(AdminCustomerActivitySchema)` to create a new message.
+ */
+export const AdminCustomerActivitySchema: GenMessage<AdminCustomerActivity> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 5);
+
+/**
+ * @generated from message deepnavy.v1.AdminCustomerReliability
+ */
+export type AdminCustomerReliability = Message<"deepnavy.v1.AdminCustomerReliability"> & {
+  /**
+   * @generated from field: deepnavy.v1.ReportingPeriod reporting_period = 1;
+   */
+  reportingPeriod?: ReportingPeriod | undefined;
+
+  /**
+   * gateway_availability_ratio uses 1.0 for 100%. Absence means no runtime was
+   * expected or the observation coverage was insufficient.
+   *
+   * @generated from field: optional double gateway_availability_ratio = 2;
+   */
+  gatewayAvailabilityRatio?: number | undefined;
+
+  /**
+   * @generated from field: int64 production_incidents = 3;
+   */
+  productionIncidents: bigint;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp last_incident_at = 4;
+   */
+  lastIncidentAt?: Timestamp | undefined;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminProjectionStatus projection_status = 5;
+   */
+  projectionStatus?: AdminProjectionStatus | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.AdminCustomerReliability.
+ * Use `create(AdminCustomerReliabilitySchema)` to create a new message.
+ */
+export const AdminCustomerReliabilitySchema: GenMessage<AdminCustomerReliability> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 6);
+
+/**
+ * AdminCustomer is the admin projection of a canonical Organization. It never
+ * exposes Stripe customer/price IDs, GitHub credentials, or runtime secrets.
+ *
+ * @generated from message deepnavy.v1.AdminCustomer
+ */
+export type AdminCustomer = Message<"deepnavy.v1.AdminCustomer"> & {
+  /**
+   * @generated from field: deepnavy.v1.Organization organization = 1;
+   */
+  organization?: Organization | undefined;
+
+  /**
+   * plan and subscription are absent when the organization has never entered
+   * billing. Their IDs are deep navy resource IDs, never Stripe provider IDs.
+   *
+   * @generated from field: deepnavy.v1.BillingPlan plan = 2;
+   */
+  plan?: BillingPlan | undefined;
+
+  /**
+   * @generated from field: deepnavy.v1.Subscription subscription = 3;
+   */
+  subscription?: Subscription | undefined;
+
+  /**
+   * @generated from field: deepnavy.v1.Money monthly_recurring_revenue = 4;
+   */
+  monthlyRecurringRevenue?: Money | undefined;
+
+  /**
+   * economics.scope_type is "organization" and scope_id equals organization.id.
+   *
+   * @generated from field: deepnavy.v1.EconomicsSummary economics = 5;
+   */
+  economics?: EconomicsSummary | undefined;
+
+  /**
+   * @generated from field: int64 team_count = 6;
+   */
+  teamCount: bigint;
+
+  /**
+   * @generated from field: int64 repository_count = 7;
+   */
+  repositoryCount: bigint;
+
+  /**
+   * @generated from field: int64 user_count = 8;
+   */
+  userCount: bigint;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminCustomerActivity activity = 9;
+   */
+  activity?: AdminCustomerActivity | undefined;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminCustomerReliability reliability = 10;
+   */
+  reliability?: AdminCustomerReliability | undefined;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminCustomerHealthState health_state = 11;
+   */
+  healthState: AdminCustomerHealthState;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminSupportState support_state = 12;
+   */
+  supportState: AdminSupportState;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminChurnRiskLevel churn_risk_level = 13;
+   */
+  churnRiskLevel: AdminChurnRiskLevel;
+
+  /**
+   * @generated from field: deepnavy.v1.ReportingPeriod reporting_period = 14;
+   */
+  reportingPeriod?: ReportingPeriod | undefined;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp generated_at = 15;
+   */
+  generatedAt?: Timestamp | undefined;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminPaymentState payment_state = 16;
+   */
+  paymentState: AdminPaymentState;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminBillingReconciliationState billing_reconciliation_state = 17;
+   */
+  billingReconciliationState: AdminBillingReconciliationState;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminProjectionStatus projection_status = 18;
+   */
+  projectionStatus?: AdminProjectionStatus | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.AdminCustomer.
+ * Use `create(AdminCustomerSchema)` to create a new message.
+ */
+export const AdminCustomerSchema: GenMessage<AdminCustomer> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 7);
+
+/**
+ * @generated from message deepnavy.v1.ListAdminCustomersRequest
+ */
+export type ListAdminCustomersRequest = Message<"deepnavy.v1.ListAdminCustomersRequest"> & {
+  /**
+   * @generated from field: deepnavy.v1.PageRequest page = 1;
+   */
+  page?: PageRequest | undefined;
+
+  /**
+   * UNSPECIFIED enum values mean that filter is not applied.
+   *
+   * @generated from field: deepnavy.v1.SubscriptionStatus subscription_status = 2;
+   */
+  subscriptionStatus: SubscriptionStatus;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminCustomerHealthState health_state = 3;
+   */
+  healthState: AdminCustomerHealthState;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminChurnRiskLevel churn_risk_level = 4;
+   */
+  churnRiskLevel: AdminChurnRiskLevel;
+
+  /**
+   * Pages are a consistent snapshot ordered by organization.created_at
+   * descending, then organization.id descending. Admin lists default to 50 and
+   * reject page sizes above 200.
+   *
+   * @generated from field: deepnavy.v1.ReportingPeriod reporting_period = 5;
+   */
+  reportingPeriod?: ReportingPeriod | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.ListAdminCustomersRequest.
+ * Use `create(ListAdminCustomersRequestSchema)` to create a new message.
+ */
+export const ListAdminCustomersRequestSchema: GenMessage<ListAdminCustomersRequest> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 8);
+
+/**
+ * @generated from message deepnavy.v1.ListAdminCustomersResponse
+ */
+export type ListAdminCustomersResponse = Message<"deepnavy.v1.ListAdminCustomersResponse"> & {
+  /**
+   * @generated from field: repeated deepnavy.v1.AdminCustomer customers = 1;
+   */
+  customers: AdminCustomer[];
+
+  /**
+   * @generated from field: deepnavy.v1.PageResponse page = 2;
+   */
+  page?: PageResponse | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.ListAdminCustomersResponse.
+ * Use `create(ListAdminCustomersResponseSchema)` to create a new message.
+ */
+export const ListAdminCustomersResponseSchema: GenMessage<ListAdminCustomersResponse> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 9);
+
+/**
+ * @generated from message deepnavy.v1.GetAdminCustomerRequest
+ */
+export type GetAdminCustomerRequest = Message<"deepnavy.v1.GetAdminCustomerRequest"> & {
+  /**
+   * organization_id is deep navy's canonical customer account identity.
+   *
+   * @generated from field: string organization_id = 1;
+   */
+  organizationId: string;
+
+  /**
+   * @generated from field: deepnavy.v1.ReportingPeriod reporting_period = 2;
+   */
+  reportingPeriod?: ReportingPeriod | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.GetAdminCustomerRequest.
+ * Use `create(GetAdminCustomerRequestSchema)` to create a new message.
+ */
+export const GetAdminCustomerRequestSchema: GenMessage<GetAdminCustomerRequest> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 10);
+
+/**
+ * @generated from message deepnavy.v1.GetAdminCustomerResponse
+ */
+export type GetAdminCustomerResponse = Message<"deepnavy.v1.GetAdminCustomerResponse"> & {
+  /**
+   * @generated from field: deepnavy.v1.AdminCustomer customer = 1;
+   */
+  customer?: AdminCustomer | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.GetAdminCustomerResponse.
+ * Use `create(GetAdminCustomerResponseSchema)` to create a new message.
+ */
+export const GetAdminCustomerResponseSchema: GenMessage<GetAdminCustomerResponse> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 11);
+
+/**
+ * AdminCustomerReliabilityRecord is one UTC calendar bucket in a customer's
+ * reliability history. Daily records are returned for launch; future API
+ * versions may add an explicit granularity selector.
+ *
+ * @generated from message deepnavy.v1.AdminCustomerReliabilityRecord
+ */
+export type AdminCustomerReliabilityRecord = Message<"deepnavy.v1.AdminCustomerReliabilityRecord"> & {
+  /**
+   * @generated from field: string organization_id = 1;
+   */
+  organizationId: string;
+
+  /**
+   * @generated from field: deepnavy.v1.ReportingPeriod reporting_period = 2;
+   */
+  reportingPeriod?: ReportingPeriod | undefined;
+
+  /**
+   * Ratio in [0.0, 1.0]. Absence means no runtime was expected or observation
+   * coverage was insufficient for this daily bucket.
+   *
+   * @generated from field: optional double gateway_availability_ratio = 3;
+   */
+  gatewayAvailabilityRatio?: number | undefined;
+
+  /**
+   * @generated from field: int64 production_incidents = 4;
+   */
+  productionIncidents: bigint;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp last_incident_at = 5;
+   */
+  lastIncidentAt?: Timestamp | undefined;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp generated_at = 6;
+   */
+  generatedAt?: Timestamp | undefined;
+
+  /**
+   * Daily gateway availability can be authoritative before an incident
+   * management source exists. Callers must hide any scalar named in
+   * unavailable_fields rather than interpreting its protobuf zero value.
+   *
+   * @generated from field: deepnavy.v1.AdminProjectionStatus projection_status = 7;
+   */
+  projectionStatus?: AdminProjectionStatus | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.AdminCustomerReliabilityRecord.
+ * Use `create(AdminCustomerReliabilityRecordSchema)` to create a new message.
+ */
+export const AdminCustomerReliabilityRecordSchema: GenMessage<AdminCustomerReliabilityRecord> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 12);
+
+/**
+ * @generated from message deepnavy.v1.ListAdminCustomerReliabilityRecordsRequest
+ */
+export type ListAdminCustomerReliabilityRecordsRequest = Message<"deepnavy.v1.ListAdminCustomerReliabilityRecordsRequest"> & {
+  /**
+   * @generated from field: string organization_id = 1;
+   */
+  organizationId: string;
+
+  /**
+   * @generated from field: deepnavy.v1.ReportingPeriod reporting_period = 2;
+   */
+  reportingPeriod?: ReportingPeriod | undefined;
+
+  /**
+   * Records are ordered by reporting_period.started_at descending. Pages are a
+   * consistent snapshot; the default page size is 50 and maximum is 200.
+   *
+   * @generated from field: deepnavy.v1.PageRequest page = 3;
+   */
+  page?: PageRequest | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.ListAdminCustomerReliabilityRecordsRequest.
+ * Use `create(ListAdminCustomerReliabilityRecordsRequestSchema)` to create a new message.
+ */
+export const ListAdminCustomerReliabilityRecordsRequestSchema: GenMessage<ListAdminCustomerReliabilityRecordsRequest> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 13);
+
+/**
+ * @generated from message deepnavy.v1.ListAdminCustomerReliabilityRecordsResponse
+ */
+export type ListAdminCustomerReliabilityRecordsResponse = Message<"deepnavy.v1.ListAdminCustomerReliabilityRecordsResponse"> & {
+  /**
+   * @generated from field: repeated deepnavy.v1.AdminCustomerReliabilityRecord reliability_records = 1;
+   */
+  reliabilityRecords: AdminCustomerReliabilityRecord[];
+
+  /**
+   * @generated from field: deepnavy.v1.PageResponse page = 2;
+   */
+  page?: PageResponse | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.ListAdminCustomerReliabilityRecordsResponse.
+ * Use `create(ListAdminCustomerReliabilityRecordsResponseSchema)` to create a new message.
+ */
+export const ListAdminCustomerReliabilityRecordsResponseSchema: GenMessage<ListAdminCustomerReliabilityRecordsResponse> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 14);
+
+/**
+ * AdminEconomics contains founder economics for one reporting period. Per-unit
+ * metrics are produced by the server so clients do not duplicate accounting
+ * logic. A Money field is absent when its denominator is zero.
+ *
+ * @generated from message deepnavy.v1.AdminEconomics
+ */
+export type AdminEconomics = Message<"deepnavy.v1.AdminEconomics"> & {
+  /**
+   * @generated from field: deepnavy.v1.ReportingPeriod reporting_period = 1;
+   */
+  reportingPeriod?: ReportingPeriod | undefined;
+
+  /**
+   * summary uses a PLATFORM scope and the same reporting period. Every derived
+   * Money value uses summary's reporting currency.
+   *
+   * @generated from field: deepnavy.v1.EconomicsSummary summary = 2;
+   */
+  summary?: EconomicsSummary | undefined;
+
+  /**
+   * @generated from field: int64 active_customers = 3;
+   */
+  activeCustomers: bigint;
+
+  /**
+   * @generated from field: int64 activated_customers = 4;
+   */
+  activatedCustomers: bigint;
+
+  /**
+   * @generated from field: int64 active_teams = 5;
+   */
+  activeTeams: bigint;
+
+  /**
+   * @generated from field: int64 completed_issues = 6;
+   */
+  completedIssues: bigint;
+
+  /**
+   * @generated from field: int64 merged_pull_requests = 7;
+   */
+  mergedPullRequests: bigint;
+
+  /**
+   * @generated from field: int64 active_initiatives = 8;
+   */
+  activeInitiatives: bigint;
+
+  /**
+   * @generated from field: int64 model_request_count = 9;
+   */
+  modelRequestCount: bigint;
+
+  /**
+   * @generated from field: int64 model_input_tokens = 10;
+   */
+  modelInputTokens: bigint;
+
+  /**
+   * @generated from field: int64 model_output_tokens = 11;
+   */
+  modelOutputTokens: bigint;
+
+  /**
+   * @generated from field: deepnavy.v1.Money cost_per_active_team = 12;
+   */
+  costPerActiveTeam?: Money | undefined;
+
+  /**
+   * @generated from field: deepnavy.v1.Money cost_per_completed_issue = 13;
+   */
+  costPerCompletedIssue?: Money | undefined;
+
+  /**
+   * @generated from field: deepnavy.v1.Money cost_per_merged_pull_request = 14;
+   */
+  costPerMergedPullRequest?: Money | undefined;
+
+  /**
+   * @generated from field: deepnavy.v1.Money cost_per_active_initiative = 15;
+   */
+  costPerActiveInitiative?: Money | undefined;
+
+  /**
+   * @generated from field: deepnavy.v1.Money cost_per_activated_customer = 16;
+   */
+  costPerActivatedCustomer?: Money | undefined;
+
+  /**
+   * @generated from field: deepnavy.v1.Money revenue_per_active_team = 17;
+   */
+  revenuePerActiveTeam?: Money | undefined;
+
+  /**
+   * @generated from field: deepnavy.v1.Money gross_profit_per_active_team = 18;
+   */
+  grossProfitPerActiveTeam?: Money | undefined;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp generated_at = 19;
+   */
+  generatedAt?: Timestamp | undefined;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminProjectionStatus projection_status = 20;
+   */
+  projectionStatus?: AdminProjectionStatus | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.AdminEconomics.
+ * Use `create(AdminEconomicsSchema)` to create a new message.
+ */
+export const AdminEconomicsSchema: GenMessage<AdminEconomics> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 15);
+
+/**
+ * AdminEconomicsSlice is an aggregate for exactly one requested dimension.
+ * dimension_id is a deep navy resource ID for domain dimensions and a stable,
+ * non-secret alias for roles, models, and providers. It is never a credential.
+ *
+ * @generated from message deepnavy.v1.AdminEconomicsSlice
+ */
+export type AdminEconomicsSlice = Message<"deepnavy.v1.AdminEconomicsSlice"> & {
+  /**
+   * @generated from field: deepnavy.v1.AdminEconomicsDimension dimension = 1;
+   */
+  dimension: AdminEconomicsDimension;
+
+  /**
+   * @generated from field: string dimension_id = 2;
+   */
+  dimensionId: string;
+
+  /**
+   * @generated from field: string display_name = 3;
+   */
+  displayName: string;
+
+  /**
+   * @generated from field: deepnavy.v1.EconomicsSummary summary = 4;
+   */
+  summary?: EconomicsSummary | undefined;
+
+  /**
+   * @generated from field: int64 model_request_count = 5;
+   */
+  modelRequestCount: bigint;
+
+  /**
+   * @generated from field: int64 model_input_tokens = 6;
+   */
+  modelInputTokens: bigint;
+
+  /**
+   * @generated from field: int64 model_output_tokens = 7;
+   */
+  modelOutputTokens: bigint;
+
+  /**
+   * @generated from field: deepnavy.v1.ReportingPeriod reporting_period = 8;
+   */
+  reportingPeriod?: ReportingPeriod | undefined;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp generated_at = 9;
+   */
+  generatedAt?: Timestamp | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.AdminEconomicsSlice.
+ * Use `create(AdminEconomicsSliceSchema)` to create a new message.
+ */
+export const AdminEconomicsSliceSchema: GenMessage<AdminEconomicsSlice> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 16);
+
+/**
+ * @generated from message deepnavy.v1.GetAdminEconomicsRequest
+ */
+export type GetAdminEconomicsRequest = Message<"deepnavy.v1.GetAdminEconomicsRequest"> & {
+  /**
+   * @generated from field: deepnavy.v1.ReportingPeriod reporting_period = 1;
+   */
+  reportingPeriod?: ReportingPeriod | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.GetAdminEconomicsRequest.
+ * Use `create(GetAdminEconomicsRequestSchema)` to create a new message.
+ */
+export const GetAdminEconomicsRequestSchema: GenMessage<GetAdminEconomicsRequest> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 17);
+
+/**
+ * @generated from message deepnavy.v1.GetAdminEconomicsResponse
+ */
+export type GetAdminEconomicsResponse = Message<"deepnavy.v1.GetAdminEconomicsResponse"> & {
+  /**
+   * @generated from field: deepnavy.v1.AdminEconomics economics = 1;
+   */
+  economics?: AdminEconomics | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.GetAdminEconomicsResponse.
+ * Use `create(GetAdminEconomicsResponseSchema)` to create a new message.
+ */
+export const GetAdminEconomicsResponseSchema: GenMessage<GetAdminEconomicsResponse> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 18);
+
+/**
+ * @generated from message deepnavy.v1.ListAdminEconomicsSlicesRequest
+ */
+export type ListAdminEconomicsSlicesRequest = Message<"deepnavy.v1.ListAdminEconomicsSlicesRequest"> & {
+  /**
+   * dimension is required; UNSPECIFIED returns INVALID_FILTER.
+   *
+   * @generated from field: deepnavy.v1.AdminEconomicsDimension dimension = 1;
+   */
+  dimension: AdminEconomicsDimension;
+
+  /**
+   * Optional deep navy scope filters. If both are supplied, team_id must belong
+   * to organization_id or the server returns INVALID_FILTER.
+   *
+   * @generated from field: string organization_id = 2;
+   */
+  organizationId: string;
+
+  /**
+   * @generated from field: string team_id = 3;
+   */
+  teamId: string;
+
+  /**
+   * @generated from field: deepnavy.v1.ReportingPeriod reporting_period = 4;
+   */
+  reportingPeriod?: ReportingPeriod | undefined;
+
+  /**
+   * Slices are ordered by direct_cost descending, then dimension_id ascending,
+   * within a consistent snapshot. Default page size is 50 and maximum is 200.
+   *
+   * @generated from field: deepnavy.v1.PageRequest page = 5;
+   */
+  page?: PageRequest | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.ListAdminEconomicsSlicesRequest.
+ * Use `create(ListAdminEconomicsSlicesRequestSchema)` to create a new message.
+ */
+export const ListAdminEconomicsSlicesRequestSchema: GenMessage<ListAdminEconomicsSlicesRequest> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 19);
+
+/**
+ * @generated from message deepnavy.v1.ListAdminEconomicsSlicesResponse
+ */
+export type ListAdminEconomicsSlicesResponse = Message<"deepnavy.v1.ListAdminEconomicsSlicesResponse"> & {
+  /**
+   * @generated from field: repeated deepnavy.v1.AdminEconomicsSlice economics_slices = 1;
+   */
+  economicsSlices: AdminEconomicsSlice[];
+
+  /**
+   * @generated from field: deepnavy.v1.PageResponse page = 2;
+   */
+  page?: PageResponse | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.ListAdminEconomicsSlicesResponse.
+ * Use `create(ListAdminEconomicsSlicesResponseSchema)` to create a new message.
+ */
+export const ListAdminEconomicsSlicesResponseSchema: GenMessage<ListAdminEconomicsSlicesResponse> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 20);
+
+/**
+ * @generated from message deepnavy.v1.AdminFleet
+ */
+export type AdminFleet = Message<"deepnavy.v1.AdminFleet"> & {
+  /**
+   * @generated from field: int64 runtime_instances = 1;
+   */
+  runtimeInstances: bigint;
+
+  /**
+   * @generated from field: int64 ready_instances = 2;
+   */
+  readyInstances: bigint;
+
+  /**
+   * @generated from field: int64 degraded_instances = 3;
+   */
+  degradedInstances: bigint;
+
+  /**
+   * @generated from field: int64 suspended_instances = 4;
+   */
+  suspendedInstances: bigint;
+
+  /**
+   * @generated from field: int64 failed_instances = 5;
+   */
+  failedInstances: bigint;
+
+  /**
+   * @generated from field: int64 active_agents = 6;
+   */
+  activeAgents: bigint;
+
+  /**
+   * @generated from field: int64 idle_agents = 7;
+   */
+  idleAgents: bigint;
+
+  /**
+   * @generated from field: int64 blocked_agents = 8;
+   */
+  blockedAgents: bigint;
+
+  /**
+   * @generated from field: int64 failed_agents = 9;
+   */
+  failedAgents: bigint;
+
+  /**
+   * @generated from field: int64 current_sessions = 10;
+   */
+  currentSessions: bigint;
+
+  /**
+   * @generated from field: int64 backup_overdue_instances = 11;
+   */
+  backupOverdueInstances: bigint;
+
+  /**
+   * @generated from field: int64 event_stream_unavailable_instances = 12;
+   */
+  eventStreamUnavailableInstances: bigint;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp observed_at = 13;
+   */
+  observedAt?: Timestamp | undefined;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminProjectionStatus projection_status = 14;
+   */
+  projectionStatus?: AdminProjectionStatus | undefined;
+
+  /**
+   * Count of runtime instances whose latest accepted health heartbeat is older
+   * than the server's runtime-health freshness objective. These instances are
+   * also included in degraded_instances.
+   *
+   * @generated from field: int64 stale_heartbeat_instances = 15;
+   */
+  staleHeartbeatInstances: bigint;
+};
+
+/**
+ * Describes the message deepnavy.v1.AdminFleet.
+ * Use `create(AdminFleetSchema)` to create a new message.
+ */
+export const AdminFleetSchema: GenMessage<AdminFleet> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 21);
+
+/**
+ * AdminRuntimeInstance is the safe operational projection of one customer
+ * team's OpenClaw runtime. Uptime is derived from gateway_started_at through
+ * observed_at; versions and resource names are not credentials.
+ *
+ * @generated from message deepnavy.v1.AdminRuntimeInstance
+ */
+export type AdminRuntimeInstance = Message<"deepnavy.v1.AdminRuntimeInstance"> & {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id: string;
+
+  /**
+   * @generated from field: string organization_id = 2;
+   */
+  organizationId: string;
+
+  /**
+   * @generated from field: string team_id = 3;
+   */
+  teamId: string;
+
+  /**
+   * @generated from field: deepnavy.v1.Environment environment = 4;
+   */
+  environment: Environment;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminRuntimeState runtime_state = 5;
+   */
+  runtimeState: AdminRuntimeState;
+
+  /**
+   * @generated from field: string openclaw_instance_name = 6;
+   */
+  openclawInstanceName: string;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp gateway_started_at = 7;
+   */
+  gatewayStartedAt?: Timestamp | undefined;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp last_heartbeat_at = 8;
+   */
+  lastHeartbeatAt?: Timestamp | undefined;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp last_tool_call_at = 9;
+   */
+  lastToolCallAt?: Timestamp | undefined;
+
+  /**
+   * @generated from field: int64 active_agents = 10;
+   */
+  activeAgents: bigint;
+
+  /**
+   * @generated from field: int64 idle_agents = 11;
+   */
+  idleAgents: bigint;
+
+  /**
+   * @generated from field: int64 blocked_agents = 12;
+   */
+  blockedAgents: bigint;
+
+  /**
+   * @generated from field: int64 failed_agents = 13;
+   */
+  failedAgents: bigint;
+
+  /**
+   * @generated from field: int64 current_sessions = 14;
+   */
+  currentSessions: bigint;
+
+  /**
+   * @generated from field: repeated string current_model_aliases = 15;
+   */
+  currentModelAliases: string[];
+
+  /**
+   * @generated from field: uint64 workspace_volume_used_bytes = 16;
+   */
+  workspaceVolumeUsedBytes: bigint;
+
+  /**
+   * @generated from field: uint64 workspace_volume_capacity_bytes = 17;
+   */
+  workspaceVolumeCapacityBytes: bigint;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminBackupState backup_state = 18;
+   */
+  backupState: AdminBackupState;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp last_successful_backup_at = 19;
+   */
+  lastSuccessfulBackupAt?: Timestamp | undefined;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminEventStreamState event_stream_state = 20;
+   */
+  eventStreamState: AdminEventStreamState;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp last_event_at = 21;
+   */
+  lastEventAt?: Timestamp | undefined;
+
+  /**
+   * @generated from field: string openclaw_version = 22;
+   */
+  openclawVersion: string;
+
+  /**
+   * @generated from field: string operator_version = 23;
+   */
+  operatorVersion: string;
+
+  /**
+   * organization_template_version is the versioned team-organization template
+   * from which this runtime's complete agent roster and policy were generated.
+   *
+   * @generated from field: string organization_template_version = 24;
+   */
+  organizationTemplateVersion: string;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp observed_at = 25;
+   */
+  observedAt?: Timestamp | undefined;
+
+  /**
+   * sequence is monotonically increasing within the deployment environment and
+   * is the resume cursor for StreamAdminRuntimeInstances.
+   *
+   * @generated from field: int64 sequence = 26;
+   */
+  sequence: bigint;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminProjectionStatus projection_status = 27;
+   */
+  projectionStatus?: AdminProjectionStatus | undefined;
+
+  /**
+   * These credential-free fields are copied from the latest accepted
+   * RuntimeHealthReport. HEARTBEAT_STALE is server-derived when the report is
+   * older than the runtime-health freshness objective.
+   *
+   * @generated from field: deepnavy.v1.RuntimeHealthReason runtime_health_reason = 28;
+   */
+  runtimeHealthReason: RuntimeHealthReason;
+
+  /**
+   * @generated from field: bool gateway_ready = 29;
+   */
+  gatewayReady: boolean;
+
+  /**
+   * @generated from field: int32 ready_agent_count = 30;
+   */
+  readyAgentCount: number;
+
+  /**
+   * @generated from field: int64 desired_generation = 31;
+   */
+  desiredGeneration: bigint;
+
+  /**
+   * @generated from field: int64 observed_generation = 32;
+   */
+  observedGeneration: bigint;
+
+  /**
+   * @generated from field: string kubernetes_namespace = 33;
+   */
+  kubernetesNamespace: string;
+};
+
+/**
+ * Describes the message deepnavy.v1.AdminRuntimeInstance.
+ * Use `create(AdminRuntimeInstanceSchema)` to create a new message.
+ */
+export const AdminRuntimeInstanceSchema: GenMessage<AdminRuntimeInstance> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 22);
+
+/**
+ * @generated from message deepnavy.v1.GetAdminFleetRequest
+ */
+export type GetAdminFleetRequest = Message<"deepnavy.v1.GetAdminFleetRequest"> & {
+};
+
+/**
+ * Describes the message deepnavy.v1.GetAdminFleetRequest.
+ * Use `create(GetAdminFleetRequestSchema)` to create a new message.
+ */
+export const GetAdminFleetRequestSchema: GenMessage<GetAdminFleetRequest> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 23);
+
+/**
+ * @generated from message deepnavy.v1.GetAdminFleetResponse
+ */
+export type GetAdminFleetResponse = Message<"deepnavy.v1.GetAdminFleetResponse"> & {
+  /**
+   * @generated from field: deepnavy.v1.AdminFleet fleet = 1;
+   */
+  fleet?: AdminFleet | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.GetAdminFleetResponse.
+ * Use `create(GetAdminFleetResponseSchema)` to create a new message.
+ */
+export const GetAdminFleetResponseSchema: GenMessage<GetAdminFleetResponse> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 24);
+
+/**
+ * @generated from message deepnavy.v1.ListAdminRuntimeInstancesRequest
+ */
+export type ListAdminRuntimeInstancesRequest = Message<"deepnavy.v1.ListAdminRuntimeInstancesRequest"> & {
+  /**
+   * Instances are ordered by runtime state severity descending, then id
+   * ascending, within a consistent snapshot. Default is 50; maximum is 200.
+   *
+   * @generated from field: deepnavy.v1.PageRequest page = 1;
+   */
+  page?: PageRequest | undefined;
+
+  /**
+   * An UNSPECIFIED environment means this API deployment's environment. An
+   * UNSPECIFIED runtime_state means no state filter.
+   *
+   * @generated from field: deepnavy.v1.Environment environment = 2;
+   */
+  environment: Environment;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminRuntimeState runtime_state = 3;
+   */
+  runtimeState: AdminRuntimeState;
+
+  /**
+   * @generated from field: string organization_id = 4;
+   */
+  organizationId: string;
+
+  /**
+   * @generated from field: string team_id = 5;
+   */
+  teamId: string;
+};
+
+/**
+ * Describes the message deepnavy.v1.ListAdminRuntimeInstancesRequest.
+ * Use `create(ListAdminRuntimeInstancesRequestSchema)` to create a new message.
+ */
+export const ListAdminRuntimeInstancesRequestSchema: GenMessage<ListAdminRuntimeInstancesRequest> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 25);
+
+/**
+ * @generated from message deepnavy.v1.ListAdminRuntimeInstancesResponse
+ */
+export type ListAdminRuntimeInstancesResponse = Message<"deepnavy.v1.ListAdminRuntimeInstancesResponse"> & {
+  /**
+   * @generated from field: repeated deepnavy.v1.AdminRuntimeInstance runtime_instances = 1;
+   */
+  runtimeInstances: AdminRuntimeInstance[];
+
+  /**
+   * @generated from field: deepnavy.v1.PageResponse page = 2;
+   */
+  page?: PageResponse | undefined;
+
+  /**
+   * snapshot_sequence is identical on every page in this list snapshot. After
+   * consuming all pages, pass it as after_sequence to stream without a race.
+   *
+   * @generated from field: int64 snapshot_sequence = 3;
+   */
+  snapshotSequence: bigint;
+};
+
+/**
+ * Describes the message deepnavy.v1.ListAdminRuntimeInstancesResponse.
+ * Use `create(ListAdminRuntimeInstancesResponseSchema)` to create a new message.
+ */
+export const ListAdminRuntimeInstancesResponseSchema: GenMessage<ListAdminRuntimeInstancesResponse> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 26);
+
+/**
+ * @generated from message deepnavy.v1.StreamAdminRuntimeInstancesRequest
+ */
+export type StreamAdminRuntimeInstancesRequest = Message<"deepnavy.v1.StreamAdminRuntimeInstancesRequest"> & {
+  /**
+   * Instances with sequence greater than after_sequence are emitted. Zero
+   * starts from the oldest retained update. Expired cursors return OUT_OF_RANGE.
+   *
+   * @generated from field: int64 after_sequence = 1;
+   */
+  afterSequence: bigint;
+
+  /**
+   * @generated from field: deepnavy.v1.Environment environment = 2;
+   */
+  environment: Environment;
+
+  /**
+   * Only immutable scope filters are allowed so a state transition cannot
+   * silently leave a stale resource in a client. A caller that filtered the
+   * initial list by runtime_state applies that mutable filter locally to every
+   * streamed UPSERT.
+   *
+   * @generated from field: string organization_id = 3;
+   */
+  organizationId: string;
+
+  /**
+   * @generated from field: string team_id = 4;
+   */
+  teamId: string;
+};
+
+/**
+ * Describes the message deepnavy.v1.StreamAdminRuntimeInstancesRequest.
+ * Use `create(StreamAdminRuntimeInstancesRequestSchema)` to create a new message.
+ */
+export const StreamAdminRuntimeInstancesRequestSchema: GenMessage<StreamAdminRuntimeInstancesRequest> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 27);
+
+/**
+ * @generated from message deepnavy.v1.StreamAdminRuntimeInstancesResponse
+ */
+export type StreamAdminRuntimeInstancesResponse = Message<"deepnavy.v1.StreamAdminRuntimeInstancesResponse"> & {
+  /**
+   * runtime_instance is present only for UPSERT.
+   *
+   * @generated from field: deepnavy.v1.AdminRuntimeInstance runtime_instance = 1;
+   */
+  runtimeInstance?: AdminRuntimeInstance | undefined;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminStreamChangeType change_type = 2;
+   */
+  changeType: AdminStreamChangeType;
+
+  /**
+   * resource_id is always set and equals runtime_instance.id on UPSERT.
+   *
+   * @generated from field: string resource_id = 3;
+   */
+  resourceId: string;
+
+  /**
+   * sequence is the environment-monotonic cursor for this change and equals
+   * runtime_instance.sequence on UPSERT.
+   *
+   * @generated from field: int64 sequence = 4;
+   */
+  sequence: bigint;
+};
+
+/**
+ * Describes the message deepnavy.v1.StreamAdminRuntimeInstancesResponse.
+ * Use `create(StreamAdminRuntimeInstancesResponseSchema)` to create a new message.
+ */
+export const StreamAdminRuntimeInstancesResponseSchema: GenMessage<StreamAdminRuntimeInstancesResponse> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 28);
+
+/**
+ * @generated from message deepnavy.v1.AdminBilling
+ */
+export type AdminBilling = Message<"deepnavy.v1.AdminBilling"> & {
+  /**
+   * @generated from field: deepnavy.v1.ReportingPeriod reporting_period = 1;
+   */
+  reportingPeriod?: ReportingPeriod | undefined;
+
+  /**
+   * @generated from field: int64 active_subscriptions = 2;
+   */
+  activeSubscriptions: bigint;
+
+  /**
+   * @generated from field: int64 trialing_subscriptions = 3;
+   */
+  trialingSubscriptions: bigint;
+
+  /**
+   * @generated from field: int64 upgrades = 4;
+   */
+  upgrades: bigint;
+
+  /**
+   * @generated from field: int64 downgrades = 5;
+   */
+  downgrades: bigint;
+
+  /**
+   * @generated from field: int64 cancellations = 6;
+   */
+  cancellations: bigint;
+
+  /**
+   * @generated from field: int64 failed_payments = 7;
+   */
+  failedPayments: bigint;
+
+  /**
+   * @generated from field: int64 past_due_invoices = 8;
+   */
+  pastDueInvoices: bigint;
+
+  /**
+   * @generated from field: int64 customers_over_included_usage = 9;
+   */
+  customersOverIncludedUsage: bigint;
+
+  /**
+   * Point-in-time total at reporting_period.ended_at. One credit is 1,000,000
+   * microcredits.
+   *
+   * @generated from field: int64 total_credit_balance_micros = 10;
+   */
+  totalCreditBalanceMicros: bigint;
+
+  /**
+   * Count in [generated_at, generated_at + 30 days).
+   *
+   * @generated from field: int64 upcoming_renewals_next_30_days = 11;
+   */
+  upcomingRenewalsNext30Days: bigint;
+
+  /**
+   * @generated from field: int64 open_reconciliation_issues = 12;
+   */
+  openReconciliationIssues: bigint;
+
+  /**
+   * @generated from field: int64 paid_customers_without_provisioned_teams = 13;
+   */
+  paidCustomersWithoutProvisionedTeams: bigint;
+
+  /**
+   * @generated from field: int64 provisioned_teams_without_valid_subscriptions = 14;
+   */
+  provisionedTeamsWithoutValidSubscriptions: bigint;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp generated_at = 15;
+   */
+  generatedAt?: Timestamp | undefined;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminProjectionStatus projection_status = 16;
+   */
+  projectionStatus?: AdminProjectionStatus | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.AdminBilling.
+ * Use `create(AdminBillingSchema)` to create a new message.
+ */
+export const AdminBillingSchema: GenMessage<AdminBilling> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 29);
+
+/**
+ * AdminBillingAccount is the provider-independent billing projection for one
+ * Organization. It exposes only deep navy resource IDs and never Stripe IDs.
+ *
+ * @generated from message deepnavy.v1.AdminBillingAccount
+ */
+export type AdminBillingAccount = Message<"deepnavy.v1.AdminBillingAccount"> & {
+  /**
+   * @generated from field: deepnavy.v1.Organization organization = 1;
+   */
+  organization?: Organization | undefined;
+
+  /**
+   * @generated from field: deepnavy.v1.BillingPlan plan = 2;
+   */
+  plan?: BillingPlan | undefined;
+
+  /**
+   * @generated from field: deepnavy.v1.Subscription subscription = 3;
+   */
+  subscription?: Subscription | undefined;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminPaymentState payment_state = 4;
+   */
+  paymentState: AdminPaymentState;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminBillingReconciliationState reconciliation_state = 5;
+   */
+  reconciliationState: AdminBillingReconciliationState;
+
+  /**
+   * @generated from field: deepnavy.v1.Money monthly_recurring_revenue = 6;
+   */
+  monthlyRecurringRevenue?: Money | undefined;
+
+  /**
+   * credit_balance_micros is the point-in-time balance at
+   * reporting_period.ended_at. One credit is 1,000,000 microcredits.
+   *
+   * @generated from field: int64 credit_balance_micros = 7;
+   */
+  creditBalanceMicros: bigint;
+
+  /**
+   * credits_used_micros and usage_overage_credit_micros cover the half-open
+   * reporting period.
+   *
+   * @generated from field: int64 credits_used_micros = 8;
+   */
+  creditsUsedMicros: bigint;
+
+  /**
+   * @generated from field: int64 usage_overage_credit_micros = 9;
+   */
+  usageOverageCreditMicros: bigint;
+
+  /**
+   * @generated from field: int64 provisioned_team_count = 10;
+   */
+  provisionedTeamCount: bigint;
+
+  /**
+   * @generated from field: int64 entitled_team_count = 11;
+   */
+  entitledTeamCount: bigint;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp upcoming_renewal_at = 12;
+   */
+  upcomingRenewalAt?: Timestamp | undefined;
+
+  /**
+   * @generated from field: deepnavy.v1.ReportingPeriod reporting_period = 13;
+   */
+  reportingPeriod?: ReportingPeriod | undefined;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp generated_at = 14;
+   */
+  generatedAt?: Timestamp | undefined;
+
+  /**
+   * usage_overage_amount is the billed or billable premium for overage credits
+   * in the reporting period. It is absent when there is no overage.
+   *
+   * @generated from field: deepnavy.v1.Money usage_overage_amount = 15;
+   */
+  usageOverageAmount?: Money | undefined;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminProjectionStatus projection_status = 16;
+   */
+  projectionStatus?: AdminProjectionStatus | undefined;
+
+  /**
+   * Per-team execution controls are projected directly from the current paid
+   * period and economics ledger. No provider identifiers or secrets appear.
+   *
+   * @generated from field: repeated deepnavy.v1.TeamCreditControl team_credit_controls = 17;
+   */
+  teamCreditControls: TeamCreditControl[];
+};
+
+/**
+ * Describes the message deepnavy.v1.AdminBillingAccount.
+ * Use `create(AdminBillingAccountSchema)` to create a new message.
+ */
+export const AdminBillingAccountSchema: GenMessage<AdminBillingAccount> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 30);
+
+/**
+ * @generated from message deepnavy.v1.AdminBillingReconciliationIssue
+ */
+export type AdminBillingReconciliationIssue = Message<"deepnavy.v1.AdminBillingReconciliationIssue"> & {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id: string;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminBillingReconciliationIssueKind kind = 2;
+   */
+  kind: AdminBillingReconciliationIssueKind;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminBillingReconciliationIssueState state = 3;
+   */
+  state: AdminBillingReconciliationIssueState;
+
+  /**
+   * @generated from field: string organization_id = 4;
+   */
+  organizationId: string;
+
+  /**
+   * @generated from field: string team_id = 5;
+   */
+  teamId: string;
+
+  /**
+   * subscription_id is deep navy's Subscription.id, never a Stripe ID.
+   *
+   * @generated from field: string subscription_id = 6;
+   */
+  subscriptionId: string;
+
+  /**
+   * @generated from field: string safe_summary = 7;
+   */
+  safeSummary: string;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp detected_at = 8;
+   */
+  detectedAt?: Timestamp | undefined;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp updated_at = 9;
+   */
+  updatedAt?: Timestamp | undefined;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp resolved_at = 10;
+   */
+  resolvedAt?: Timestamp | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.AdminBillingReconciliationIssue.
+ * Use `create(AdminBillingReconciliationIssueSchema)` to create a new message.
+ */
+export const AdminBillingReconciliationIssueSchema: GenMessage<AdminBillingReconciliationIssue> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 31);
+
+/**
+ * @generated from message deepnavy.v1.GetAdminBillingRequest
+ */
+export type GetAdminBillingRequest = Message<"deepnavy.v1.GetAdminBillingRequest"> & {
+  /**
+   * @generated from field: deepnavy.v1.ReportingPeriod reporting_period = 1;
+   */
+  reportingPeriod?: ReportingPeriod | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.GetAdminBillingRequest.
+ * Use `create(GetAdminBillingRequestSchema)` to create a new message.
+ */
+export const GetAdminBillingRequestSchema: GenMessage<GetAdminBillingRequest> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 32);
+
+/**
+ * @generated from message deepnavy.v1.GetAdminBillingResponse
+ */
+export type GetAdminBillingResponse = Message<"deepnavy.v1.GetAdminBillingResponse"> & {
+  /**
+   * @generated from field: deepnavy.v1.AdminBilling billing = 1;
+   */
+  billing?: AdminBilling | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.GetAdminBillingResponse.
+ * Use `create(GetAdminBillingResponseSchema)` to create a new message.
+ */
+export const GetAdminBillingResponseSchema: GenMessage<GetAdminBillingResponse> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 33);
+
+/**
+ * @generated from message deepnavy.v1.ListAdminBillingAccountsRequest
+ */
+export type ListAdminBillingAccountsRequest = Message<"deepnavy.v1.ListAdminBillingAccountsRequest"> & {
+  /**
+   * Accounts are ordered by upcoming_renewal_at ascending (absent values last),
+   * then organization.id ascending, in a consistent snapshot. Default is 50;
+   * maximum is 200.
+   *
+   * @generated from field: deepnavy.v1.PageRequest page = 1;
+   */
+  page?: PageRequest | undefined;
+
+  /**
+   * @generated from field: deepnavy.v1.SubscriptionStatus subscription_status = 2;
+   */
+  subscriptionStatus: SubscriptionStatus;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminPaymentState payment_state = 3;
+   */
+  paymentState: AdminPaymentState;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminBillingReconciliationState reconciliation_state = 4;
+   */
+  reconciliationState: AdminBillingReconciliationState;
+
+  /**
+   * @generated from field: deepnavy.v1.ReportingPeriod reporting_period = 5;
+   */
+  reportingPeriod?: ReportingPeriod | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.ListAdminBillingAccountsRequest.
+ * Use `create(ListAdminBillingAccountsRequestSchema)` to create a new message.
+ */
+export const ListAdminBillingAccountsRequestSchema: GenMessage<ListAdminBillingAccountsRequest> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 34);
+
+/**
+ * @generated from message deepnavy.v1.ListAdminBillingAccountsResponse
+ */
+export type ListAdminBillingAccountsResponse = Message<"deepnavy.v1.ListAdminBillingAccountsResponse"> & {
+  /**
+   * @generated from field: repeated deepnavy.v1.AdminBillingAccount billing_accounts = 1;
+   */
+  billingAccounts: AdminBillingAccount[];
+
+  /**
+   * @generated from field: deepnavy.v1.PageResponse page = 2;
+   */
+  page?: PageResponse | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.ListAdminBillingAccountsResponse.
+ * Use `create(ListAdminBillingAccountsResponseSchema)` to create a new message.
+ */
+export const ListAdminBillingAccountsResponseSchema: GenMessage<ListAdminBillingAccountsResponse> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 35);
+
+/**
+ * @generated from message deepnavy.v1.ListAdminBillingReconciliationIssuesRequest
+ */
+export type ListAdminBillingReconciliationIssuesRequest = Message<"deepnavy.v1.ListAdminBillingReconciliationIssuesRequest"> & {
+  /**
+   * Issues are ordered by detected_at descending, then id descending, in a
+   * consistent snapshot. Default page size is 50 and maximum is 200.
+   *
+   * @generated from field: deepnavy.v1.PageRequest page = 1;
+   */
+  page?: PageRequest | undefined;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminBillingReconciliationIssueKind kind = 2;
+   */
+  kind: AdminBillingReconciliationIssueKind;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminBillingReconciliationIssueState state = 3;
+   */
+  state: AdminBillingReconciliationIssueState;
+
+  /**
+   * @generated from field: string organization_id = 4;
+   */
+  organizationId: string;
+
+  /**
+   * @generated from field: string team_id = 5;
+   */
+  teamId: string;
+};
+
+/**
+ * Describes the message deepnavy.v1.ListAdminBillingReconciliationIssuesRequest.
+ * Use `create(ListAdminBillingReconciliationIssuesRequestSchema)` to create a new message.
+ */
+export const ListAdminBillingReconciliationIssuesRequestSchema: GenMessage<ListAdminBillingReconciliationIssuesRequest> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 36);
+
+/**
+ * @generated from message deepnavy.v1.ListAdminBillingReconciliationIssuesResponse
+ */
+export type ListAdminBillingReconciliationIssuesResponse = Message<"deepnavy.v1.ListAdminBillingReconciliationIssuesResponse"> & {
+  /**
+   * @generated from field: repeated deepnavy.v1.AdminBillingReconciliationIssue reconciliation_issues = 1;
+   */
+  reconciliationIssues: AdminBillingReconciliationIssue[];
+
+  /**
+   * @generated from field: deepnavy.v1.PageResponse page = 2;
+   */
+  page?: PageResponse | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.ListAdminBillingReconciliationIssuesResponse.
+ * Use `create(ListAdminBillingReconciliationIssuesResponseSchema)` to create a new message.
+ */
+export const ListAdminBillingReconciliationIssuesResponseSchema: GenMessage<ListAdminBillingReconciliationIssuesResponse> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 37);
+
+/**
+ * AdminAlert is a safe, deduplicated operational or commercial alert. It must
+ * never contain raw webhook payloads, model prompts, credentials, SQL, or
+ * another customer's data in safe_summary.
+ *
+ * @generated from message deepnavy.v1.AdminAlert
+ */
+export type AdminAlert = Message<"deepnavy.v1.AdminAlert"> & {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id: string;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminAlertKind kind = 2;
+   */
+  kind: AdminAlertKind;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminAlertSeverity severity = 3;
+   */
+  severity: AdminAlertSeverity;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminAlertState state = 4;
+   */
+  state: AdminAlertState;
+
+  /**
+   * @generated from field: deepnavy.v1.Environment environment = 5;
+   */
+  environment: Environment;
+
+  /**
+   * @generated from field: string organization_id = 6;
+   */
+  organizationId: string;
+
+  /**
+   * @generated from field: string team_id = 7;
+   */
+  teamId: string;
+
+  /**
+   * @generated from field: string runtime_instance_id = 8;
+   */
+  runtimeInstanceId: string;
+
+  /**
+   * @generated from field: string safe_summary = 9;
+   */
+  safeSummary: string;
+
+  /**
+   * @generated from field: int64 occurrence_count = 10;
+   */
+  occurrenceCount: bigint;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp first_detected_at = 11;
+   */
+  firstDetectedAt?: Timestamp | undefined;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp last_detected_at = 12;
+   */
+  lastDetectedAt?: Timestamp | undefined;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp resolved_at = 13;
+   */
+  resolvedAt?: Timestamp | undefined;
+
+  /**
+   * sequence is monotonically increasing within the deployment environment and
+   * is the resume cursor for StreamAdminAlerts.
+   *
+   * @generated from field: int64 sequence = 14;
+   */
+  sequence: bigint;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminProjectionStatus projection_status = 15;
+   */
+  projectionStatus?: AdminProjectionStatus | undefined;
+
+  /**
+   * Set for runtime-health-derived alerts; UNSPECIFIED for unrelated alert
+   * sources. HEARTBEAT_STALE is derived by platform-api.
+   *
+   * @generated from field: deepnavy.v1.RuntimeHealthReason runtime_health_reason = 16;
+   */
+  runtimeHealthReason: RuntimeHealthReason;
+};
+
+/**
+ * Describes the message deepnavy.v1.AdminAlert.
+ * Use `create(AdminAlertSchema)` to create a new message.
+ */
+export const AdminAlertSchema: GenMessage<AdminAlert> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 38);
+
+/**
+ * @generated from message deepnavy.v1.ListAdminAlertsRequest
+ */
+export type ListAdminAlertsRequest = Message<"deepnavy.v1.ListAdminAlertsRequest"> & {
+  /**
+   * Alerts are ordered by severity descending, last_detected_at descending,
+   * then id descending, in a consistent snapshot. Default is 50; maximum 200.
+   *
+   * @generated from field: deepnavy.v1.PageRequest page = 1;
+   */
+  page?: PageRequest | undefined;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminAlertKind kind = 2;
+   */
+  kind: AdminAlertKind;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminAlertSeverity severity = 3;
+   */
+  severity: AdminAlertSeverity;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminAlertState state = 4;
+   */
+  state: AdminAlertState;
+
+  /**
+   * @generated from field: deepnavy.v1.Environment environment = 5;
+   */
+  environment: Environment;
+
+  /**
+   * @generated from field: string organization_id = 6;
+   */
+  organizationId: string;
+
+  /**
+   * @generated from field: string team_id = 7;
+   */
+  teamId: string;
+};
+
+/**
+ * Describes the message deepnavy.v1.ListAdminAlertsRequest.
+ * Use `create(ListAdminAlertsRequestSchema)` to create a new message.
+ */
+export const ListAdminAlertsRequestSchema: GenMessage<ListAdminAlertsRequest> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 39);
+
+/**
+ * @generated from message deepnavy.v1.ListAdminAlertsResponse
+ */
+export type ListAdminAlertsResponse = Message<"deepnavy.v1.ListAdminAlertsResponse"> & {
+  /**
+   * @generated from field: repeated deepnavy.v1.AdminAlert alerts = 1;
+   */
+  alerts: AdminAlert[];
+
+  /**
+   * @generated from field: deepnavy.v1.PageResponse page = 2;
+   */
+  page?: PageResponse | undefined;
+
+  /**
+   * snapshot_sequence is identical on every page in this list snapshot. After
+   * consuming all pages, pass it as after_sequence to stream without a race.
+   *
+   * @generated from field: int64 snapshot_sequence = 3;
+   */
+  snapshotSequence: bigint;
+
+  /**
+   * An absent kind is not evidence that no such alert exists when it appears
+   * here. This makes partial launch-time source coverage explicit.
+   *
+   * @generated from field: repeated deepnavy.v1.AdminAlertKind unavailable_kinds = 4;
+   */
+  unavailableKinds: AdminAlertKind[];
+
+  /**
+   * False means only current OPEN alerts can be trusted; callers must not infer
+   * that resolved-alert history is empty.
+   *
+   * @generated from field: bool resolved_alert_history_available = 5;
+   */
+  resolvedAlertHistoryAvailable: boolean;
+};
+
+/**
+ * Describes the message deepnavy.v1.ListAdminAlertsResponse.
+ * Use `create(ListAdminAlertsResponseSchema)` to create a new message.
+ */
+export const ListAdminAlertsResponseSchema: GenMessage<ListAdminAlertsResponse> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 40);
+
+/**
+ * @generated from message deepnavy.v1.StreamAdminAlertsRequest
+ */
+export type StreamAdminAlertsRequest = Message<"deepnavy.v1.StreamAdminAlertsRequest"> & {
+  /**
+   * Alerts with sequence greater than after_sequence are emitted. Zero starts
+   * from the oldest retained update. Expired cursors return OUT_OF_RANGE.
+   *
+   * @generated from field: int64 after_sequence = 1;
+   */
+  afterSequence: bigint;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminAlertKind kind = 2;
+   */
+  kind: AdminAlertKind;
+
+  /**
+   * Only immutable scope/type filters are allowed so severity and resolution
+   * transitions always reach a subscribed client. A caller that filtered the
+   * initial list by severity or state applies those mutable filters locally to
+   * every streamed UPSERT.
+   *
+   * @generated from field: deepnavy.v1.Environment environment = 3;
+   */
+  environment: Environment;
+
+  /**
+   * @generated from field: string organization_id = 4;
+   */
+  organizationId: string;
+
+  /**
+   * @generated from field: string team_id = 5;
+   */
+  teamId: string;
+};
+
+/**
+ * Describes the message deepnavy.v1.StreamAdminAlertsRequest.
+ * Use `create(StreamAdminAlertsRequestSchema)` to create a new message.
+ */
+export const StreamAdminAlertsRequestSchema: GenMessage<StreamAdminAlertsRequest> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 41);
+
+/**
+ * @generated from message deepnavy.v1.StreamAdminAlertsResponse
+ */
+export type StreamAdminAlertsResponse = Message<"deepnavy.v1.StreamAdminAlertsResponse"> & {
+  /**
+   * alert is present only for UPSERT.
+   *
+   * @generated from field: deepnavy.v1.AdminAlert alert = 1;
+   */
+  alert?: AdminAlert | undefined;
+
+  /**
+   * @generated from field: deepnavy.v1.AdminStreamChangeType change_type = 2;
+   */
+  changeType: AdminStreamChangeType;
+
+  /**
+   * resource_id is always set and equals alert.id on UPSERT.
+   *
+   * @generated from field: string resource_id = 3;
+   */
+  resourceId: string;
+
+  /**
+   * sequence is the environment-monotonic cursor for this change and equals
+   * alert.sequence on UPSERT.
+   *
+   * @generated from field: int64 sequence = 4;
+   */
+  sequence: bigint;
+};
+
+/**
+ * Describes the message deepnavy.v1.StreamAdminAlertsResponse.
+ * Use `create(StreamAdminAlertsResponseSchema)` to create a new message.
+ */
+export const StreamAdminAlertsResponseSchema: GenMessage<StreamAdminAlertsResponse> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_admin, 42);
+
+/**
+ * @generated from enum deepnavy.v1.AdminErrorReason
+ */
+export enum AdminErrorReason {
+  /**
+   * @generated from enum value: ADMIN_ERROR_REASON_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * The verified principal is not a founder or admin, has no MFA-backed admin
+   * session, or otherwise lacks access. Returned with PERMISSION_DENIED.
+   *
+   * @generated from enum value: ADMIN_ERROR_REASON_NOT_AUTHORIZED = 1;
+   */
+  NOT_AUTHORIZED = 1,
+
+  /**
+   * The reporting period is invalid or exceeds a server-defined limit.
+   * Returned with INVALID_ARGUMENT.
+   *
+   * @generated from enum value: ADMIN_ERROR_REASON_INVALID_REPORTING_PERIOD = 2;
+   */
+  INVALID_REPORTING_PERIOD = 2,
+
+  /**
+   * One or more filters cannot be combined. Returned with INVALID_ARGUMENT.
+   *
+   * @generated from enum value: ADMIN_ERROR_REASON_INVALID_FILTER = 3;
+   */
+  INVALID_FILTER = 3,
+
+  /**
+   * A page token or stream sequence is no longer retained. Returned with
+   * OUT_OF_RANGE so the caller can restart from a fresh list response.
+   *
+   * @generated from enum value: ADMIN_ERROR_REASON_CURSOR_EXPIRED = 4;
+   */
+  CURSOR_EXPIRED = 4,
+
+  /**
+   * A required source has not produced a trustworthy current snapshot.
+   * Returned with UNAVAILABLE rather than fabricating a zero value.
+   *
+   * @generated from enum value: ADMIN_ERROR_REASON_DATA_UNAVAILABLE = 5;
+   */
+  DATA_UNAVAILABLE = 5,
+
+  /**
+   * The request has no valid/active authentication. Returned with
+   * UNAUTHENTICATED; this is distinct from an authenticated principal that
+   * lacks an admin role or MFA-backed admin session.
+   *
+   * @generated from enum value: ADMIN_ERROR_REASON_UNAUTHENTICATED = 6;
+   */
+  UNAUTHENTICATED = 6,
+
+  /**
+   * page_size is negative or above the admin maximum, or page_token is invalid
+   * for this caller/filter/snapshot. Returned with INVALID_ARGUMENT.
+   *
+   * @generated from enum value: ADMIN_ERROR_REASON_INVALID_PAGE_REQUEST = 7;
+   */
+  INVALID_PAGE_REQUEST = 7,
+
+  /**
+   * The requested deep navy resource does not exist. Returned with NOT_FOUND.
+   *
+   * @generated from enum value: ADMIN_ERROR_REASON_RESOURCE_NOT_FOUND = 8;
+   */
+  RESOURCE_NOT_FOUND = 8,
+}
+
+/**
+ * Describes the enum deepnavy.v1.AdminErrorReason.
+ */
+export const AdminErrorReasonSchema: GenEnum<AdminErrorReason> = /*@__PURE__*/
+  enumDesc(file_deepnavy_v1_admin, 0);
+
+/**
+ * @generated from enum deepnavy.v1.AdminCustomerHealthState
+ */
+export enum AdminCustomerHealthState {
+  /**
+   * @generated from enum value: ADMIN_CUSTOMER_HEALTH_STATE_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * No current product-adoption, commercial, support, or reliability signal
+   * breaches a configured threshold.
+   *
+   * @generated from enum value: ADMIN_CUSTOMER_HEALTH_STATE_HEALTHY = 1;
+   */
+  HEALTHY = 1,
+
+  /**
+   * A non-urgent signal warrants review.
+   *
+   * @generated from enum value: ADMIN_CUSTOMER_HEALTH_STATE_NEEDS_ATTENTION = 2;
+   */
+  NEEDS_ATTENTION = 2,
+
+  /**
+   * One or more signals indicate likely churn or material customer impact.
+   *
+   * @generated from enum value: ADMIN_CUSTOMER_HEALTH_STATE_AT_RISK = 3;
+   */
+  AT_RISK = 3,
+
+  /**
+   * Immediate intervention is required.
+   *
+   * @generated from enum value: ADMIN_CUSTOMER_HEALTH_STATE_CRITICAL = 4;
+   */
+  CRITICAL = 4,
+}
+
+/**
+ * Describes the enum deepnavy.v1.AdminCustomerHealthState.
+ */
+export const AdminCustomerHealthStateSchema: GenEnum<AdminCustomerHealthState> = /*@__PURE__*/
+  enumDesc(file_deepnavy_v1_admin, 1);
+
+/**
+ * @generated from enum deepnavy.v1.AdminSupportState
+ */
+export enum AdminSupportState {
+  /**
+   * @generated from enum value: ADMIN_SUPPORT_STATE_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * No open support engagement exists.
+   *
+   * @generated from enum value: ADMIN_SUPPORT_STATE_NONE = 1;
+   */
+  NONE = 1,
+
+  /**
+   * @generated from enum value: ADMIN_SUPPORT_STATE_OPEN = 2;
+   */
+  OPEN = 2,
+
+  /**
+   * @generated from enum value: ADMIN_SUPPORT_STATE_ESCALATED = 3;
+   */
+  ESCALATED = 3,
+}
+
+/**
+ * Describes the enum deepnavy.v1.AdminSupportState.
+ */
+export const AdminSupportStateSchema: GenEnum<AdminSupportState> = /*@__PURE__*/
+  enumDesc(file_deepnavy_v1_admin, 2);
+
+/**
+ * @generated from enum deepnavy.v1.AdminChurnRiskLevel
+ */
+export enum AdminChurnRiskLevel {
+  /**
+   * @generated from enum value: ADMIN_CHURN_RISK_LEVEL_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * @generated from enum value: ADMIN_CHURN_RISK_LEVEL_LOW = 1;
+   */
+  LOW = 1,
+
+  /**
+   * @generated from enum value: ADMIN_CHURN_RISK_LEVEL_MEDIUM = 2;
+   */
+  MEDIUM = 2,
+
+  /**
+   * @generated from enum value: ADMIN_CHURN_RISK_LEVEL_HIGH = 3;
+   */
+  HIGH = 3,
+
+  /**
+   * @generated from enum value: ADMIN_CHURN_RISK_LEVEL_CRITICAL = 4;
+   */
+  CRITICAL = 4,
+}
+
+/**
+ * Describes the enum deepnavy.v1.AdminChurnRiskLevel.
+ */
+export const AdminChurnRiskLevelSchema: GenEnum<AdminChurnRiskLevel> = /*@__PURE__*/
+  enumDesc(file_deepnavy_v1_admin, 3);
+
+/**
+ * @generated from enum deepnavy.v1.AdminEconomicsDimension
+ */
+export enum AdminEconomicsDimension {
+  /**
+   * @generated from enum value: ADMIN_ECONOMICS_DIMENSION_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * Customer accounts are canonical Organizations at launch.
+   *
+   * @generated from enum value: ADMIN_ECONOMICS_DIMENSION_ORGANIZATION = 1;
+   */
+  ORGANIZATION = 1,
+
+  /**
+   * @generated from enum value: ADMIN_ECONOMICS_DIMENSION_TEAM = 2;
+   */
+  TEAM = 2,
+
+  /**
+   * @generated from enum value: ADMIN_ECONOMICS_DIMENSION_AGENT = 3;
+   */
+  AGENT = 3,
+
+  /**
+   * @generated from enum value: ADMIN_ECONOMICS_DIMENSION_AGENT_ROLE = 4;
+   */
+  AGENT_ROLE = 4,
+
+  /**
+   * @generated from enum value: ADMIN_ECONOMICS_DIMENSION_MODEL = 5;
+   */
+  MODEL = 5,
+
+  /**
+   * @generated from enum value: ADMIN_ECONOMICS_DIMENSION_PROVIDER = 6;
+   */
+  PROVIDER = 6,
+
+  /**
+   * @generated from enum value: ADMIN_ECONOMICS_DIMENSION_INITIATIVE = 7;
+   */
+  INITIATIVE = 7,
+
+  /**
+   * @generated from enum value: ADMIN_ECONOMICS_DIMENSION_ISSUE = 8;
+   */
+  ISSUE = 8,
+
+  /**
+   * @generated from enum value: ADMIN_ECONOMICS_DIMENSION_PULL_REQUEST = 9;
+   */
+  PULL_REQUEST = 9,
+
+  /**
+   * @generated from enum value: ADMIN_ECONOMICS_DIMENSION_REPOSITORY = 10;
+   */
+  REPOSITORY = 10,
+}
+
+/**
+ * Describes the enum deepnavy.v1.AdminEconomicsDimension.
+ */
+export const AdminEconomicsDimensionSchema: GenEnum<AdminEconomicsDimension> = /*@__PURE__*/
+  enumDesc(file_deepnavy_v1_admin, 4);
+
+/**
+ * @generated from enum deepnavy.v1.AdminRuntimeState
+ */
+export enum AdminRuntimeState {
+  /**
+   * @generated from enum value: ADMIN_RUNTIME_STATE_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * The Gateway and required dependencies passed their current readiness and
+   * authenticated end-to-end health checks.
+   *
+   * @generated from enum value: ADMIN_RUNTIME_STATE_READY = 1;
+   */
+  READY = 1,
+
+  /**
+   * The runtime exists but one or more required health signals are failing or
+   * stale; this includes a runtime still converging toward readiness.
+   *
+   * @generated from enum value: ADMIN_RUNTIME_STATE_DEGRADED = 2;
+   */
+  DEGRADED = 2,
+
+  /**
+   * The desired team state intentionally prevents agent execution.
+   *
+   * @generated from enum value: ADMIN_RUNTIME_STATE_SUSPENDED = 3;
+   */
+  SUSPENDED = 3,
+
+  /**
+   * Reconciliation exhausted retries or the runtime cannot safely operate.
+   *
+   * @generated from enum value: ADMIN_RUNTIME_STATE_FAILED = 4;
+   */
+  FAILED = 4,
+}
+
+/**
+ * Describes the enum deepnavy.v1.AdminRuntimeState.
+ */
+export const AdminRuntimeStateSchema: GenEnum<AdminRuntimeState> = /*@__PURE__*/
+  enumDesc(file_deepnavy_v1_admin, 5);
+
+/**
+ * @generated from enum deepnavy.v1.AdminBackupState
+ */
+export enum AdminBackupState {
+  /**
+   * @generated from enum value: ADMIN_BACKUP_STATE_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * The latest successful backup is within the configured recovery policy.
+   *
+   * @generated from enum value: ADMIN_BACKUP_STATE_CURRENT = 1;
+   */
+  CURRENT = 1,
+
+  /**
+   * No successful backup exists within the configured recovery policy.
+   *
+   * @generated from enum value: ADMIN_BACKUP_STATE_OVERDUE = 2;
+   */
+  OVERDUE = 2,
+
+  /**
+   * The most recent backup attempt failed, whether or not an older backup is
+   * still within policy.
+   *
+   * @generated from enum value: ADMIN_BACKUP_STATE_FAILED = 3;
+   */
+  FAILED = 3,
+
+  /**
+   * @generated from enum value: ADMIN_BACKUP_STATE_NEVER_COMPLETED = 4;
+   */
+  NEVER_COMPLETED = 4,
+}
+
+/**
+ * Describes the enum deepnavy.v1.AdminBackupState.
+ */
+export const AdminBackupStateSchema: GenEnum<AdminBackupState> = /*@__PURE__*/
+  enumDesc(file_deepnavy_v1_admin, 6);
+
+/**
+ * @generated from enum deepnavy.v1.AdminEventStreamState
+ */
+export enum AdminEventStreamState {
+  /**
+   * @generated from enum value: ADMIN_EVENT_STREAM_STATE_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * The durable stream consumer is within the configured freshness objective.
+   *
+   * @generated from enum value: ADMIN_EVENT_STREAM_STATE_CURRENT = 1;
+   */
+  CURRENT = 1,
+
+  /**
+   * Events are arriving but freshness or sequence lag exceeds its objective.
+   *
+   * @generated from enum value: ADMIN_EVENT_STREAM_STATE_LAGGING = 2;
+   */
+  LAGGING = 2,
+
+  /**
+   * The stream cannot currently ingest or persist events.
+   *
+   * @generated from enum value: ADMIN_EVENT_STREAM_STATE_UNAVAILABLE = 3;
+   */
+  UNAVAILABLE = 3,
+}
+
+/**
+ * Describes the enum deepnavy.v1.AdminEventStreamState.
+ */
+export const AdminEventStreamStateSchema: GenEnum<AdminEventStreamState> = /*@__PURE__*/
+  enumDesc(file_deepnavy_v1_admin, 7);
+
+/**
+ * @generated from enum deepnavy.v1.AdminPaymentState
+ */
+export enum AdminPaymentState {
+  /**
+   * @generated from enum value: ADMIN_PAYMENT_STATE_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * No currently payable invoice is delinquent.
+   *
+   * @generated from enum value: ADMIN_PAYMENT_STATE_CURRENT = 1;
+   */
+  CURRENT = 1,
+
+  /**
+   * The most recent collection attempt failed but the invoice is not yet in
+   * the platform's past-due state.
+   *
+   * @generated from enum value: ADMIN_PAYMENT_STATE_FAILED = 2;
+   */
+  FAILED = 2,
+
+  /**
+   * At least one currently payable invoice is past due.
+   *
+   * @generated from enum value: ADMIN_PAYMENT_STATE_PAST_DUE = 3;
+   */
+  PAST_DUE = 3,
+
+  /**
+   * The account requires a payment method before the next collection attempt.
+   *
+   * @generated from enum value: ADMIN_PAYMENT_STATE_NO_PAYMENT_METHOD = 4;
+   */
+  NO_PAYMENT_METHOD = 4,
+}
+
+/**
+ * Describes the enum deepnavy.v1.AdminPaymentState.
+ */
+export const AdminPaymentStateSchema: GenEnum<AdminPaymentState> = /*@__PURE__*/
+  enumDesc(file_deepnavy_v1_admin, 8);
+
+/**
+ * @generated from enum deepnavy.v1.AdminBillingReconciliationState
+ */
+export enum AdminBillingReconciliationState {
+  /**
+   * @generated from enum value: ADMIN_BILLING_RECONCILIATION_STATE_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * @generated from enum value: ADMIN_BILLING_RECONCILIATION_STATE_MATCHED = 1;
+   */
+  MATCHED = 1,
+
+  /**
+   * @generated from enum value: ADMIN_BILLING_RECONCILIATION_STATE_MISMATCHED = 2;
+   */
+  MISMATCHED = 2,
+}
+
+/**
+ * Describes the enum deepnavy.v1.AdminBillingReconciliationState.
+ */
+export const AdminBillingReconciliationStateSchema: GenEnum<AdminBillingReconciliationState> = /*@__PURE__*/
+  enumDesc(file_deepnavy_v1_admin, 9);
+
+/**
+ * @generated from enum deepnavy.v1.AdminBillingReconciliationIssueKind
+ */
+export enum AdminBillingReconciliationIssueKind {
+  /**
+   * @generated from enum value: ADMIN_BILLING_RECONCILIATION_ISSUE_KIND_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * @generated from enum value: ADMIN_BILLING_RECONCILIATION_ISSUE_KIND_STRIPE_LOCAL_STATE_MISMATCH = 1;
+   */
+  STRIPE_LOCAL_STATE_MISMATCH = 1,
+
+  /**
+   * @generated from enum value: ADMIN_BILLING_RECONCILIATION_ISSUE_KIND_PAID_CUSTOMER_NOT_PROVISIONED = 2;
+   */
+  PAID_CUSTOMER_NOT_PROVISIONED = 2,
+
+  /**
+   * @generated from enum value: ADMIN_BILLING_RECONCILIATION_ISSUE_KIND_PROVISIONED_TEAM_WITHOUT_VALID_SUBSCRIPTION = 3;
+   */
+  PROVISIONED_TEAM_WITHOUT_VALID_SUBSCRIPTION = 3,
+
+  /**
+   * @generated from enum value: ADMIN_BILLING_RECONCILIATION_ISSUE_KIND_USAGE_LEDGER_MISMATCH = 4;
+   */
+  USAGE_LEDGER_MISMATCH = 4,
+
+  /**
+   * @generated from enum value: ADMIN_BILLING_RECONCILIATION_ISSUE_KIND_CREDIT_LEDGER_MISMATCH = 5;
+   */
+  CREDIT_LEDGER_MISMATCH = 5,
+}
+
+/**
+ * Describes the enum deepnavy.v1.AdminBillingReconciliationIssueKind.
+ */
+export const AdminBillingReconciliationIssueKindSchema: GenEnum<AdminBillingReconciliationIssueKind> = /*@__PURE__*/
+  enumDesc(file_deepnavy_v1_admin, 10);
+
+/**
+ * @generated from enum deepnavy.v1.AdminBillingReconciliationIssueState
+ */
+export enum AdminBillingReconciliationIssueState {
+  /**
+   * @generated from enum value: ADMIN_BILLING_RECONCILIATION_ISSUE_STATE_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * @generated from enum value: ADMIN_BILLING_RECONCILIATION_ISSUE_STATE_OPEN = 1;
+   */
+  OPEN = 1,
+
+  /**
+   * @generated from enum value: ADMIN_BILLING_RECONCILIATION_ISSUE_STATE_RESOLVED = 2;
+   */
+  RESOLVED = 2,
+}
+
+/**
+ * Describes the enum deepnavy.v1.AdminBillingReconciliationIssueState.
+ */
+export const AdminBillingReconciliationIssueStateSchema: GenEnum<AdminBillingReconciliationIssueState> = /*@__PURE__*/
+  enumDesc(file_deepnavy_v1_admin, 11);
+
+/**
+ * @generated from enum deepnavy.v1.AdminAlertSeverity
+ */
+export enum AdminAlertSeverity {
+  /**
+   * @generated from enum value: ADMIN_ALERT_SEVERITY_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * @generated from enum value: ADMIN_ALERT_SEVERITY_INFORMATIONAL = 1;
+   */
+  INFORMATIONAL = 1,
+
+  /**
+   * @generated from enum value: ADMIN_ALERT_SEVERITY_WARNING = 2;
+   */
+  WARNING = 2,
+
+  /**
+   * @generated from enum value: ADMIN_ALERT_SEVERITY_CRITICAL = 3;
+   */
+  CRITICAL = 3,
+}
+
+/**
+ * Describes the enum deepnavy.v1.AdminAlertSeverity.
+ */
+export const AdminAlertSeveritySchema: GenEnum<AdminAlertSeverity> = /*@__PURE__*/
+  enumDesc(file_deepnavy_v1_admin, 12);
+
+/**
+ * @generated from enum deepnavy.v1.AdminAlertState
+ */
+export enum AdminAlertState {
+  /**
+   * @generated from enum value: ADMIN_ALERT_STATE_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * @generated from enum value: ADMIN_ALERT_STATE_OPEN = 1;
+   */
+  OPEN = 1,
+
+  /**
+   * @generated from enum value: ADMIN_ALERT_STATE_RESOLVED = 2;
+   */
+  RESOLVED = 2,
+}
+
+/**
+ * Describes the enum deepnavy.v1.AdminAlertState.
+ */
+export const AdminAlertStateSchema: GenEnum<AdminAlertState> = /*@__PURE__*/
+  enumDesc(file_deepnavy_v1_admin, 13);
+
+/**
+ * @generated from enum deepnavy.v1.AdminAlertKind
+ */
+export enum AdminAlertKind {
+  /**
+   * @generated from enum value: ADMIN_ALERT_KIND_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * @generated from enum value: ADMIN_ALERT_KIND_GATEWAY_UNAVAILABLE = 1;
+   */
+  GATEWAY_UNAVAILABLE = 1,
+
+  /**
+   * @generated from enum value: ADMIN_ALERT_KIND_INVALID_OPENCLAW_CONFIGURATION = 2;
+   */
+  INVALID_OPENCLAW_CONFIGURATION = 2,
+
+  /**
+   * @generated from enum value: ADMIN_ALERT_KIND_FAILED_STRIPE_WEBHOOK = 3;
+   */
+  FAILED_STRIPE_WEBHOOK = 3,
+
+  /**
+   * @generated from enum value: ADMIN_ALERT_KIND_FAILED_GITHUB_WEBHOOK = 4;
+   */
+  FAILED_GITHUB_WEBHOOK = 4,
+
+  /**
+   * @generated from enum value: ADMIN_ALERT_KIND_PAID_CUSTOMER_NOT_PROVISIONED = 5;
+   */
+  PAID_CUSTOMER_NOT_PROVISIONED = 5,
+
+  /**
+   * @generated from enum value: ADMIN_ALERT_KIND_SUBSCRIPTION_CANCELED_WHILE_TEAM_RUNNING = 6;
+   */
+  SUBSCRIPTION_CANCELED_WHILE_TEAM_RUNNING = 6,
+
+  /**
+   * @generated from enum value: ADMIN_ALERT_KIND_CUSTOMER_OVER_INCLUDED_USAGE = 7;
+   */
+  CUSTOMER_OVER_INCLUDED_USAGE = 7,
+
+  /**
+   * @generated from enum value: ADMIN_ALERT_KIND_GROSS_MARGIN_BELOW_THRESHOLD = 8;
+   */
+  GROSS_MARGIN_BELOW_THRESHOLD = 8,
+
+  /**
+   * @generated from enum value: ADMIN_ALERT_KIND_PVC_NEAR_CAPACITY = 9;
+   */
+  PVC_NEAR_CAPACITY = 9,
+
+  /**
+   * @generated from enum value: ADMIN_ALERT_KIND_BACKUP_OVERDUE = 10;
+   */
+  BACKUP_OVERDUE = 10,
+
+  /**
+   * @generated from enum value: ADMIN_ALERT_KIND_ELEVATED_MODEL_PROVIDER_ERRORS = 11;
+   */
+  ELEVATED_MODEL_PROVIDER_ERRORS = 11,
+
+  /**
+   * @generated from enum value: ADMIN_ALERT_KIND_CUSTOMER_ADOPTION_DECLINE = 12;
+   */
+  CUSTOMER_ADOPTION_DECLINE = 12,
+
+  /**
+   * @generated from enum value: ADMIN_ALERT_KIND_TRIAL_NEARING_EXPIRATION = 13;
+   */
+  TRIAL_NEARING_EXPIRATION = 13,
+}
+
+/**
+ * Describes the enum deepnavy.v1.AdminAlertKind.
+ */
+export const AdminAlertKindSchema: GenEnum<AdminAlertKind> = /*@__PURE__*/
+  enumDesc(file_deepnavy_v1_admin, 14);
+
+/**
+ * @generated from enum deepnavy.v1.AdminStreamChangeType
+ */
+export enum AdminStreamChangeType {
+  /**
+   * @generated from enum value: ADMIN_STREAM_CHANGE_TYPE_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * The included resource is the complete current representation and replaces
+   * any client copy with the same ID.
+   *
+   * @generated from enum value: ADMIN_STREAM_CHANGE_TYPE_UPSERT = 1;
+   */
+  UPSERT = 1,
+
+  /**
+   * The resource identified by resource_id left the result set or retention
+   * window. The resource message is absent.
+   *
+   * @generated from enum value: ADMIN_STREAM_CHANGE_TYPE_REMOVE = 2;
+   */
+  REMOVE = 2,
+}
+
+/**
+ * Describes the enum deepnavy.v1.AdminStreamChangeType.
+ */
+export const AdminStreamChangeTypeSchema: GenEnum<AdminStreamChangeType> = /*@__PURE__*/
+  enumDesc(file_deepnavy_v1_admin, 15);
+
+/**
+ * AdminProjectionAvailability prevents unsupported or stale founder metrics
+ * from being represented as trustworthy protobuf scalar zero values.
+ *
+ * @generated from enum deepnavy.v1.AdminProjectionAvailability
+ */
+export enum AdminProjectionAvailability {
+  /**
+   * @generated from enum value: ADMIN_PROJECTION_AVAILABILITY_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * Every field in the containing projection is backed by a current,
+   * authoritative source.
+   *
+   * @generated from enum value: ADMIN_PROJECTION_AVAILABILITY_COMPLETE = 1;
+   */
+  COMPLETE = 1,
+
+  /**
+   * Authoritative fields are present, while unavailable_fields identifies the
+   * exact protobuf field names that callers must hide rather than read as zero.
+   *
+   * @generated from enum value: ADMIN_PROJECTION_AVAILABILITY_PARTIAL = 2;
+   */
+  PARTIAL = 2,
+
+  /**
+   * No trustworthy projection exists. RPCs should normally return
+   * ADMIN_ERROR_REASON_DATA_UNAVAILABLE instead of a message in this state.
+   *
+   * @generated from enum value: ADMIN_PROJECTION_AVAILABILITY_UNAVAILABLE = 3;
+   */
+  UNAVAILABLE = 3,
+
+  /**
+   * A projection exists but is older than its declared freshness objective.
+   *
+   * @generated from enum value: ADMIN_PROJECTION_AVAILABILITY_STALE = 4;
+   */
+  STALE = 4,
+}
+
+/**
+ * Describes the enum deepnavy.v1.AdminProjectionAvailability.
+ */
+export const AdminProjectionAvailabilitySchema: GenEnum<AdminProjectionAvailability> = /*@__PURE__*/
+  enumDesc(file_deepnavy_v1_admin, 16);
+
+/**
+ * AdminService is a read-only projection over the same versioned API used by
+ * customer clients. Every RPC requires server-side founder/admin authorization,
+ * an MFA-backed short-lived session, and an audit record. Request fields never
+ * substitute for authorization.
+ *
  * @generated from service deepnavy.v1.AdminService
  */
 export const AdminService: GenService<{
   /**
+   * GetAdminOverview is retained at its original stable procedure path and is
+   * additive-compatible with the first generated clients.
+   *
    * @generated from rpc deepnavy.v1.AdminService.GetAdminOverview
    */
   getAdminOverview: {
     methodKind: "unary";
     input: typeof GetAdminOverviewRequestSchema;
     output: typeof GetAdminOverviewResponseSchema;
+  },
+  /**
+   * @generated from rpc deepnavy.v1.AdminService.ListAdminCustomers
+   */
+  listAdminCustomers: {
+    methodKind: "unary";
+    input: typeof ListAdminCustomersRequestSchema;
+    output: typeof ListAdminCustomersResponseSchema;
+  },
+  /**
+   * @generated from rpc deepnavy.v1.AdminService.GetAdminCustomer
+   */
+  getAdminCustomer: {
+    methodKind: "unary";
+    input: typeof GetAdminCustomerRequestSchema;
+    output: typeof GetAdminCustomerResponseSchema;
+  },
+  /**
+   * @generated from rpc deepnavy.v1.AdminService.ListAdminCustomerReliabilityRecords
+   */
+  listAdminCustomerReliabilityRecords: {
+    methodKind: "unary";
+    input: typeof ListAdminCustomerReliabilityRecordsRequestSchema;
+    output: typeof ListAdminCustomerReliabilityRecordsResponseSchema;
+  },
+  /**
+   * @generated from rpc deepnavy.v1.AdminService.GetAdminEconomics
+   */
+  getAdminEconomics: {
+    methodKind: "unary";
+    input: typeof GetAdminEconomicsRequestSchema;
+    output: typeof GetAdminEconomicsResponseSchema;
+  },
+  /**
+   * @generated from rpc deepnavy.v1.AdminService.ListAdminEconomicsSlices
+   */
+  listAdminEconomicsSlices: {
+    methodKind: "unary";
+    input: typeof ListAdminEconomicsSlicesRequestSchema;
+    output: typeof ListAdminEconomicsSlicesResponseSchema;
+  },
+  /**
+   * @generated from rpc deepnavy.v1.AdminService.GetAdminFleet
+   */
+  getAdminFleet: {
+    methodKind: "unary";
+    input: typeof GetAdminFleetRequestSchema;
+    output: typeof GetAdminFleetResponseSchema;
+  },
+  /**
+   * @generated from rpc deepnavy.v1.AdminService.ListAdminRuntimeInstances
+   */
+  listAdminRuntimeInstances: {
+    methodKind: "unary";
+    input: typeof ListAdminRuntimeInstancesRequestSchema;
+    output: typeof ListAdminRuntimeInstancesResponseSchema;
+  },
+  /**
+   * @generated from rpc deepnavy.v1.AdminService.StreamAdminRuntimeInstances
+   */
+  streamAdminRuntimeInstances: {
+    methodKind: "server_streaming";
+    input: typeof StreamAdminRuntimeInstancesRequestSchema;
+    output: typeof StreamAdminRuntimeInstancesResponseSchema;
+  },
+  /**
+   * @generated from rpc deepnavy.v1.AdminService.GetAdminBilling
+   */
+  getAdminBilling: {
+    methodKind: "unary";
+    input: typeof GetAdminBillingRequestSchema;
+    output: typeof GetAdminBillingResponseSchema;
+  },
+  /**
+   * @generated from rpc deepnavy.v1.AdminService.ListAdminBillingAccounts
+   */
+  listAdminBillingAccounts: {
+    methodKind: "unary";
+    input: typeof ListAdminBillingAccountsRequestSchema;
+    output: typeof ListAdminBillingAccountsResponseSchema;
+  },
+  /**
+   * @generated from rpc deepnavy.v1.AdminService.ListAdminBillingReconciliationIssues
+   */
+  listAdminBillingReconciliationIssues: {
+    methodKind: "unary";
+    input: typeof ListAdminBillingReconciliationIssuesRequestSchema;
+    output: typeof ListAdminBillingReconciliationIssuesResponseSchema;
+  },
+  /**
+   * @generated from rpc deepnavy.v1.AdminService.ListAdminAlerts
+   */
+  listAdminAlerts: {
+    methodKind: "unary";
+    input: typeof ListAdminAlertsRequestSchema;
+    output: typeof ListAdminAlertsResponseSchema;
+  },
+  /**
+   * @generated from rpc deepnavy.v1.AdminService.StreamAdminAlerts
+   */
+  streamAdminAlerts: {
+    methodKind: "server_streaming";
+    input: typeof StreamAdminAlertsRequestSchema;
+    output: typeof StreamAdminAlertsResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_deepnavy_v1_admin, 0);

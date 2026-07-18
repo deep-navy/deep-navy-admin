@@ -4,7 +4,6 @@ on:
   pull_request:
   push:
     branches: [develop, main]
-  workflow_dispatch:
 
 concurrency:
   group: admin-pages-${{ github.event_name == 'pull_request' && github.ref || 'deployment' }}
@@ -32,7 +31,9 @@ jobs:
         run: script/validate-site
 
   build:
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    # A Pages repository has only one live deployment. Production stays
+    # disabled until the custom domain and branch policy are cut over together.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
     needs: validate
     runs-on: ubuntu-latest
     steps:
@@ -53,8 +54,10 @@ jobs:
           bundler-cache: true
       - name: Write public admin runtime configuration
         env:
-          DEEP_NAVY_ENVIRONMENT: ${{ github.ref_name == 'main' && 'production' || 'development' }}
-          ADMIN_URL: ${{ steps.pages.outputs.base_url }}
+          DEEP_NAVY_ENVIRONMENT: development
+          # Keep generated routes and Cognito redirects on the custom domain
+          # even while GitHub Pages is still provisioning its certificate.
+          ADMIN_URL: https://dev.admin.deep.navy
           ADMIN_API_BASE_URL: ${{ vars.ADMIN_API_BASE_URL }}
           ADMIN_COGNITO_DOMAIN: ${{ vars.ADMIN_COGNITO_DOMAIN }}
           ADMIN_COGNITO_ISSUER: ${{ vars.ADMIN_COGNITO_ISSUER }}
@@ -64,19 +67,19 @@ jobs:
         run: ruby scripts/write_runtime_config.rb
       - name: Build protected admin artifact
         env:
-          JEKYLL_ENV: ${{ github.ref_name == 'main' && 'production' || 'development' }}
-        run: bundle exec jekyll build --strict_front_matter --config _config.yml,_config.runtime.yml --baseurl "${{ steps.pages.outputs.base_path }}"
+          JEKYLL_ENV: development
+        run: bundle exec jekyll build --strict_front_matter --config _config.yml,_config.runtime.yml --baseurl ""
       - name: Validate rendered deployment artifact
         env:
-          TARGET_ENVIRONMENT: ${{ github.ref_name == 'main' && 'production' || 'development' }}
+          TARGET_ENVIRONMENT: development
           TARGET_API_ORIGIN: ${{ vars.ADMIN_API_BASE_URL }}
-        run: ruby test/site_test.rb _site "$TARGET_ENVIRONMENT" "$TARGET_API_ORIGIN" "${{ steps.pages.outputs.base_path }}"
+        run: ruby test/site_test.rb _site "$TARGET_ENVIRONMENT" "$TARGET_API_ORIGIN" ""
       - uses: actions/upload-pages-artifact@v5
         with:
           path: _site
 
   deploy:
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
     needs: build
     permissions:
       contents: read
@@ -84,7 +87,7 @@ jobs:
       id-token: write
     runs-on: ubuntu-latest
     environment:
-      name: ${{ github.ref_name == 'main' && 'production' || 'development' }}
+      name: development
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment

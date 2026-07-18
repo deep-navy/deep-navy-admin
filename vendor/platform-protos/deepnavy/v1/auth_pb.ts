@@ -19,7 +19,7 @@ export const file_deepnavy_v1_auth: GenFile = /*@__PURE__*/
  */
 export type CurrentUser = Message<"deepnavy.v1.CurrentUser"> & {
   /**
-   * id is Deep Navy's stable user identifier. The server resolves it from the
+   * id is deep navy's stable user identifier. The server resolves it from the
    * authenticated Cognito subject; a caller never supplies it.
    *
    * @generated from field: string id = 1;

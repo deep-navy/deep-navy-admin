@@ -12,18 +12,25 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file deepnavy/v1/common.proto.
  */
 export const file_deepnavy_v1_common: GenFile = /*@__PURE__*/
-  fileDesc("ChhkZWVwbmF2eS92MS9jb21tb24ucHJvdG8SC2RlZXBuYXZ5LnYxIjQKC1BhZ2VSZXF1ZXN0EhEKCXBhZ2Vfc2l6ZRgBIAEoBRISCgpwYWdlX3Rva2VuGAIgASgJIicKDFBhZ2VSZXNwb25zZRIXCg9uZXh0X3BhZ2VfdG9rZW4YASABKAkiPAoFTW9uZXkSFQoNY3VycmVuY3lfY29kZRgBIAEoCRINCgV1bml0cxgCIAEoAxINCgVuYW5vcxgDIAEoBSJ5Cg1BdWRpdE1ldGFkYXRhEhIKCnJlcXVlc3RfaWQYASABKAkSEAoIdHJhY2VfaWQYAiABKAkSLgoKY3JlYXRlZF9hdBgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASEgoKY3JlYXRlZF9ieRgEIAEoCSpjCgtFbnZpcm9ubWVudBIbChdFTlZJUk9OTUVOVF9VTlNQRUNJRklFRBAAEhsKF0VOVklST05NRU5UX0RFVkVMT1BNRU5UEAESGgoWRU5WSVJPTk1FTlRfUFJPRFVDVElPThACKuABCg5MaWZlY3ljbGVTdGF0ZRIfChtMSUZFQ1lDTEVfU1RBVEVfVU5TUEVDSUZJRUQQABIbChdMSUZFQ1lDTEVfU1RBVEVfUEVORElORxABEhoKFkxJRkVDWUNMRV9TVEFURV9BQ1RJVkUQAhIdChlMSUZFQ1lDTEVfU1RBVEVfU1VTUEVOREVEEAMSHAoYTElGRUNZQ0xFX1NUQVRFX0RFTEVUSU5HEAQSGwoXTElGRUNZQ0xFX1NUQVRFX0RFTEVURUQQBRIaChZMSUZFQ1lDTEVfU1RBVEVfRkFJTEVEEAZCRFpCZ2l0aHViLmNvbS9kZWVwLW5hdnkvcGxhdGZvcm0tcHJvdG9zL2dlbi9nby9kZWVwbmF2eS92MTtkZWVwbmF2eXYxYgZwcm90bzM", [file_google_protobuf_timestamp]);
+  fileDesc("ChhkZWVwbmF2eS92MS9jb21tb24ucHJvdG8SC2RlZXBuYXZ5LnYxIjQKC1BhZ2VSZXF1ZXN0EhEKCXBhZ2Vfc2l6ZRgBIAEoBRISCgpwYWdlX3Rva2VuGAIgASgJIicKDFBhZ2VSZXNwb25zZRIXCg9uZXh0X3BhZ2VfdG9rZW4YASABKAkibwoPUmVwb3J0aW5nUGVyaW9kEi4KCnN0YXJ0ZWRfYXQYASABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEiwKCGVuZGVkX2F0GAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCI8CgVNb25leRIVCg1jdXJyZW5jeV9jb2RlGAEgASgJEg0KBXVuaXRzGAIgASgDEg0KBW5hbm9zGAMgASgFInkKDUF1ZGl0TWV0YWRhdGESEgoKcmVxdWVzdF9pZBgBIAEoCRIQCgh0cmFjZV9pZBgCIAEoCRIuCgpjcmVhdGVkX2F0GAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBISCgpjcmVhdGVkX2J5GAQgASgJKmMKC0Vudmlyb25tZW50EhsKF0VOVklST05NRU5UX1VOU1BFQ0lGSUVEEAASGwoXRU5WSVJPTk1FTlRfREVWRUxPUE1FTlQQARIaChZFTlZJUk9OTUVOVF9QUk9EVUNUSU9OEAIq4AEKDkxpZmVjeWNsZVN0YXRlEh8KG0xJRkVDWUNMRV9TVEFURV9VTlNQRUNJRklFRBAAEhsKF0xJRkVDWUNMRV9TVEFURV9QRU5ESU5HEAESGgoWTElGRUNZQ0xFX1NUQVRFX0FDVElWRRACEh0KGUxJRkVDWUNMRV9TVEFURV9TVVNQRU5ERUQQAxIcChhMSUZFQ1lDTEVfU1RBVEVfREVMRVRJTkcQBBIbChdMSUZFQ1lDTEVfU1RBVEVfREVMRVRFRBAFEhoKFkxJRkVDWUNMRV9TVEFURV9GQUlMRUQQBkJEWkJnaXRodWIuY29tL2RlZXAtbmF2eS9wbGF0Zm9ybS1wcm90b3MvZ2VuL2dvL2RlZXBuYXZ5L3YxO2RlZXBuYXZ5djFiBnByb3RvMw", [file_google_protobuf_timestamp]);
 
 /**
  * @generated from message deepnavy.v1.PageRequest
  */
 export type PageRequest = Message<"deepnavy.v1.PageRequest"> & {
   /**
+   * page_size is the maximum number of resources to return. Zero selects the
+   * server default; servers publish and enforce an upper bound.
+   *
    * @generated from field: int32 page_size = 1;
    */
   pageSize: number;
 
   /**
+   * page_token is an opaque cursor returned by the preceding response. It is
+   * bound to the caller, filters, ordering, and authorization scope and must
+   * not be parsed or constructed by clients.
+   *
    * @generated from field: string page_token = 2;
    */
   pageToken: string;
@@ -41,6 +48,8 @@ export const PageRequestSchema: GenMessage<PageRequest> = /*@__PURE__*/
  */
 export type PageResponse = Message<"deepnavy.v1.PageResponse"> & {
   /**
+   * next_page_token is empty when no more resources remain.
+   *
    * @generated from field: string next_page_token = 1;
    */
   nextPageToken: string;
@@ -54,6 +63,38 @@ export const PageResponseSchema: GenMessage<PageResponse> = /*@__PURE__*/
   messageDesc(file_deepnavy_v1_common, 1);
 
 /**
+ * ReportingPeriod is a half-open UTC interval: started_at is inclusive and
+ * ended_at is exclusive. An empty request period selects the procedure's
+ * documented default; responses always return the actual applied period.
+ *
+ * @generated from message deepnavy.v1.ReportingPeriod
+ */
+export type ReportingPeriod = Message<"deepnavy.v1.ReportingPeriod"> & {
+  /**
+   * @generated from field: google.protobuf.Timestamp started_at = 1;
+   */
+  startedAt?: Timestamp | undefined;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp ended_at = 2;
+   */
+  endedAt?: Timestamp | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.ReportingPeriod.
+ * Use `create(ReportingPeriodSchema)` to create a new message.
+ */
+export const ReportingPeriodSchema: GenMessage<ReportingPeriod> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_common, 2);
+
+/**
+ * Money is a signed ISO-4217 currency amount. currency_code is the uppercase
+ * three-letter code. The amount is units + nanos / 1,000,000,000; nanos must be
+ * in [-999,999,999, 999,999,999] and have the same sign as units when units is
+ * non-zero. Services must reject mixed-currency arithmetic rather than silently
+ * converting or dropping a currency.
+ *
  * @generated from message deepnavy.v1.Money
  */
 export type Money = Message<"deepnavy.v1.Money"> & {
@@ -78,7 +119,7 @@ export type Money = Message<"deepnavy.v1.Money"> & {
  * Use `create(MoneySchema)` to create a new message.
  */
 export const MoneySchema: GenMessage<Money> = /*@__PURE__*/
-  messageDesc(file_deepnavy_v1_common, 2);
+  messageDesc(file_deepnavy_v1_common, 3);
 
 /**
  * @generated from message deepnavy.v1.AuditMetadata
@@ -110,7 +151,7 @@ export type AuditMetadata = Message<"deepnavy.v1.AuditMetadata"> & {
  * Use `create(AuditMetadataSchema)` to create a new message.
  */
 export const AuditMetadataSchema: GenMessage<AuditMetadata> = /*@__PURE__*/
-  messageDesc(file_deepnavy_v1_common, 3);
+  messageDesc(file_deepnavy_v1_common, 4);
 
 /**
  * @generated from enum deepnavy.v1.Environment

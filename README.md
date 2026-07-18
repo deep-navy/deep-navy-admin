@@ -1,6 +1,6 @@
 # deep-navy-admin
 
-Static, noindex Jekyll application for Deep Navy founders and administrators.
+Static, noindex Jekyll application for deep navy founders and administrators.
 The browser uses Amazon Cognito authorization code with PKCE and calls the same
 ConnectRPC platform API as the customer application. The repository contains no
 secret and the browser is never treated as an authorization boundary.
@@ -16,13 +16,33 @@ secret and the browser is never treated as an authorization boundary.
 - `AuthService.GetCurrentUser` verifies the bearer identity through the platform
   API. The admin overview is requested only after that response contains a
   case-insensitive `Founder` or `Admin` platform role.
-- `AdminService.GetAdminOverview` is consumed through TypeScript generated from
-  `platform-protos` revision
+- The read-only overview, customer, team economics, fleet, runtime, billing,
+  reconciliation, and alert projections are consumed through TypeScript
+  generated from `platform-protos` revision
   `fa01d7cc4c68c1e7ee606a44677ad70d16f4c563`.
-- MRR, ARR, active customers, active teams, gross margin, production incidents,
-  and merged pull requests render only from a successful API response. Missing
-  contracts and failed responses stay visibly unavailable; the UI has no demo
-  records or fallback business data.
+- Every list follows the AdminService snapshot cursor until complete, so the
+  customer, team, runtime, billing-account, reconciliation, and alert tables do
+  not silently stop at the first 100 records.
+- Each customer row opens an authorized current-account detail projection with
+  support and churn state, agent/session/initiative/approval activity, and an
+  independently paginated daily reliability history. Reliability cursors stay
+  opaque and organization-scoped; missing availability ratios are shown as
+  unavailable rather than zero.
+- MRR, ARR, retention, churn, customers, per-team direct cost, revenue, gross
+  profit and margin, runtime health, billing state, credits, reconciliation,
+  and alerts render only from successful API responses. Failed or unavailable
+  projections stay empty; independently successful customer, per-team,
+  billing-account, and reconciliation projections remain visible when an
+  aggregate summary is unavailable. The UI has no demo records or fallback
+  business data.
+- Every partial or stale projection reports source freshness and exact
+  unavailable protobuf fields; those fields remain visibly blank instead of
+  becoming trustworthy scalar zeroes. Billing accounts also expose the
+  authoritative paid-period team credit controls: ledger availability, open
+  reservations, consumed credits, hard limits, spendable capacity, and the
+  effective pause reason. Billing operations also expose upgrades, downgrades,
+  and each account's overage credits and premium, subject to the same exact
+  field-availability rules.
 - Public `/healthz` and `/readyz` probes are clearly distinguished from
   authenticated admin data.
 - All browser API and token requests use `cache: "no-store"`, omit cookies,
@@ -41,36 +61,30 @@ is absent or malformed.
 
 | GitHub environment variable | Meaning |
 | --- | --- |
-| `ADMIN_API_BASE_URL` | Exact HTTPS origin of the shared platform API, such as `https://api.dev.deep.navy` |
+| `ADMIN_API_BASE_URL` | Exact HTTPS origin of the shared platform API, such as `https://dev.api.deep.navy` |
 | `ADMIN_COGNITO_DOMAIN` | Exact Cognito managed-login origin |
 | `ADMIN_COGNITO_ISSUER` | Exact user-pool issuer, such as `https://cognito-idp.us-west-2.amazonaws.com/us-west-2_example` |
 | `ADMIN_COGNITO_CLIENT_ID` | Public Cognito app-client ID; never a client secret |
 | `ADMIN_SESSION_MAX_AGE_SECONDS` | Optional browser ceiling from 300 through 900; defaults to 900 |
 
-The workflow obtains `ADMIN_URL` from `actions/configure-pages`. The writer
-derives the only accepted callback and logout URLs from that deployed URL:
+The deployment workflow pins `ADMIN_URL` to the development custom domain. The
+writer derives the only accepted callback and logout URLs from that deployed
+URL:
 
 ```text
 <ADMIN_URL>/auth/callback/
 <ADMIN_URL>/
 ```
 
-For the current GitHub Pages project URL those are:
+For development those are:
 
 ```text
-https://deep-navy.github.io/deep-navy-admin/auth/callback/
-https://deep-navy.github.io/deep-navy-admin/
+https://dev.admin.deep.navy/auth/callback/
+https://dev.admin.deep.navy/
 ```
 
-After the custom domain is active they become:
-
-```text
-https://admin.dev.deep.navy/auth/callback/
-https://admin.dev.deep.navy/
-```
-
-Both exact callback/logout pairs must be registered on the development Cognito
-app client before the corresponding Pages URL is deployed. The current platform
+This exact callback/logout pair must be registered on the development Cognito
+app client before the Pages URL is deployed. The current platform
 API validates a single Cognito client ID, so development should initially add
 the admin URLs to that existing public client (and reduce its access/ID token
 validity to 15 minutes) unless platform authentication is first expanded to
@@ -87,6 +101,17 @@ The generated browser client issues ConnectRPC JSON `POST` requests to:
 ```text
 /deepnavy.v1.AuthService/GetCurrentUser
 /deepnavy.v1.AdminService/GetAdminOverview
+/deepnavy.v1.AdminService/ListAdminCustomers
+/deepnavy.v1.AdminService/GetAdminCustomer
+/deepnavy.v1.AdminService/ListAdminCustomerReliabilityRecords
+/deepnavy.v1.AdminService/GetAdminEconomics
+/deepnavy.v1.AdminService/ListAdminEconomicsSlices
+/deepnavy.v1.AdminService/GetAdminFleet
+/deepnavy.v1.AdminService/ListAdminRuntimeInstances
+/deepnavy.v1.AdminService/GetAdminBilling
+/deepnavy.v1.AdminService/ListAdminBillingAccounts
+/deepnavy.v1.AdminService/ListAdminBillingReconciliationIssues
+/deepnavy.v1.AdminService/ListAdminAlerts
 ```
 
 The portal also makes unauthenticated `GET` requests to:
@@ -97,28 +122,19 @@ The portal also makes unauthenticated `GET` requests to:
 ```
 
 Every protected request carries exactly one `Authorization: Bearer …` header
-and an opaque `X-Request-ID`. The client exposes only these two generated RPCs;
-it does not call customer-scoped billing or team methods as an admin shortcut.
+and an opaque `X-Request-ID`. The client exposes only generated read RPCs and
+does not call customer-scoped billing or team methods as an admin shortcut.
 
 ## Backend gaps blocking a complete admin launch
 
-`platform-protos` currently defines only the seven-field aggregate admin
-overview, and `platform-api` does not yet register or implement even that
-`AdminService`. The following requirements therefore remain unavailable by
-design, not simulated in this frontend:
+The read projections are defined and consumed. The remaining contract gaps are:
 
-- Admin customer list/detail, users, repositories, activity, support state,
-  reliability, churn risk, and customer health.
-- Economics by customer, team, agent, initiative, model, provider, issue, and
-  pull request.
-- Fleet instances, agent/session state, heartbeats, model, volume, backup,
-  event-stream, OpenClaw/operator/template versions, and alerts.
-- Subscription/invoice lifecycle, payment failures, renewals, credits,
-  overages, Stripe/local mismatches, and subscription/provisioning mismatches.
-- Audited privileged mutations with explicit confirmation and idempotency.
+- Collected versus recognized revenue. The current economics projection exposes
+  one period revenue value.
+- An admin audit-event list and privileged mutations with explicit confirmation,
+  idempotency, founder authorization, and immutable audit records.
 
-Those capabilities need resource-oriented protobuf methods, generated clients,
-and server-side founder/admin authorization. Protected responses should include
+Protected responses should include
 `Cache-Control: no-store`; GitHub Pages cannot set response headers, so the
 static shell itself contains no protected data and every browser fetch opts out
 of caching.
@@ -135,8 +151,7 @@ script/validate-site
 
 The validation command verifies vendored generated code and its revision,
 TypeScript, the browser bundle, OAuth/storage controls, runtime-value validation,
-JavaScript syntax, and rendered development, production, and GitHub Pages path
-builds.
+JavaScript syntax, and rendered development and production builds.
 
 For a local configured build, generate a public runtime file and serve Jekyll:
 

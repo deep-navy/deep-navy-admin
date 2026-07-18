@@ -10,7 +10,7 @@ const source = readFileSync("assets/js/callback-scrubber.js", "utf8");
 test("the authorization code is captured non-enumerably and removed before other assets load", () => {
   const replacements = [];
   const window = {
-    location: { search: "?code=one-time-code&state=opaque-state", pathname: "/deep-navy-admin/auth/callback/", hash: "" },
+    location: { search: "?code=one-time-code&state=opaque-state", pathname: "/auth/callback/", hash: "" },
     history: { replaceState(state, title, url) { replacements.push({ state, title, url }); } }
   };
   vm.runInNewContext(source, { window });
@@ -19,5 +19,5 @@ test("the authorization code is captured non-enumerably and removed before other
   assert.equal(replacements.length, 1);
   assert.deepEqual(Object.keys(replacements[0].state), []);
   assert.equal(replacements[0].title, "");
-  assert.equal(replacements[0].url, "/deep-navy-admin/auth/callback/");
+  assert.equal(replacements[0].url, "/auth/callback/");
 });
