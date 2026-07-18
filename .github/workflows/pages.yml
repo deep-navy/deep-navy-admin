@@ -74,6 +74,16 @@ jobs:
           TARGET_ENVIRONMENT: development
           TARGET_API_ORIGIN: ${{ vars.ADMIN_API_BASE_URL }}
         run: ruby test/site_test.rb _site "$TARGET_ENVIRONMENT" "$TARGET_API_ORIGIN" ""
+      - name: Assert the Pages custom domain
+        # Actions-deployed Pages only keeps a custom domain bound if the published
+        # artifact carries a CNAME file. Without it GitHub clears the domain on
+        # each deploy, actions/configure-pages then reports the repository-project
+        # base path (/deep-navy-admin) — baking broken asset URLs into every page —
+        # and the managed TLS certificate never provisions. Derive the host from
+        # the pinned public origin so this stays a single source of truth.
+        env:
+          ADMIN_URL: https://dev.admin.deep.navy
+        run: printf '%s\n' "${ADMIN_URL#https://}" > _site/CNAME
       - uses: actions/upload-pages-artifact@v5
         with:
           path: _site
