@@ -6,13 +6,17 @@ import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegen
 import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
 import type { OnboardingState, Organization, OrganizationMembership } from "./organizations_pb.js";
 import { file_deepnavy_v1_organizations } from "./organizations_pb.js";
+import type { GitHubInstallation } from "./github_pb.js";
+import { file_deepnavy_v1_github } from "./github_pb.js";
+import type { Timestamp } from "@bufbuild/protobuf/wkt";
+import { file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
 import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file deepnavy/v1/auth.proto.
  */
 export const file_deepnavy_v1_auth: GenFile = /*@__PURE__*/
-  fileDesc("ChZkZWVwbmF2eS92MS9hdXRoLnByb3RvEgtkZWVwbmF2eS52MSKXAQoLQ3VycmVudFVzZXISCgoCaWQYASABKAkSFAoMZ2l0aHViX2xvZ2luGAIgASgJEhQKDGRpc3BsYXlfbmFtZRgDIAEoCRIWCg5wbGF0Zm9ybV9yb2xlcxgEIAMoCRIQCgh1c2VybmFtZRgFIAEoCRINCgVlbWFpbBgGIAEoCRIXCg9jb2duaXRvX3N1YmplY3QYByABKAkiFwoVR2V0Q3VycmVudFVzZXJSZXF1ZXN0IusBChZHZXRDdXJyZW50VXNlclJlc3BvbnNlEiYKBHVzZXIYASABKAsyGC5kZWVwbmF2eS52MS5DdXJyZW50VXNlchI4CgttZW1iZXJzaGlwcxgCIAMoCzIjLmRlZXBuYXZ5LnYxLk9yZ2FuaXphdGlvbk1lbWJlcnNoaXASNwoUY3VycmVudF9vcmdhbml6YXRpb24YAyABKAsyGS5kZWVwbmF2eS52MS5Pcmdhbml6YXRpb24SNgoQb25ib2FyZGluZ19zdGF0ZRgEIAEoDjIcLmRlZXBuYXZ5LnYxLk9uYm9hcmRpbmdTdGF0ZSItChhTdGFydEdpdEh1YlNpZ25JblJlcXVlc3QSEQoJcmV0dXJuX3RvGAEgASgJIjYKGVN0YXJ0R2l0SHViU2lnbkluUmVzcG9uc2USGQoRYXV0aG9yaXphdGlvbl91cmwYASABKAkiEAoOU2lnbk91dFJlcXVlc3QiEQoPU2lnbk91dFJlc3BvbnNlMpICCgtBdXRoU2VydmljZRJZCg5HZXRDdXJyZW50VXNlchIiLmRlZXBuYXZ5LnYxLkdldEN1cnJlbnRVc2VyUmVxdWVzdBojLmRlZXBuYXZ5LnYxLkdldEN1cnJlbnRVc2VyUmVzcG9uc2USYgoRU3RhcnRHaXRIdWJTaWduSW4SJS5kZWVwbmF2eS52MS5TdGFydEdpdEh1YlNpZ25JblJlcXVlc3QaJi5kZWVwbmF2eS52MS5TdGFydEdpdEh1YlNpZ25JblJlc3BvbnNlEkQKB1NpZ25PdXQSGy5kZWVwbmF2eS52MS5TaWduT3V0UmVxdWVzdBocLmRlZXBuYXZ5LnYxLlNpZ25PdXRSZXNwb25zZUJEWkJnaXRodWIuY29tL2RlZXAtbmF2eS9wbGF0Zm9ybS1wcm90b3MvZ2VuL2dvL2RlZXBuYXZ5L3YxO2RlZXBuYXZ5djFiBnByb3RvMw", [file_deepnavy_v1_organizations]);
+  fileDesc("ChZkZWVwbmF2eS92MS9hdXRoLnByb3RvEgtkZWVwbmF2eS52MSKvAQoLQ3VycmVudFVzZXISCgoCaWQYASABKAkSFAoMZ2l0aHViX2xvZ2luGAIgASgJEhQKDGRpc3BsYXlfbmFtZRgDIAEoCRIWCg5wbGF0Zm9ybV9yb2xlcxgEIAMoCRIQCgh1c2VybmFtZRgFIAEoCRINCgVlbWFpbBgGIAEoCRIXCg9jb2duaXRvX3N1YmplY3QYByABKAkSFgoOZ2l0aHViX3VzZXJfaWQYCCABKAkiFwoVR2V0Q3VycmVudFVzZXJSZXF1ZXN0IusBChZHZXRDdXJyZW50VXNlclJlc3BvbnNlEiYKBHVzZXIYASABKAsyGC5kZWVwbmF2eS52MS5DdXJyZW50VXNlchI4CgttZW1iZXJzaGlwcxgCIAMoCzIjLmRlZXBuYXZ5LnYxLk9yZ2FuaXphdGlvbk1lbWJlcnNoaXASNwoUY3VycmVudF9vcmdhbml6YXRpb24YAyABKAsyGS5kZWVwbmF2eS52MS5Pcmdhbml6YXRpb24SNgoQb25ib2FyZGluZ19zdGF0ZRgEIAEoDjIcLmRlZXBuYXZ5LnYxLk9uYm9hcmRpbmdTdGF0ZSItChhTdGFydEdpdEh1YlNpZ25JblJlcXVlc3QSEQoJcmV0dXJuX3RvGAEgASgJIlAKGVN0YXJ0R2l0SHViU2lnbkluUmVzcG9uc2USGQoRYXV0aG9yaXphdGlvbl91cmwYASABKAkSGAoQaW5zdGFsbGF0aW9uX3VybBgCIAEoCSJ6ChtDb21wbGV0ZUdpdEh1YlNpZ25JblJlcXVlc3QSGgoSYXV0aG9yaXphdGlvbl9jb2RlGAEgASgJEhMKC3N0YXRlX3Rva2VuGAIgASgJEhcKD2luc3RhbGxhdGlvbl9pZBgDIAEoAxIRCglyZXR1cm5fdG8YBCABKAkihgIKHENvbXBsZXRlR2l0SHViU2lnbkluUmVzcG9uc2USFQoNc2Vzc2lvbl90b2tlbhgBIAEoCRIuCgpleHBpcmVzX2F0GAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBImCgR1c2VyGAMgASgLMhguZGVlcG5hdnkudjEuQ3VycmVudFVzZXISOAoLbWVtYmVyc2hpcHMYBCADKAsyIy5kZWVwbmF2eS52MS5Pcmdhbml6YXRpb25NZW1iZXJzaGlwEj0KFHBlbmRpbmdfaW5zdGFsbGF0aW9uGAUgASgLMh8uZGVlcG5hdnkudjEuR2l0SHViSW5zdGFsbGF0aW9uIhAKDlNpZ25PdXRSZXF1ZXN0IhEKD1NpZ25PdXRSZXNwb25zZTL/AgoLQXV0aFNlcnZpY2USWQoOR2V0Q3VycmVudFVzZXISIi5kZWVwbmF2eS52MS5HZXRDdXJyZW50VXNlclJlcXVlc3QaIy5kZWVwbmF2eS52MS5HZXRDdXJyZW50VXNlclJlc3BvbnNlEmIKEVN0YXJ0R2l0SHViU2lnbkluEiUuZGVlcG5hdnkudjEuU3RhcnRHaXRIdWJTaWduSW5SZXF1ZXN0GiYuZGVlcG5hdnkudjEuU3RhcnRHaXRIdWJTaWduSW5SZXNwb25zZRJrChRDb21wbGV0ZUdpdEh1YlNpZ25JbhIoLmRlZXBuYXZ5LnYxLkNvbXBsZXRlR2l0SHViU2lnbkluUmVxdWVzdBopLmRlZXBuYXZ5LnYxLkNvbXBsZXRlR2l0SHViU2lnbkluUmVzcG9uc2USRAoHU2lnbk91dBIbLmRlZXBuYXZ5LnYxLlNpZ25PdXRSZXF1ZXN0GhwuZGVlcG5hdnkudjEuU2lnbk91dFJlc3BvbnNlQkRaQmdpdGh1Yi5jb20vZGVlcC1uYXZ5L3BsYXRmb3JtLXByb3Rvcy9nZW4vZ28vZGVlcG5hdnkvdjE7ZGVlcG5hdnl2MWIGcHJvdG8z", [file_deepnavy_v1_organizations, file_deepnavy_v1_github, file_google_protobuf_timestamp]);
 
 /**
  * @generated from message deepnavy.v1.CurrentUser
@@ -60,6 +64,14 @@ export type CurrentUser = Message<"deepnavy.v1.CurrentUser"> & {
    * @generated from field: string cognito_subject = 7;
    */
   cognitoSubject: string;
+
+  /**
+   * github_user_id is the stable numeric GitHub account id (as a string) for a
+   * customer who signed in with GitHub; empty for a Cognito-authenticated admin.
+   *
+   * @generated from field: string github_user_id = 8;
+   */
+  githubUserId: string;
 };
 
 /**
@@ -143,9 +155,22 @@ export const StartGitHubSignInRequestSchema: GenMessage<StartGitHubSignInRequest
  */
 export type StartGitHubSignInResponse = Message<"deepnavy.v1.StartGitHubSignInResponse"> & {
   /**
+   * authorization_url is the GitHub user-authorization (OAuth) login URL. A
+   * returning user is redirected straight back; this is the sign-in handoff.
+   *
    * @generated from field: string authorization_url = 1;
    */
   authorizationUrl: string;
+
+  /**
+   * installation_url is the GitHub App installation URL carrying the same one-time
+   * state. A newly signed-in user who has not installed the App yet is sent here
+   * to connect their repositories; installing also authorizes, so the callback
+   * completes sign-in and derives the organization. A short-lived credential.
+   *
+   * @generated from field: string installation_url = 2;
+   */
+  installationUrl: string;
 };
 
 /**
@@ -154,6 +179,88 @@ export type StartGitHubSignInResponse = Message<"deepnavy.v1.StartGitHubSignInRe
  */
 export const StartGitHubSignInResponseSchema: GenMessage<StartGitHubSignInResponse> = /*@__PURE__*/
   messageDesc(file_deepnavy_v1_auth, 4);
+
+/**
+ * @generated from message deepnavy.v1.CompleteGitHubSignInRequest
+ */
+export type CompleteGitHubSignInRequest = Message<"deepnavy.v1.CompleteGitHubSignInRequest"> & {
+  /**
+   * authorization_code and state_token are one-time credentials: redact them
+   * from logs, traces, errors, and analytics.
+   *
+   * @generated from field: string authorization_code = 1;
+   */
+  authorizationCode: string;
+
+  /**
+   * @generated from field: string state_token = 2;
+   */
+  stateToken: string;
+
+  /**
+   * installation_id may be 0. The server resolves and verifies the installation
+   * from the trusted GET /user/installations response and fails closed if no
+   * unique installation can be established; a supplied value may only narrow it.
+   *
+   * @generated from field: int64 installation_id = 3;
+   */
+  installationId: bigint;
+
+  /**
+   * @generated from field: string return_to = 4;
+   */
+  returnTo: string;
+};
+
+/**
+ * Describes the message deepnavy.v1.CompleteGitHubSignInRequest.
+ * Use `create(CompleteGitHubSignInRequestSchema)` to create a new message.
+ */
+export const CompleteGitHubSignInRequestSchema: GenMessage<CompleteGitHubSignInRequest> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_auth, 5);
+
+/**
+ * @generated from message deepnavy.v1.CompleteGitHubSignInResponse
+ */
+export type CompleteGitHubSignInResponse = Message<"deepnavy.v1.CompleteGitHubSignInResponse"> & {
+  /**
+   * session_token is the deep navy customer session bearer token. It is a
+   * credential: redact it from logs and never persist it outside browser memory.
+   *
+   * @generated from field: string session_token = 1;
+   */
+  sessionToken: string;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp expires_at = 2;
+   */
+  expiresAt?: Timestamp | undefined;
+
+  /**
+   * @generated from field: deepnavy.v1.CurrentUser user = 3;
+   */
+  user?: CurrentUser | undefined;
+
+  /**
+   * @generated from field: repeated deepnavy.v1.OrganizationMembership memberships = 4;
+   */
+  memberships: OrganizationMembership[];
+
+  /**
+   * pending_installation is the captured GitHub App installation, not yet bound
+   * to an organization. Onboarding binds it when the organization is created.
+   *
+   * @generated from field: deepnavy.v1.GitHubInstallation pending_installation = 5;
+   */
+  pendingInstallation?: GitHubInstallation | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.CompleteGitHubSignInResponse.
+ * Use `create(CompleteGitHubSignInResponseSchema)` to create a new message.
+ */
+export const CompleteGitHubSignInResponseSchema: GenMessage<CompleteGitHubSignInResponse> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_auth, 6);
 
 /**
  * @generated from message deepnavy.v1.SignOutRequest
@@ -166,7 +273,7 @@ export type SignOutRequest = Message<"deepnavy.v1.SignOutRequest"> & {
  * Use `create(SignOutRequestSchema)` to create a new message.
  */
 export const SignOutRequestSchema: GenMessage<SignOutRequest> = /*@__PURE__*/
-  messageDesc(file_deepnavy_v1_auth, 5);
+  messageDesc(file_deepnavy_v1_auth, 7);
 
 /**
  * @generated from message deepnavy.v1.SignOutResponse
@@ -179,7 +286,7 @@ export type SignOutResponse = Message<"deepnavy.v1.SignOutResponse"> & {
  * Use `create(SignOutResponseSchema)` to create a new message.
  */
 export const SignOutResponseSchema: GenMessage<SignOutResponse> = /*@__PURE__*/
-  messageDesc(file_deepnavy_v1_auth, 6);
+  messageDesc(file_deepnavy_v1_auth, 8);
 
 /**
  * @generated from service deepnavy.v1.AuthService
@@ -204,6 +311,18 @@ export const AuthService: GenService<{
     methodKind: "unary";
     input: typeof StartGitHubSignInRequestSchema;
     output: typeof StartGitHubSignInResponseSchema;
+  },
+  /**
+   * CompleteGitHubSignIn exchanges the one-time GitHub authorization code for a
+   * deep navy customer session, capturing the GitHub identity and the App
+   * installation selected during sign-in. It is public (no bearer required).
+   *
+   * @generated from rpc deepnavy.v1.AuthService.CompleteGitHubSignIn
+   */
+  completeGitHubSignIn: {
+    methodKind: "unary";
+    input: typeof CompleteGitHubSignInRequestSchema;
+    output: typeof CompleteGitHubSignInResponseSchema;
   },
   /**
    * @generated from rpc deepnavy.v1.AuthService.SignOut
