@@ -61,7 +61,7 @@ is absent or malformed.
 
 | GitHub environment variable | Meaning |
 | --- | --- |
-| `ADMIN_API_BASE_URL` | Exact HTTPS origin of the shared platform API, such as `https://dev.api.deep.navy` |
+| `ADMIN_API_BASE_URL` | Exact HTTPS origin of the shared platform API, such as `https://api.dev.deep.navy` |
 | `ADMIN_COGNITO_DOMAIN` | Exact Cognito managed-login origin |
 | `ADMIN_COGNITO_ISSUER` | Exact user-pool issuer, such as `https://cognito-idp.us-west-2.amazonaws.com/us-west-2_example` |
 | `ADMIN_COGNITO_CLIENT_ID` | Public Cognito app-client ID; never a client secret |
@@ -79,8 +79,8 @@ URL:
 For development those are:
 
 ```text
-https://dev.admin.deep.navy/auth/callback/
-https://dev.admin.deep.navy/
+https://admin.deep.navy/auth/callback/
+https://admin.deep.navy/
 ```
 
 This exact callback/logout pair must be registered on the development Cognito

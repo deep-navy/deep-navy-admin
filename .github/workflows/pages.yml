@@ -57,7 +57,7 @@ jobs:
           DEEP_NAVY_ENVIRONMENT: development
           # Keep generated routes and Cognito redirects on the custom domain
           # even while GitHub Pages is still provisioning its certificate.
-          ADMIN_URL: https://dev.admin.deep.navy
+          ADMIN_URL: https://admin.deep.navy
           ADMIN_API_BASE_URL: ${{ vars.ADMIN_API_BASE_URL }}
           ADMIN_COGNITO_DOMAIN: ${{ vars.ADMIN_COGNITO_DOMAIN }}
           ADMIN_COGNITO_ISSUER: ${{ vars.ADMIN_COGNITO_ISSUER }}
@@ -82,7 +82,7 @@ jobs:
         # and the managed TLS certificate never provisions. Derive the host from
         # the pinned public origin so this stays a single source of truth.
         env:
-          ADMIN_URL: https://dev.admin.deep.navy
+          ADMIN_URL: https://admin.deep.navy
         run: printf '%s\n' "${ADMIN_URL#https://}" > _site/CNAME
       - uses: actions/upload-pages-artifact@v5
         with:
