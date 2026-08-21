@@ -45,6 +45,7 @@
       <a class="nav-link" href="#economics"><span class="nav-index" aria-hidden="true">03</span>Economics</a>
       <a class="nav-link" href="#operations"><span class="nav-index" aria-hidden="true">04</span>Operations</a>
       <a class="nav-link" href="#billing"><span class="nav-index" aria-hidden="true">05</span>Billing</a>
+      <a class="nav-link" href="#metrics"><span class="nav-index" aria-hidden="true">06</span>Metrics</a>
     </nav>
     <div class="rail-session"><span class="eyebrow">Session policy</span><strong>Short-lived operator session</strong><p>Tokens live in this tab’s memory and the portal signs out at <span data-session-expiry>the session ceiling</span>.</p></div>
   </aside>
@@ -130,6 +131,12 @@
     <section class="workspace-section" id="audit" aria-labelledby="audit-title">
       <div class="section-heading"><div><p class="eyebrow">Security</p><h2 id="audit-title">Audit trail</h2></div><span class="section-state" data-section-state="audit">Waiting</span></div>
       <div class="table-shell"><table><caption class="visually-hidden">Administrative audit events</caption><thead><tr><th scope="col">Occurred (UTC)</th><th scope="col">Actor</th><th scope="col">Action</th><th scope="col">Resource</th><th scope="col">Organization</th><th scope="col">Source IP</th><th scope="col">Request ID</th></tr></thead><tbody data-audit-rows></tbody></table><p class="data-table-empty" data-table-empty="audit">No audit events loaded.</p></div>
+    </section>
+
+    <section class="workspace-section" id="metrics" aria-labelledby="metrics-title">
+      <div class="section-heading"><div><p class="eyebrow">Fleet telemetry</p><h2 id="metrics-title">Metrics</h2></div><span class="section-state" data-section-state="metrics">Waiting</span></div>
+      <p class="metrics-note">Live series from the per-environment Prometheus workspaces, rendered environment by environment. A column whose workspace does not exist says so; nothing here is ever invented browser-side.</p>
+      <div class="metrics-grid" data-metrics-grid></div>
     </section>
 
     <section class="workspace-section" id="billing" aria-labelledby="billing-title">

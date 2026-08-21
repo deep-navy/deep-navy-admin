@@ -495,7 +495,7 @@
     document.querySelectorAll("[data-alert-coverage]").forEach((element) => { element.textContent = "No alert coverage has been loaded."; });
     document.querySelectorAll("[data-economics-metric], [data-fleet-metric], [data-billing-metric]").forEach((element) => { element.textContent = "—"; });
     ["customers", "team-economics", "runtimes", "alerts", "billing-accounts", "team-credit-controls", "reconciliation", "audit"].forEach(clearTable);
-    ["customers", "economics", "operations", "billing"].forEach((name) => setSectionState(name, "Waiting", "neutral"));
+    ["customers", "economics", "operations", "billing", "metrics"].forEach((name) => setSectionState(name, "Waiting", "neutral"));
     closeCustomerDetail();
   }
 
@@ -1235,6 +1235,153 @@
     renderRuntimeRows([...state.runtimeInstances.values()]);
   }
 
+  // The metrics panels read the per-environment Prometheus workspaces
+  // through platform-api's closed PromQL proxy. Environments render side by
+  // side; an environment whose workspace does not exist answers 404 from the
+  // proxy and its column says "Not provisioned" - the production column is
+  // honest before the production account is real.
+  const METRICS_ENVIRONMENTS = ["development", "production"];
+  const METRICS_PANELS = [
+    { key: "request_rate", title: "HTTP requests", unit: "req/s", scale: 1 },
+    { key: "latency_p95", title: "HTTP latency p95", unit: "ms", scale: 1000 },
+    { key: "error_rate", title: "HTTP 5xx", unit: "req/s", scale: 1 },
+    { key: "goroutines", title: "Goroutines", unit: "", scale: 1 },
+    { key: "memory_bytes", title: "Go heap in use", unit: "MiB", scale: 1 / (1024 * 1024) },
+    { key: "llm_tokens", title: "Model tokens", unit: "tok/s", scale: 1 },
+    { key: "llm_cost_usd", title: "Model spend (1h)", unit: "USD", scale: 1 },
+    { key: "queue_depth", title: "Agent queue depth", unit: "", scale: 1 }
+  ];
+
+  function metricsSparkline(points) {
+    const svgNamespace = "http://www.w3.org/2000/svg";
+    const width = 160;
+    const height = 36;
+    const svg = document.createElementNS(svgNamespace, "svg");
+    svg.setAttribute("class", "metrics-spark");
+    svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+    svg.setAttribute("preserveAspectRatio", "none");
+    svg.setAttribute("aria-hidden", "true");
+    const maxValue = Math.max(...points.map((point) => point.value), 1e-9);
+    const coordinates = points.map((point, index) => {
+      const x = points.length === 1 ? width : (index / (points.length - 1)) * width;
+      const y = height - (point.value / maxValue) * (height - 2) - 1;
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    });
+    const line = document.createElementNS(svgNamespace, "polyline");
+    line.setAttribute("fill", "none");
+    line.setAttribute("stroke", "currentColor");
+    line.setAttribute("stroke-width", "1.5");
+    line.setAttribute("points", coordinates.join(" "));
+    svg.append(line);
+    return svg;
+  }
+
+  async function fetchMetricsPanel(environment, panel, signal) {
+    const target = new URL("/admin/v1/metrics/query_range", apiBaseUrl);
+    target.searchParams.set("environment", environment);
+    target.searchParams.set("panel", panel.key);
+    target.searchParams.set("step", "60");
+    const response = await fetch(target, {
+      method: "GET",
+      cache: "no-store",
+      credentials: "omit",
+      redirect: "error",
+      referrerPolicy: "no-referrer",
+      headers: { Accept: "application/json", Authorization: `Bearer ${state.accessToken}` },
+      signal
+    });
+    if (response.status === 404) return { state: "unprovisioned" };
+    if (!response.ok) return { state: "unavailable", detail: `HTTP ${response.status}` };
+    const payload = await response.json();
+    const series = payload?.data?.result;
+    if (!Array.isArray(series) || series.length === 0) return { state: "empty" };
+    // Sum across result series per timestamp: the panel headline is the
+    // fleet total, and the per-series split belongs to a drill-down, not a
+    // tile.
+    const totals = new Map();
+    for (const entry of series) {
+      for (const [timestamp, raw] of entry?.values ?? []) {
+        const value = Number(raw);
+        if (!Number.isFinite(value)) continue;
+        totals.set(timestamp, (totals.get(timestamp) ?? 0) + value);
+      }
+    }
+    const points = [...totals.entries()].sort((a, b) => a[0] - b[0]).map(([, value]) => ({ value: value * panel.scale }));
+    if (!points.length) return { state: "empty" };
+    return { state: "ok", latest: points[points.length - 1].value, points };
+  }
+
+  function renderMetricsCell(cell, outcome, panel) {
+    const environmentLabel = cell.querySelector(".metrics-environment");
+    cell.replaceChildren(environmentLabel);
+    if (outcome.state === "ok") {
+      const digits = outcome.latest >= 100 ? 0 : 2;
+      const value = document.createElement("strong");
+      value.className = "metrics-value";
+      value.textContent = outcome.latest.toFixed(digits);
+      const unit = document.createElement("span");
+      unit.className = "metrics-unit";
+      unit.textContent = panel.unit;
+      value.append(unit);
+      cell.append(value, metricsSparkline(outcome.points));
+      return;
+    }
+    const absent = document.createElement("span");
+    absent.className = "metrics-absent";
+    absent.textContent = outcome.state === "unprovisioned" ? "Not provisioned"
+      : outcome.state === "empty" ? "No data yet"
+        : `Unavailable${outcome.detail ? ` (${outcome.detail})` : ""}`;
+    cell.append(absent);
+  }
+
+  async function loadMetrics(signal) {
+    const grid = document.querySelector("[data-metrics-grid]");
+    if (!grid) return true;
+    setSectionState("metrics", "Loading", "pending");
+    grid.replaceChildren();
+    const cards = new Map();
+    for (const panel of METRICS_PANELS) {
+      const card = document.createElement("article");
+      card.className = "metrics-card";
+      const kicker = document.createElement("span");
+      kicker.className = "panel-kicker";
+      kicker.textContent = panel.title;
+      const columns = document.createElement("div");
+      columns.className = "metrics-columns";
+      for (const environment of METRICS_ENVIRONMENTS) {
+        const cell = document.createElement("div");
+        cell.className = "metrics-cell";
+        cell.dataset.environment = environment;
+        const label = document.createElement("span");
+        label.className = "metrics-environment";
+        label.textContent = environment;
+        const loading = document.createElement("span");
+        loading.className = "metrics-absent";
+        loading.textContent = "Loading";
+        cell.append(label, loading);
+        columns.append(cell);
+      }
+      card.append(kicker, columns);
+      grid.append(card);
+      cards.set(panel.key, card);
+    }
+    let anyFailure = false;
+    await Promise.all(METRICS_PANELS.flatMap((panel) => METRICS_ENVIRONMENTS.map(async (environment) => {
+      let outcome;
+      try {
+        outcome = await fetchMetricsPanel(environment, panel, signal);
+      } catch (error) {
+        if (error?.name === "AbortError") return;
+        outcome = { state: "unavailable" };
+      }
+      if (outcome.state === "unavailable") anyFailure = true;
+      const cell = cards.get(panel.key)?.querySelector(`[data-environment="${environment}"]`);
+      if (cell) renderMetricsCell(cell, outcome, panel);
+    })));
+    setSectionState("metrics", anyFailure ? "Degraded" : "Live", anyFailure ? "negative" : "positive");
+    return !anyFailure;
+  }
+
   async function loadOperations(signal) {
     setSectionState("operations", "Loading", "pending");
     const [fleetResult, runtimesResult] = await Promise.allSettled([
@@ -1691,6 +1838,7 @@
         loadCustomers(state.refreshController.signal),
         loadEconomics(state.refreshController.signal),
         loadOperations(state.refreshController.signal),
+        loadMetrics(state.refreshController.signal),
         loadBilling(state.refreshController.signal),
         loadAlerts(state.refreshController.signal),
         loadAudit(state.refreshController.signal),

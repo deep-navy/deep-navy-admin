@@ -51,3 +51,19 @@ test("billing exposes upgrades, downgrades, and per-account overages without fak
   assert.match(shell, /Overage credits/);
   assert.match(shell, /Overage premium/);
 });
+
+// The metrics section renders environments side by side from the closed
+// proxy, and it never invents a number: unknown environments say "Not
+// provisioned", empty results say "No data yet".
+test("metrics panels are proxied, side-by-side, and honest about absence", () => {
+  const js = readFileSync("assets/js/admin.js", "utf8");
+  const html = readFileSync("_includes/admin-console.html", "utf8");
+  assert.match(js, /METRICS_ENVIRONMENTS = \["development", "production"\]/);
+  assert.match(js, /\/admin\/v1\/metrics\/query_range/);
+  assert.match(js, /Authorization: `Bearer \$\{state\.accessToken\}`/);
+  assert.match(js, /"unprovisioned"/);
+  assert.match(js, /Not provisioned/);
+  assert.match(js, /No data yet/);
+  assert.match(html, /data-metrics-grid/);
+  assert.match(html, /href="#metrics"/);
+});
