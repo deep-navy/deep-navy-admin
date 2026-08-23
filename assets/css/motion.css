@@ -1,0 +1,62 @@
+/* deep.navy — the motion layer. Utilities any screen can use without writing keyframes.
+   Every class here answers "what just changed?". Reduced motion neutralises all of them. */
+
+/* --- choreography: a group arrives one --stagger-step apart, never all at once --- */
+.dn-stagger>*{animation:dn-rise var(--dur-base) var(--ease-out) both;animation-delay:calc(var(--dn-i,0) * var(--stagger-step))}
+.dn-stagger>*:nth-child(2){animation-delay:calc(1 * var(--stagger-step))}.dn-stagger>*:nth-child(3){animation-delay:calc(2 * var(--stagger-step))}.dn-stagger>*:nth-child(4){animation-delay:calc(3 * var(--stagger-step))}.dn-stagger>*:nth-child(5){animation-delay:calc(4 * var(--stagger-step))}.dn-stagger>*:nth-child(6){animation-delay:calc(5 * var(--stagger-step))}.dn-stagger>*:nth-child(7){animation-delay:calc(6 * var(--stagger-step))}.dn-stagger>*:nth-child(8){animation-delay:calc(7 * var(--stagger-step))}.dn-stagger>*:nth-child(9){animation-delay:calc(8 * var(--stagger-step))}.dn-stagger>*:nth-child(10){animation-delay:calc(9 * var(--stagger-step))}.dn-stagger>*:nth-child(11){animation-delay:calc(10 * var(--stagger-step))}.dn-stagger>*:nth-child(12){animation-delay:calc(11 * var(--stagger-step))}
+
+/* --- arrivals --- */
+.dn-in{animation:dn-rise var(--dur-base) var(--ease-out) both}
+.dn-in-fade{animation:dn-fade var(--dur-base) var(--ease-standard) both}
+.dn-in-pop{animation:dn-pop var(--dur-slow) var(--ease-arrive) both}
+.dn-in-slide{animation:dn-slide-in var(--dur-base) var(--ease-out) both}
+/* a log line the agent just wrote: it arrives AND the row flashes once */
+.dn-in-log{animation:dn-rise var(--dur-base) var(--ease-out) both,dn-flash var(--dur-slower) var(--ease-in) var(--dur-base) both}
+
+/* --- scroll reveal (motion.js adds .is-in when the element enters the viewport) ---
+   FAIL OPEN. The hidden state is scoped to .dn-motion-ready, which motion.js puts on <html>
+   only once it is actually observing. No motion.js, script blocked, mounted after
+   DOMContentLoaded, printing, reduced motion — the content is simply visible. A reveal
+   utility that defaults to opacity:0 will eventually hide something permanently. */
+.dn-reveal{transition:opacity var(--dur-slow) var(--ease-out),transform var(--dur-slow) var(--ease-out);transition-delay:calc(var(--dn-i,0) * var(--stagger-step))}
+.dn-motion-ready .dn-reveal:not(.is-in){opacity:0;transform:translate3d(0,14px,0)}
+.dn-reveal.is-in{opacity:1;transform:none}
+@media print{.dn-reveal{opacity:1!important;transform:none!important}}
+
+/* --- link and label underline sweep: grows from the left, never fades --- */
+.dn-sweep{position:relative;text-decoration:none}
+.dn-sweep::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:1px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform var(--dur-base) var(--ease-out)}
+.dn-sweep:focus-visible::after{transform:scaleX(1)}
+
+/* --- icon nudge: the arrow leans toward where it is taking you --- */
+.dn-nudge .dn-icon{transition:transform var(--dur-base) var(--ease-out)}
+
+/* --- a value that just changed --- */
+.dn-tick{animation:dn-tick var(--dur-slow) var(--ease-arrive) both}
+.dn-shake{animation:dn-shake var(--dur-slower) var(--ease-in-out) both}
+.dn-flash{animation:dn-flash var(--dur-slower) var(--ease-in) both}
+.dn-wipe{animation:dn-wipe var(--dur-slow) var(--ease-out) both}
+
+/* --- an agent thinking: the mono caret every log tail ends with --- */
+.dn-caret::after{content:"▍";margin-left:2px;color:var(--status-live-dot);animation:dn-caret var(--dur-loop-fast) steps(1) infinite}
+
+/* --- the live rail: a hairline that travels, for anything actively streaming --- */
+.dn-livebar{position:relative;overflow:hidden}
+.dn-livebar::after{content:"";position:absolute;left:0;top:0;height:1px;width:38%;background:linear-gradient(90deg,transparent,var(--status-live-dot),transparent);animation:dn-travel var(--dur-loop) var(--ease-in-out) infinite}
+@keyframes dn-travel{from{transform:translateX(-100%)}to{transform:translateX(360%)}}
+
+/* --- numbers that count. motion.js drives the value; this keeps them from reflowing --- */
+.dn-odometer{font-variant-numeric:tabular-nums;display:inline-block}
+
+/* --- press physics: everything pressable shares one curve --- */
+.dn-press{transition:transform var(--dur-micro) var(--ease-standard)}
+.dn-press:active{transform:scale(var(--press-scale))}
+
+/* Hover is a pointer capability, not a device: gating it keeps a tap on iOS and iPad
+   from leaving hover paint stuck, while an iPad with a trackpad still gets it. */
+@media (hover:hover){
+.dn-sweep:hover::after{transform:scaleX(1)}
+.dn-sweep:hover{text-decoration:none}
+.dn-nudge:hover .dn-icon:last-child{transform:translateX(3px)}
+.dn-nudge-back:hover .dn-icon:first-child{transform:translateX(-3px)}
+}

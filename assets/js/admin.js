@@ -496,6 +496,7 @@
     document.querySelectorAll("[data-economics-metric], [data-fleet-metric], [data-billing-metric]").forEach((element) => { element.textContent = "—"; });
     ["customers", "team-economics", "runtimes", "alerts", "billing-accounts", "team-credit-controls", "reconciliation", "audit"].forEach(clearTable);
     ["customers", "economics", "operations", "billing", "metrics"].forEach((name) => setSectionState(name, "Waiting", "neutral"));
+    resetMetricsExplorer();
     closeCustomerDetail();
   }
 
@@ -1235,52 +1236,72 @@
     renderRuntimeRows([...state.runtimeInstances.values()]);
   }
 
-  // The metrics panels read the per-environment Prometheus workspaces
-  // through platform-api's closed PromQL proxy. Environments render side by
-  // side; an environment whose workspace does not exist answers 404 from the
-  // proxy and its column says "Not provisioned" - the production column is
-  // honest before the production account is real.
+  // The metrics explorer reads the per-environment Prometheus workspaces
+  // through platform-api's closed PromQL proxy. The proxy takes PANEL NAMES
+  // plus params - never raw PromQL - with the window capped at 24h and the
+  // step at >=30s. Environments render side by side, and the empty states
+  // are the design system's four kinds of empty, mapped onto what the proxy
+  // really answered: an environment whose workspace does not exist answers
+  // 404 and its column says "Not provisioned" (the production column is
+  // honest before the production account is real); a series that is wired
+  // but has never delivered a sample says "No data yet" with the brass
+  // pending flag and the reason; target_health is empty by construction
+  // (push pipeline, no scrape up) and says so; a failed request is a
+  // failure, never a substitute series. Nothing is invented browser-side.
   const METRICS_ENVIRONMENTS = ["development", "production"];
+  const METRICS_SERVICES = ["platform-api", "builder", "gateway"];
+  const METRICS_WINDOWS = ["1h", "6h", "24h"];
+  const METRICS_STEP_SECONDS = "30";
+  const METRICS_PENDING_WHY = "Wired, but no openclaw_* series has reached the workspace. The running crew pod was provisioned before the metrics wiring shipped — its live config still has metrics: false and no gateway endpoint. A generation bump per crew is the activation step; that action belongs to provisioning, not to this console, so no button pretends otherwise.";
+  const METRICS_ABSENT_WHY = "Not provisioned — the environment map has one entry until the production account exists. An absent environment is not an outage and not a permissions problem; there is no environment to query.";
+  const METRICS_FAILED_WHY = "The proxy did not answer this request. Nothing was substituted — the panel stays empty rather than showing an invented series.";
+  // Ten panel names, exactly the proxy's vocabulary. The service= filter
+  // exists on the first five only.
   const METRICS_PANELS = [
-    { key: "request_rate", title: "HTTP requests", unit: "req/s", scale: 1 },
-    { key: "latency_p95", title: "HTTP latency p95", unit: "ms", scale: 1000 },
-    { key: "error_rate", title: "HTTP 5xx", unit: "req/s", scale: 1 },
-    { key: "goroutines", title: "Goroutines", unit: "", scale: 1 },
-    { key: "memory_bytes", title: "Go heap in use", unit: "MiB", scale: 1 / (1024 * 1024) },
-    { key: "llm_tokens", title: "Model tokens", unit: "tok/s", scale: 1 },
-    { key: "llm_cost_usd", title: "Model spend (1h)", unit: "USD", scale: 1 },
-    { key: "queue_depth", title: "Agent queue depth", unit: "", scale: 1 }
+    { key: "request_rate", title: "Request rate", unit: "req/s", scale: 1, group: "service", filterable: true, resolves: "http_server_request_duration_seconds (histogram)" },
+    { key: "error_rate", title: "Error rate (5xx)", unit: "req/s", scale: 1, group: "service", filterable: true, tone: "danger", resolves: "http_server_request_duration_seconds + http_response_status_code" },
+    { key: "latency_p95", title: "Latency p95", unit: "ms", scale: 1000, group: "service", filterable: true, resolves: "http_server_request_duration_seconds → p95", caveat: "No http_route label — this is service-wide. Per-endpoint latency needs new instrumentation, not a different query." },
+    { key: "goroutines", title: "Goroutines", unit: "", scale: 1, group: "service", filterable: true, resolves: "go_goroutine_count" },
+    { key: "memory_bytes", title: "Go heap in use", unit: "MiB", scale: 1 / (1024 * 1024), group: "service", filterable: true, resolves: "go_memory_used_bytes" },
+    { key: "target_health", title: "Target health", unit: "", scale: 1, group: "service", filterable: false, resolves: "target_info", emptyByDesign: "Resolves to target_info. Push pipeline — there is no scrape up to report. Empty by construction, not by outage." },
+    { key: "llm_tokens", title: "Model tokens", unit: "tok/s", scale: 1, group: "crew", filterable: false, resolves: "openclaw_tokens_total" },
+    { key: "llm_cost_usd", title: "Model spend (1h)", unit: "USD", scale: 1, group: "crew", filterable: false, resolves: "openclaw_cost_usd_total" },
+    { key: "run_duration", title: "Run duration p95", unit: "s", scale: 1, group: "crew", filterable: false, resolves: "openclaw_run_duration_ms (histogram) → p95" },
+    { key: "queue_depth", title: "Agent queue depth", unit: "", scale: 1, group: "crew", filterable: false, resolves: "openclaw_queue_depth" }
   ];
 
-  function metricsSparkline(points) {
-    const svgNamespace = "http://www.w3.org/2000/svg";
-    const width = 160;
-    const height = 36;
-    const svg = document.createElementNS(svgNamespace, "svg");
-    svg.setAttribute("class", "metrics-spark");
-    svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
-    svg.setAttribute("preserveAspectRatio", "none");
-    svg.setAttribute("aria-hidden", "true");
-    const maxValue = Math.max(...points.map((point) => point.value), 1e-9);
-    const coordinates = points.map((point, index) => {
-      const x = points.length === 1 ? width : (index / (points.length - 1)) * width;
-      const y = height - (point.value / maxValue) * (height - 2) - 1;
-      return `${x.toFixed(1)},${y.toFixed(1)}`;
-    });
-    const line = document.createElementNS(svgNamespace, "polyline");
-    line.setAttribute("fill", "none");
-    line.setAttribute("stroke", "currentColor");
-    line.setAttribute("stroke-width", "1.5");
-    line.setAttribute("points", coordinates.join(" "));
-    svg.append(line);
-    return svg;
+  const metricsState = {
+    outcomes: new Map(),
+    focusKey: METRICS_PANELS[0].key,
+    service: "",
+    windowKey: "24h",
+    environment: "development",
+    focusController: null,
+    loaded: false
+  };
+
+  function metricsPanel(key) {
+    return METRICS_PANELS.find((panel) => panel.key === key) || METRICS_PANELS[0];
+  }
+
+  function metricsUpstreamSeries(panel) {
+    return panel.resolves.split(" ")[0];
+  }
+
+  // One URL builder serves both the fetch and the query-echo strip, so what
+  // the strip reads back is provably the request the browser sends.
+  function metricsRequestUrl(environment, panel, service, windowKey) {
+    const target = new URL("/admin/v1/metrics/query_range", apiBaseUrl);
+    target.searchParams.set("panel", panel.key);
+    if (panel.filterable && service) target.searchParams.set("service", service);
+    target.searchParams.set("window", windowKey);
+    target.searchParams.set("step", METRICS_STEP_SECONDS);
+    target.searchParams.set("environment", environment);
+    return target;
   }
 
   async function fetchMetricsPanel(environment, panel, signal) {
-    const target = new URL("/admin/v1/metrics/query_range", apiBaseUrl);
-    target.searchParams.set("environment", environment);
-    target.searchParams.set("panel", panel.key);
-    target.searchParams.set("step", "60");
+    const target = metricsRequestUrl(environment, panel, metricsState.service, metricsState.windowKey);
     const response = await fetch(target, {
       method: "GET",
       cache: "no-store",
@@ -1311,58 +1332,458 @@
     return { state: "ok", latest: points[points.length - 1].value, points };
   }
 
+  function formatMetricsValue(value) {
+    return value.toFixed(value >= 100 ? 0 : 2);
+  }
+
+  function metricsPip(state) {
+    const pip = document.createElement("span");
+    pip.className = `pip pip--${state}`;
+    pip.setAttribute("aria-hidden", "true");
+    return pip;
+  }
+
+  function metricsPipState(outcome, panel) {
+    if (!outcome) return "idle";
+    if (outcome.state === "ok") return "live";
+    if (outcome.state === "unavailable") return "danger";
+    if (outcome.state === "unprovisioned") return "idle";
+    return panel.emptyByDesign ? "idle" : "attention";
+  }
+
+  function metricsChart(points, panel, large) {
+    const svgNamespace = "http://www.w3.org/2000/svg";
+    const width = large ? 640 : 160;
+    const height = large ? 180 : 44;
+    const svg = document.createElementNS(svgNamespace, "svg");
+    svg.setAttribute("class", `metrics-spark${panel.tone === "danger" ? " metrics-spark--danger" : ""}${large ? " metrics-spark--lg" : ""}`);
+    svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+    svg.setAttribute("preserveAspectRatio", "none");
+    svg.setAttribute("aria-hidden", "true");
+    // Hairline y-grid only - no x-grid, no frame, no fill. The only colour
+    // on the plot is the data.
+    for (const fraction of [0.25, 0.5, 0.75]) {
+      const grid = document.createElementNS(svgNamespace, "line");
+      grid.setAttribute("class", "spark-grid");
+      grid.setAttribute("x1", "0");
+      grid.setAttribute("x2", String(width));
+      grid.setAttribute("y1", (height * fraction).toFixed(1));
+      grid.setAttribute("y2", (height * fraction).toFixed(1));
+      svg.append(grid);
+    }
+    const maxValue = Math.max(...points.map((point) => point.value), 1e-9);
+    const coordinates = points.map((point, index) => {
+      const x = points.length === 1 ? width : (index / (points.length - 1)) * width;
+      const y = height - (point.value / maxValue) * (height - 2) - 1;
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    });
+    const line = document.createElementNS(svgNamespace, "polyline");
+    line.setAttribute("class", "spark-line");
+    line.setAttribute("fill", "none");
+    line.setAttribute("stroke-width", large ? "2" : "1.5");
+    line.setAttribute("points", coordinates.join(" "));
+    svg.append(line);
+    if (!large) return svg;
+    // The focused plot carries mono ticks: the scale's top and floor, in the
+    // panel's own unit, where the eye already is.
+    const wrap = document.createElement("div");
+    wrap.className = "metrics-plot";
+    wrap.append(svg);
+    const ticks = document.createElement("div");
+    ticks.className = "metrics-plot__ticks";
+    ticks.setAttribute("aria-hidden", "true");
+    const top = document.createElement("span");
+    top.textContent = `${formatMetricsValue(maxValue)}${panel.unit ? ` ${panel.unit}` : ""}`;
+    const floor = document.createElement("span");
+    floor.textContent = "0";
+    ticks.append(top, floor);
+    wrap.append(ticks);
+    return wrap;
+  }
+
+  // A ghost plot: repeating hairlines where the grid would be, so a grid of
+  // empty panels reads as instruments whose series are absent, not as a
+  // screen that failed to load.
+  function metricsGhostPlot(large) {
+    const svgNamespace = "http://www.w3.org/2000/svg";
+    const width = large ? 640 : 160;
+    const height = large ? 96 : 36;
+    const svg = document.createElementNS(svgNamespace, "svg");
+    svg.setAttribute("class", "metrics-ghost");
+    svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+    svg.setAttribute("preserveAspectRatio", "none");
+    svg.setAttribute("aria-hidden", "true");
+    for (const fraction of [0.2, 0.4, 0.6, 0.8]) {
+      const line = document.createElementNS(svgNamespace, "line");
+      line.setAttribute("class", "spark-grid");
+      line.setAttribute("x1", "0");
+      line.setAttribute("x2", String(width));
+      line.setAttribute("y1", (height * fraction).toFixed(1));
+      line.setAttribute("y2", (height * fraction).toFixed(1));
+      svg.append(line);
+    }
+    return svg;
+  }
+
+  // Empty is four different facts, so it is four different states: pending
+  // (wired, not flowing - the only one with a hue), bydesign (empty by
+  // construction), absent (the environment does not exist), failed (the
+  // request itself failed). Never a bare "no data".
+  function metricsDataState(kind, label, why, queryLine, options = {}) {
+    const block = document.createElement("div");
+    block.className = `dstate dstate--${kind}${options.compact ? " dstate--compact" : ""}`;
+    const flag = document.createElement("span");
+    flag.className = "dstate__flag";
+    flag.append(metricsPip(kind === "pending" ? "attention" : kind === "failed" ? "danger" : "idle"), document.createTextNode(label));
+    block.append(flag);
+    if (why && !options.compact) {
+      const explanation = document.createElement("p");
+      explanation.className = "dstate__why";
+      explanation.textContent = why;
+      block.append(explanation);
+    }
+    if (why && options.compact) block.title = why;
+    if (queryLine && !options.compact) {
+      const query = document.createElement("code");
+      query.className = "dstate__query";
+      query.textContent = queryLine;
+      block.append(query);
+    }
+    block.append(metricsGhostPlot(Boolean(options.large)));
+    return block;
+  }
+
+  function metricsOutcomeState(outcome, panel, options = {}) {
+    if (outcome.state === "unprovisioned") {
+      return metricsDataState("absent", options.compact ? "Not provisioned" : "Environment absent", METRICS_ABSENT_WHY, `${metricsUpstreamSeries(panel)} → 404`, options);
+    }
+    if (outcome.state === "unavailable") {
+      return metricsDataState("failed", `Unavailable${outcome.detail ? ` (${outcome.detail})` : ""}`, METRICS_FAILED_WHY, `${metricsUpstreamSeries(panel)} → no answer`, options);
+    }
+    if (panel.emptyByDesign) {
+      return metricsDataState("bydesign", "Empty by design", panel.emptyByDesign, `${metricsUpstreamSeries(panel)} → 0 series`, options);
+    }
+    const why = panel.group === "crew" ? METRICS_PENDING_WHY : "The workspace answered this request with zero series for the window. No sample was invented to fill the panel.";
+    return metricsDataState("pending", "No data yet", why, `${metricsUpstreamSeries(panel)} → 0 series`, options);
+  }
+
   function renderMetricsCell(cell, outcome, panel) {
     const environmentLabel = cell.querySelector(".metrics-environment");
     cell.replaceChildren(environmentLabel);
+    if (!outcome) {
+      const loading = document.createElement("span");
+      loading.className = "metrics-absent";
+      loading.textContent = "Loading";
+      cell.append(loading);
+      return;
+    }
     if (outcome.state === "ok") {
-      const digits = outcome.latest >= 100 ? 0 : 2;
       const value = document.createElement("strong");
       value.className = "metrics-value";
-      value.textContent = outcome.latest.toFixed(digits);
+      value.textContent = formatMetricsValue(outcome.latest);
       const unit = document.createElement("span");
       unit.className = "metrics-unit";
       unit.textContent = panel.unit;
       value.append(unit);
-      cell.append(value, metricsSparkline(outcome.points));
+      cell.append(value, metricsChart(outcome.points, panel, false));
       return;
     }
-    const absent = document.createElement("span");
-    absent.className = "metrics-absent";
-    absent.textContent = outcome.state === "unprovisioned" ? "Not provisioned"
-      : outcome.state === "empty" ? "No data yet"
-        : `Unavailable${outcome.detail ? ` (${outcome.detail})` : ""}`;
-    cell.append(absent);
+    cell.append(metricsOutcomeState(outcome, panel, { compact: true }));
+  }
+
+  function metricsSeriesLabel(panel) {
+    return panel.filterable && metricsState.service ? `${panel.key} · service=${metricsState.service}` : panel.key;
+  }
+
+  function buildMetricsCard(panel) {
+    const card = document.createElement("article");
+    card.className = "mpanel metrics-card";
+    const head = document.createElement("header");
+    head.className = "mpanel__head";
+    const series = document.createElement("span");
+    series.className = "mpanel__series";
+    series.textContent = metricsSeriesLabel(panel);
+    const meta = document.createElement("span");
+    meta.className = "mpanel__meta";
+    meta.textContent = "…";
+    head.append(series, meta);
+    const title = document.createElement("p");
+    title.className = "mpanel__title";
+    title.textContent = panel.title;
+    const columns = document.createElement("div");
+    columns.className = "metrics-columns";
+    for (const environment of METRICS_ENVIRONMENTS) {
+      const cell = document.createElement("div");
+      cell.className = "metrics-cell";
+      cell.dataset.environment = environment;
+      const label = document.createElement("span");
+      label.className = "metrics-environment";
+      label.textContent = environment;
+      cell.append(label);
+      columns.append(cell);
+      renderMetricsCell(cell, null, panel);
+    }
+    card.append(head, title, columns);
+    if (panel.caveat) {
+      const caveat = document.createElement("p");
+      caveat.className = "mpanel__caveat";
+      caveat.textContent = panel.caveat;
+      card.append(caveat);
+    }
+    return card;
+  }
+
+  function updateMetricsCardMeta(card, outcome, panel) {
+    const meta = card?.querySelector(".mpanel__meta");
+    if (!meta) return;
+    if (!outcome) meta.textContent = "…";
+    else if (outcome.state === "ok") meta.textContent = `now ${formatMetricsValue(outcome.latest)}${panel.unit ? ` ${panel.unit}` : ""}`;
+    else if (outcome.state === "unprovisioned") meta.textContent = "404";
+    else if (outcome.state === "unavailable") meta.textContent = outcome.detail || "unavailable";
+    else meta.textContent = "no samples";
+  }
+
+  function metricsChip(label, pressed, onSelect) {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "qbar__chip";
+    chip.setAttribute("aria-pressed", String(pressed));
+    chip.addEventListener("click", onSelect);
+    chip.append(document.createTextNode(label));
+    return chip;
+  }
+
+  function metricsEnvironmentPipState(environment) {
+    const outcomes = METRICS_PANELS.map((panel) => metricsState.outcomes.get(`${environment}:${panel.key}`)).filter(Boolean);
+    if (!outcomes.length) return "idle";
+    if (outcomes.some((outcome) => outcome.state === "ok")) return "live";
+    return "idle";
+  }
+
+  function renderMetricsQueryBar() {
+    const seriesHost = document.querySelector("[data-metrics-series-chips]");
+    const serviceHost = document.querySelector("[data-metrics-service-chips]");
+    const windowHost = document.querySelector("[data-metrics-window-chips]");
+    const environmentHost = document.querySelector("[data-metrics-env-chips]");
+    const serviceNote = document.querySelector("[data-metrics-service-note]");
+    if (!seriesHost || !serviceHost || !windowHost || !environmentHost) return;
+    const focused = metricsPanel(metricsState.focusKey);
+
+    seriesHost.replaceChildren();
+    METRICS_PANELS.forEach((panel) => {
+      const chip = metricsChip(panel.key, panel.key === metricsState.focusKey, () => selectMetricsFocus(panel.key));
+      chip.title = panel.title;
+      chip.prepend(metricsPip(metricsPipState(metricsState.outcomes.get(`development:${panel.key}`), panel)));
+      seriesHost.append(chip);
+    });
+
+    serviceHost.replaceChildren();
+    const allChip = metricsChip("all", !metricsState.service, () => selectMetricsService(""));
+    allChip.disabled = !focused.filterable;
+    serviceHost.append(allChip);
+    METRICS_SERVICES.forEach((service) => {
+      const chip = metricsChip(service, metricsState.service === service, () => selectMetricsService(service));
+      chip.disabled = !focused.filterable;
+      serviceHost.append(chip);
+    });
+    if (serviceNote) serviceNote.hidden = focused.filterable;
+
+    windowHost.replaceChildren();
+    METRICS_WINDOWS.forEach((windowKey) => {
+      windowHost.append(metricsChip(windowKey, metricsState.windowKey === windowKey, () => selectMetricsWindow(windowKey)));
+    });
+
+    environmentHost.replaceChildren();
+    METRICS_ENVIRONMENTS.forEach((environment) => {
+      const chip = metricsChip(environment, metricsState.environment === environment, () => selectMetricsEnvironment(environment));
+      chip.prepend(metricsPip(metricsEnvironmentPipState(environment)));
+      if (metricsState.loaded && metricsEnvironmentPipState(environment) === "idle" && METRICS_PANELS.every((panel) => metricsState.outcomes.get(`${environment}:${panel.key}`)?.state === "unprovisioned")) {
+        const absent = document.createElement("span");
+        absent.className = "qbar__chip-tail";
+        absent.textContent = "404";
+        chip.append(absent);
+      }
+      environmentHost.append(chip);
+    });
+
+    updateMetricsQueryEcho();
+  }
+
+  function updateMetricsQueryEcho() {
+    const echo = document.querySelector("[data-metrics-query-echo]");
+    const resolves = document.querySelector("[data-metrics-resolves]");
+    if (!echo) return;
+    const panel = metricsPanel(metricsState.focusKey);
+    if (!state.authorized || !apiBaseUrl) {
+      echo.textContent = "Sign in to build a verified metrics request.";
+      if (resolves) resolves.hidden = true;
+      return;
+    }
+    const target = metricsRequestUrl(metricsState.environment, panel, metricsState.service, metricsState.windowKey);
+    echo.replaceChildren();
+    echo.append(document.createTextNode("GET "), document.createTextNode(`${target.pathname}?${target.searchParams.toString()}`));
+    if (resolves) {
+      resolves.textContent = `↳ resolves upstream to ${panel.resolves} — panel names only, the browser never sends PromQL`;
+      resolves.hidden = false;
+    }
+  }
+
+  function renderMetricsFocusOutcome(outcome, panel) {
+    const host = document.querySelector("[data-metrics-focus]");
+    if (!host) return;
+    const nameLabel = document.querySelector("[data-metrics-focus-name]");
+    if (nameLabel) nameLabel.textContent = metricsUpstreamSeries(panel);
+    const card = document.createElement("article");
+    card.className = "mpanel mpanel--lg";
+    const head = document.createElement("header");
+    head.className = "mpanel__head";
+    const series = document.createElement("span");
+    series.className = "mpanel__series";
+    series.textContent = `${metricsSeriesLabel(panel)} · ${metricsState.environment}`;
+    const meta = document.createElement("span");
+    meta.className = "mpanel__meta";
+    head.append(series, meta);
+    const title = document.createElement("p");
+    title.className = "mpanel__title";
+    title.textContent = panel.title;
+    card.append(head, title);
+    if (!outcome) {
+      meta.textContent = "…";
+      const loading = document.createElement("p");
+      loading.className = "metrics-absent";
+      loading.textContent = state.authorized ? "Loading" : "Panels load after operator verification.";
+      card.append(loading, metricsGhostPlot(true));
+    } else if (outcome.state === "ok") {
+      meta.textContent = `now ${formatMetricsValue(outcome.latest)}${panel.unit ? ` ${panel.unit}` : ""}`;
+      card.append(metricsChart(outcome.points, panel, true));
+    } else {
+      meta.textContent = outcome.state === "unprovisioned" ? "404" : outcome.state === "unavailable" ? outcome.detail || "unavailable" : "no samples";
+      card.append(metricsOutcomeState(outcome, panel, { large: true }));
+    }
+    if (panel.caveat) {
+      const caveat = document.createElement("p");
+      caveat.className = "mpanel__caveat";
+      caveat.textContent = panel.caveat;
+      card.append(caveat);
+    }
+    host.replaceChildren(card);
+  }
+
+  function renderMetricsFocusFromCache() {
+    const panel = metricsPanel(metricsState.focusKey);
+    renderMetricsFocusOutcome(metricsState.outcomes.get(`${metricsState.environment}:${panel.key}`) || null, panel);
+  }
+
+  // Any query-bar change refetches the focused panel - one real request,
+  // and the echo strip above it is built from the same URL builder.
+  async function refetchMetricsFocus() {
+    renderMetricsQueryBar();
+    if (!state.authorized || !state.accessToken || Date.now() >= state.deadline) {
+      renderMetricsFocusFromCache();
+      return;
+    }
+    const panel = metricsPanel(metricsState.focusKey);
+    if (metricsState.focusController) metricsState.focusController.abort();
+    const controller = new AbortController();
+    metricsState.focusController = controller;
+    renderMetricsFocusOutcome(null, panel);
+    let outcome;
+    try {
+      outcome = await fetchMetricsPanel(metricsState.environment, panel, controller.signal);
+    } catch (error) {
+      if (error?.name === "AbortError") return;
+      outcome = { state: "unavailable" };
+    }
+    if (controller.signal.aborted) return;
+    renderMetricsFocusOutcome(outcome, panel);
+  }
+
+  function selectMetricsFocus(key) {
+    if (metricsState.focusKey === key) return;
+    metricsState.focusKey = key;
+    void refetchMetricsFocus();
+  }
+
+  function selectMetricsService(service) {
+    if (metricsState.service === service) return;
+    metricsState.service = service;
+    void refetchMetricsFocus();
+  }
+
+  function selectMetricsWindow(windowKey) {
+    if (metricsState.windowKey === windowKey) return;
+    metricsState.windowKey = windowKey;
+    void refetchMetricsFocus();
+  }
+
+  function selectMetricsEnvironment(environment) {
+    if (metricsState.environment === environment) return;
+    metricsState.environment = environment;
+    void refetchMetricsFocus();
+  }
+
+  function setMetricsRailValue(name, value) {
+    document.querySelectorAll(`[data-metrics-rail="${name}"]`).forEach((element) => { element.textContent = value; });
+  }
+
+  function renderMetricsSummaryRail() {
+    if (!metricsState.loaded) {
+      ["series", "reporting", "pending", "absent"].forEach((name) => setMetricsRailValue(name, "—"));
+      return;
+    }
+    let reporting = 0;
+    let pending = 0;
+    let absent = 0;
+    METRICS_PANELS.forEach((panel) => {
+      const outcome = metricsState.outcomes.get(`development:${panel.key}`);
+      if (!outcome) return;
+      if (outcome.state === "ok") reporting += 1;
+      else if (outcome.state === "empty") {
+        if (panel.emptyByDesign) absent += 1;
+        else pending += 1;
+      }
+    });
+    setMetricsRailValue("series", String(METRICS_PANELS.length));
+    setMetricsRailValue("reporting", String(reporting));
+    setMetricsRailValue("pending", String(pending));
+    setMetricsRailValue("absent", String(absent));
+  }
+
+  function updateMetricsGridBasis() {
+    const basis = document.querySelector("[data-metrics-grid-basis]");
+    if (!basis) return;
+    basis.textContent = metricsState.loaded
+      ? `grid basis: window=${metricsState.windowKey} · step=${METRICS_STEP_SECONDS}s · service=${metricsState.service || "all"} · environments development + production — the grid reloads with the current selection on the next verified refresh`
+      : "Panels load after operator verification.";
+  }
+
+  function resetMetricsExplorer() {
+    if (metricsState.focusController) metricsState.focusController.abort();
+    metricsState.focusController = null;
+    metricsState.outcomes = new Map();
+    metricsState.loaded = false;
+    document.querySelectorAll("[data-metrics-grid], [data-metrics-grid-crew]").forEach((element) => element.replaceChildren());
+    // The focused panel keeps a populated panel's shape - ghost plot, not a
+    // blank - so the empty explorer still reads as an instrument.
+    renderMetricsFocusFromCache();
+    renderMetricsSummaryRail();
+    updateMetricsGridBasis();
+    renderMetricsQueryBar();
   }
 
   async function loadMetrics(signal) {
-    const grid = document.querySelector("[data-metrics-grid]");
-    if (!grid) return true;
+    const serviceGrid = document.querySelector("[data-metrics-grid]");
+    const crewGrid = document.querySelector("[data-metrics-grid-crew]");
+    if (!serviceGrid) return true;
     setSectionState("metrics", "Loading", "pending");
-    grid.replaceChildren();
+    serviceGrid.replaceChildren();
+    crewGrid?.replaceChildren();
+    metricsState.outcomes = new Map();
+    metricsState.loaded = false;
     const cards = new Map();
     for (const panel of METRICS_PANELS) {
-      const card = document.createElement("article");
-      card.className = "metrics-card";
-      const kicker = document.createElement("span");
-      kicker.className = "panel-kicker";
-      kicker.textContent = panel.title;
-      const columns = document.createElement("div");
-      columns.className = "metrics-columns";
-      for (const environment of METRICS_ENVIRONMENTS) {
-        const cell = document.createElement("div");
-        cell.className = "metrics-cell";
-        cell.dataset.environment = environment;
-        const label = document.createElement("span");
-        label.className = "metrics-environment";
-        label.textContent = environment;
-        const loading = document.createElement("span");
-        loading.className = "metrics-absent";
-        loading.textContent = "Loading";
-        cell.append(label, loading);
-        columns.append(cell);
-      }
-      card.append(kicker, columns);
-      grid.append(card);
+      const card = buildMetricsCard(panel);
+      (panel.group === "crew" && crewGrid ? crewGrid : serviceGrid).append(card);
       cards.set(panel.key, card);
     }
     let anyFailure = false;
@@ -1375,9 +1796,17 @@
         outcome = { state: "unavailable" };
       }
       if (outcome.state === "unavailable") anyFailure = true;
+      metricsState.outcomes.set(`${environment}:${panel.key}`, outcome);
       const cell = cards.get(panel.key)?.querySelector(`[data-environment="${environment}"]`);
       if (cell) renderMetricsCell(cell, outcome, panel);
+      if (environment === "development") updateMetricsCardMeta(cards.get(panel.key), outcome, panel);
     })));
+    if (signal?.aborted) return !anyFailure;
+    metricsState.loaded = true;
+    renderMetricsSummaryRail();
+    updateMetricsGridBasis();
+    renderMetricsQueryBar();
+    renderMetricsFocusFromCache();
     setSectionState("metrics", anyFailure ? "Degraded" : "Live", anyFailure ? "negative" : "positive");
     return !anyFailure;
   }
@@ -1899,6 +2328,7 @@
     if (event.persisted) window.location.reload();
   });
 
+  renderMetricsQueryBar();
   renderConfiguration();
   showSignedOut();
   if (document.body.dataset.authCallback === "true") completeCallback();

@@ -15,7 +15,12 @@ admin_script_path = site.join("assets", "js", "admin.js")
 client_script_path = site.join("assets", "js", "admin-api-client.js")
 runtime_script_path = site.join("assets", "js", "runtime-config.js")
 
-[index_path, callback_path, robots_path, stylesheet_path, admin_script_path, client_script_path, runtime_script_path].each do |path|
+token_paths = %w[palette semantic roles foundation motion].map { |name| site.join("assets", "css", "tokens", "#{name}.css") }
+motion_layer_path = site.join("assets", "css", "motion.css")
+font_paths = %w[bricolage-grotesque.woff2 instrument-sans.woff2 jetbrains-mono.woff2 FONTS-LICENSE.md].map { |name| site.join("assets", "fonts", name) }
+
+[index_path, callback_path, robots_path, stylesheet_path, admin_script_path, client_script_path, runtime_script_path,
+ motion_layer_path, *token_paths, *font_paths].each do |path|
   abort "missing build output: #{path}" unless path.file?
 end
 
@@ -44,6 +49,12 @@ expectations = {
   "usage overage premium" => "Overage premium",
   "server authorization statement" => "The UI is not the authorization boundary",
   "privileged-control honesty" => "Privileged controls stay unavailable until they are auditable",
+  "metrics explorer" => %(data-metrics-grid),
+  "metrics query echo" => %(data-metrics-query-echo),
+  "reference" => %(id="reference"),
+  "signoff lock contract" => "/internal/v1/prd-signoff-locks",
+  "self-hosted font policy" => "font-src 'self'",
+  "design tokens" => %(href="#{expected_base_path}/assets/css/tokens/semantic.css"),
   "generated client" => %(src="#{expected_base_path}/assets/js/admin-api-client.js"),
   "stylesheet base path" => %(href="#{expected_base_path}/assets/css/admin.css"),
   "application script" => %(src="#{expected_base_path}/assets/js/admin.js")

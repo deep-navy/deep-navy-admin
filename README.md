@@ -1,9 +1,22 @@
 # deep-navy-admin
 
-Static, noindex Jekyll application for deep navy founders and administrators.
+Static, noindex Jekyll application for deep.navy founders and administrators.
 The browser uses Amazon Cognito authorization code with PKCE and calls the same
 ConnectRPC platform API as the customer application. The repository contains no
 secret and the browser is never treated as an authorization boundary.
+
+The console is built on the deep.navy design system. Its token layer lives in
+`assets/css/tokens/` (raw palette, semantic light/dark aliases, crew roles,
+motion) with `assets/css/motion.css` as the motion utility layer and
+`assets/css/admin.css` as the app layer. The chrome is achromatic in both
+themes — colour appears only where it carries meaning (lumen = live, kelp =
+success, brass = waiting on a human, coral = failed) — evidence is set in
+JetBrains Mono, headings in Bricolage Grotesque, voice in Instrument Sans (all
+three self-hosted under `font-src 'self'`; see `assets/fonts/FONTS-LICENSE.md`),
+and the layout breaks at exactly 1200/900/600. Both themes ship from one build:
+`:root` is light, `data-theme="dark"` is dark, and the OS preference decides
+when no explicit choice is present. The design contract is enforced by
+`test/admin_app_security_test.cjs`.
 
 ## Implemented launch surface
 
@@ -43,6 +56,23 @@ secret and the browser is never treated as an authorization boundary.
   effective pause reason. Billing operations also expose upgrades, downgrades,
   and each account's overage credits and premium, subject to the same exact
   field-availability rules.
+- A metrics explorer reads the per-environment Prometheus workspaces through
+  platform-api's closed PromQL proxy (`GET /admin/v1/metrics/query_range`):
+  ten panel names — never raw PromQL — with the `service=` filter on the first
+  five only, a window of at most 24h and a 30s step. A query bar (series,
+  service, window, environment) drives a focused panel and echoes the exact
+  request from the same URL builder the fetch uses. Empty is four different
+  facts and each panel says which one: production 404s render as an absent
+  environment, wired-but-silent `openclaw_*` series render as pending with the
+  crew re-provision reason, `target_health` is empty by construction, and a
+  failed request is a failure — nothing is invented browser-side.
+- A reference section carries the data-planes audit verbatim beside the live
+  panels: the four telemetry planes, the Platform API surface inventory
+  (customer vs admin vs the one agent-originated write), webhook ingestion,
+  the GitHub App grants, both check-run trust models, the PRD sign-off lock
+  contract, the cross-plane join matrix (an em dash means that pivot cannot be
+  built), the Langfuse read API, OTEL label dimensions, unsurfaced series, and
+  the honest limits.
 - Public `/healthz` and `/readyz` probes are clearly distinguished from
   authenticated admin data.
 - All browser API and token requests use `cache: "no-store"`, omit cookies,

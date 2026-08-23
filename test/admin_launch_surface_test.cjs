@@ -67,3 +67,78 @@ test("metrics panels are proxied, side-by-side, and honest about absence", () =>
   assert.match(html, /data-metrics-grid/);
   assert.match(html, /href="#metrics"/);
 });
+
+// The metrics explorer speaks the proxy's actual vocabulary: ten panel names,
+// the service filter on the first five only, a 24h window at a 30s step, and
+// the exact request echoed back from the same URL builder the fetch uses.
+test("the metrics explorer speaks the proxy's real vocabulary", () => {
+  const js = readFileSync("assets/js/admin.js", "utf8");
+  const html = readFileSync("_includes/admin-console.html", "utf8");
+  const panelOrder = [...js.matchAll(/\{ key: "([a-z0-9_]+)"/g)].map((match) => match[1]);
+  assert.deepEqual(panelOrder, [
+    "request_rate", "error_rate", "latency_p95", "goroutines", "memory_bytes",
+    "target_health", "llm_tokens", "llm_cost_usd", "run_duration", "queue_depth"
+  ]);
+  assert.equal([...js.matchAll(/filterable: true/g)].length, 5);
+  assert.ok(panelOrder.slice(5).every((key) => new RegExp(`key: "${key}"[^\\n]*filterable: false`).test(js)));
+  assert.match(js, /METRICS_SERVICES = \["platform-api", "builder", "gateway"\]/);
+  assert.match(js, /METRICS_WINDOWS = \["1h", "6h", "24h"\]/);
+  assert.match(js, /windowKey: "24h"/);
+  assert.match(js, /METRICS_STEP_SECONDS = "30"/);
+  assert.match(js, /searchParams\.set\("window", windowKey\)/);
+  assert.match(js, /searchParams\.set\("step", METRICS_STEP_SECONDS\)/);
+  assert.match(js, /if \(panel\.filterable && service\) target\.searchParams\.set\("service", service\)/);
+  // one URL builder serves the fetch, the focused refetch, and the echo strip
+  assert.match(js, /function metricsRequestUrl/);
+  assert.ok([...js.matchAll(/metricsRequestUrl\(/g)].length >= 3);
+  assert.match(html, /data-metrics-query-echo/);
+  assert.match(html, /data-metrics-series-chips/);
+  assert.match(html, /data-metrics-service-chips/);
+  assert.match(html, /the service filter exists on the first five series only/);
+});
+
+// Empty is four different facts. Every honest state names its kind and its
+// cause; "No data available" is banned vocabulary.
+test("the four kinds of empty are mapped onto what the proxy really answered", () => {
+  const js = readFileSync("assets/js/admin.js", "utf8");
+  assert.match(js, /provisioned before the metrics wiring shipped/);
+  assert.match(js, /Empty by design/);
+  assert.match(js, /there is no scrape up to report/);
+  assert.match(js, /Environment absent/);
+  assert.match(js, /No sample was invented/);
+  assert.match(js, /Nothing was substituted/);
+  assert.doesNotMatch(js, /No data available/);
+  assert.match(js, /metricsGhostPlot/);
+});
+
+// The reference sections carry the data-planes audit verbatim: they document
+// the live platform beside the panels that query it.
+test("the reference sections document the live platform verbatim", () => {
+  const html = readFileSync("_includes/admin-console.html", "utf8");
+  for (const marker of [
+    'id="reference"',
+    "ws-251f4ede",
+    "20 protos · 84 RPCs",
+    "ApprovalWorkerService.RequestApproval",
+    "carried · not projected",
+    "objective_acceptance_checks",
+    "objective_id · team_id+repository_id fence · head_sha",
+    "new_permissions_accepted reprojected",
+    "deep-navy/review-gate",
+    "no app pin — deliberate",
+    "/internal/v1/prd-signoff-locks",
+    "discussions_permission_missing",
+    "token_scope_unavailable",
+    "discussion_not_found",
+    "ids filterable but NOT groupable",
+    "no http_route",
+    "go_config_gogc_percent",
+    "target_health is empty",
+    "prod columns 404 by design"
+  ]) {
+    assert.ok(html.includes(marker), `reference marker missing: ${marker}`);
+  }
+  // the em dash in the join matrix is load-bearing: an absent key is shown,
+  // never left blank
+  assert.ok([...html.matchAll(/joins__cell--none/g)].length >= 8);
+});

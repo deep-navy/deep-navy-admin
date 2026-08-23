@@ -1,0 +1,28 @@
+/* deep.navy — the six-agent crew. Role colour is identity, never status.
+   The four identity hues sit outside the status arc on purpose, and a role tint never
+   appears without the agent's monogram beside it — colour is the second cue, never the only one. */
+:root{
+--role-pm:var(--rose-600);--role-pm-soft:var(--rose-50);--role-pm-border:var(--rose-200);
+--role-em:var(--iris-600);--role-em-soft:var(--iris-50);--role-em-border:var(--iris-200);
+--role-design:var(--anemone-600);--role-design-soft:var(--anemone-50);--role-design-border:var(--anemone-200);
+--role-eng:var(--current-600);--role-eng-soft:var(--current-50);--role-eng-border:var(--current-200);
+--role-human:var(--ink-600);--role-human-soft:var(--ink-50);--role-human-border:var(--ink-150);
+}
+[data-theme="dark"]{
+--role-pm:var(--rose-400);--role-pm-soft:rgba(217,62,119,.16);--role-pm-border:rgba(217,62,119,.36);
+--role-em:var(--iris-400);--role-em-soft:rgba(110,86,224,.18);--role-em-border:rgba(110,86,224,.40);
+--role-design:var(--anemone-400);--role-design-soft:rgba(175,60,188,.17);--role-design-border:rgba(175,60,188,.38);
+--role-eng:var(--current-400);--role-eng-soft:rgba(42,120,224,.17);--role-eng-border:rgba(42,120,224,.38);
+--role-human:var(--ink-250);--role-human-soft:rgba(255,255,255,.06);--role-human-border:rgba(255,255,255,.16);
+}
+
+/* OS-preference default for the crew aliases, mirroring semantic.css. An explicit data-theme scope still wins. */
+@media (prefers-color-scheme: dark){
+:root:not([data-theme="light"]){
+--role-pm:var(--rose-400);--role-pm-soft:rgba(217,62,119,.16);--role-pm-border:rgba(217,62,119,.36);
+--role-em:var(--iris-400);--role-em-soft:rgba(110,86,224,.18);--role-em-border:rgba(110,86,224,.40);
+--role-design:var(--anemone-400);--role-design-soft:rgba(175,60,188,.17);--role-design-border:rgba(175,60,188,.38);
+--role-eng:var(--current-400);--role-eng-soft:rgba(42,120,224,.17);--role-eng-border:rgba(42,120,224,.38);
+--role-human:var(--ink-250);--role-human-soft:rgba(255,255,255,.06);--role-human-border:rgba(255,255,255,.16);
+}
+}

@@ -1,0 +1,27 @@
+/* deep.navy — raw palette. Never reference these directly in product UI; use tokens/semantic.css aliases.
+   The system is achromatic by default: surfaces, text and borders carry NO hue.
+   Colour appears only where it carries meaning — status, crew identity, data series. */
+:root{
+/* Ink — a true neutral ramp. Pure white and pure black are the two page grounds. */
+--ink-1000:#000000;--ink-950:#0A0A0A;--ink-900:#111111;--ink-850:#161616;--ink-800:#1F1F1F;--ink-700:#2E2E2E;--ink-600:#454545;--ink-500:#5C5C5C;--ink-400:#757575;--ink-300:#949494;--ink-250:#A8A8A8;--ink-200:#C2C2C2;--ink-150:#D4D4D4;--ink-100:#E4E4E4;--ink-75:#EDEDED;--ink-50:#F5F5F5;--ink-25:#FAFAFA;--ink-0:#FFFFFF;
+/* Brand navy — the mark's own ground. Used for the logo tile and nothing else. */
+--brand-navy:#000F1A;
+/* Lumen — bioluminescence. Reserved for ONE meaning: something is happening right now. */
+--lumen-900:#022E2B;--lumen-800:#04443F;--lumen-700:#046057;--lumen-600:#067E72;--lumen-500:#0B9C8D;--lumen-400:#17BFAD;--lumen-300:#45D8C6;--lumen-200:#8CEBDE;--lumen-100:#C6F5EE;--lumen-50:#E7FBF8;
+/* Kelp — success, merged, passing checks */
+--kelp-800:#0C3F26;--kelp-700:#116538;--kelp-600:#17834B;--kelp-500:#1FA35D;--kelp-400:#3CC17A;--kelp-300:#6BD69B;--kelp-200:#A6E5C1;--kelp-100:#DCF4E6;--kelp-50:#F0FAF4;
+/* Brass — attention, awaiting a human */
+--brass-800:#4A3005;--brass-700:#87590B;--brass-600:#A96F12;--brass-500:#C68A21;--brass-400:#E0A63A;--brass-300:#EEC069;--brass-200:#F3D8A0;--brass-100:#FAEDD2;--brass-50:#FDF8EE;
+/* Coral — failure, blocked, destructive */
+--coral-800:#5A1717;--coral-700:#A32C2C;--coral-600:#BE3A3A;--coral-500:#D24A4A;--coral-400:#E4706F;--coral-300:#EF9A99;--coral-200:#F6C6C5;--coral-100:#FBE5E4;--coral-50:#FDF4F4;
+/* ---- Crew identity families. Deliberately outside the status arc so a role tint
+       can never be mistaken for a state. Always paired with the agent's monogram. ---- */
+/* Rose — Technical PM */
+--rose-800:#5E1030;--rose-700:#9C1E4E;--rose-600:#BC2A61;--rose-500:#D93E77;--rose-400:#EE6E9B;--rose-300:#F79DBC;--rose-200:#FBC7D9;--rose-100:#FDE6EE;--rose-50:#FEF3F7;
+/* Iris — Engineering Manager */
+--iris-800:#2A1C6B;--iris-700:#4632A8;--iris-600:#5941C6;--iris-500:#6E56E0;--iris-400:#8E7BEC;--iris-300:#AEA1F4;--iris-200:#CFC7F9;--iris-100:#E7E2FC;--iris-50:#F4F2FE;
+/* Anemone — Designer (orchid) */
+--anemone-800:#4B1152;--anemone-700:#7C2287;--anemone-600:#962BA3;--anemone-500:#AF3CBC;--anemone-400:#C769D2;--anemone-300:#DB9AE3;--anemone-200:#EDC6F1;--anemone-100:#F7E5F9;--anemone-50:#FCF4FD;
+/* Current — the three Engineers (azure) */
+--current-800:#0C2E6B;--current-700:#164EA8;--current-600:#1D63C9;--current-500:#2A78E0;--current-400:#5C9AEC;--current-300:#8DB9F4;--current-200:#BDD6F9;--current-100:#DEEAFC;--current-50:#F1F6FE;
+}
