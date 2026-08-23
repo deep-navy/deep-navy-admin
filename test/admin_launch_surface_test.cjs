@@ -101,7 +101,7 @@ test("the metrics explorer speaks the proxy's real vocabulary", () => {
 // cause; "No data available" is banned vocabulary.
 test("the four kinds of empty are mapped onto what the proxy really answered", () => {
   const js = readFileSync("assets/js/admin.js", "utf8");
-  assert.match(js, /provisioned before the metrics wiring shipped/);
+  assert.match(js, /Activation happens at the next crew provisioning/);
   assert.match(js, /Empty by design/);
   assert.match(js, /there is no scrape up to report/);
   assert.match(js, /Environment absent/);
@@ -111,34 +111,30 @@ test("the four kinds of empty are mapped onto what the proxy really answered", (
   assert.match(js, /metricsGhostPlot/);
 });
 
-// The reference sections carry the data-planes audit verbatim: they document
-// the live platform beside the panels that query it.
-test("the reference sections document the live platform verbatim", () => {
+// The public static shell is served unauthenticated by Pages, so it must carry
+// NO internal architecture documentation: no internal endpoint contracts, no
+// App-grant inventory, no infrastructure identifiers, no database table names.
+// The console documents the platform to signed-in admins through the DATA it
+// fetches, never through world-readable markup. This test is the guard that
+// keeps the reference audit from ever coming back to the public page.
+test("the public shell carries no internal architecture documentation", () => {
   const html = readFileSync("_includes/admin-console.html", "utf8");
-  for (const marker of [
+  for (const banned of [
     'id="reference"',
     "ws-251f4ede",
-    "20 protos · 84 RPCs",
-    "ApprovalWorkerService.RequestApproval",
-    "carried · not projected",
+    "/internal/v1/",
     "objective_acceptance_checks",
-    "objective_id · team_id+repository_id fence · head_sha",
-    "new_permissions_accepted reprojected",
-    "deep-navy/review-gate",
-    "no app pin — deliberate",
-    "/internal/v1/prd-signoff-locks",
-    "discussions_permission_missing",
-    "token_scope_unavailable",
-    "discussion_not_found",
-    "ids filterable but NOT groupable",
-    "no http_route",
-    "go_config_gogc_percent",
-    "target_health is empty",
-    "prod columns 404 by design"
+    "new_permissions_accepted",
+    "AppVerifierKey",
+    "cluster-internal",
+    "master key",
+    "pk-lf",
+    "openclaw_"
   ]) {
-    assert.ok(html.includes(marker), `reference marker missing: ${marker}`);
+    assert.ok(!html.includes(banned), `internal detail leaked to the public shell: ${banned}`);
   }
-  // the em dash in the join matrix is load-bearing: an absent key is shown,
-  // never left blank
-  assert.ok([...html.matchAll(/joins__cell--none/g)].length >= 8);
+  const js = readFileSync("assets/js/admin.js", "utf8");
+  for (const banned of ["metrics: false", "openclaw_tokens_total", "ws-251f4ede", "/internal/v1/"]) {
+    assert.ok(!js.includes(banned), `internal detail leaked to public JS: ${banned}`);
+  }
 });

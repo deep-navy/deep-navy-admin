@@ -1252,7 +1252,7 @@
   const METRICS_SERVICES = ["platform-api", "builder", "gateway"];
   const METRICS_WINDOWS = ["1h", "6h", "24h"];
   const METRICS_STEP_SECONDS = "30";
-  const METRICS_PENDING_WHY = "Wired, but no openclaw_* series has reached the workspace. The running crew pod was provisioned before the metrics wiring shipped — its live config still has metrics: false and no gateway endpoint. A generation bump per crew is the activation step; that action belongs to provisioning, not to this console, so no button pretends otherwise.";
+  const METRICS_PENDING_WHY = "Wired, but no crew-runtime series has reached this workspace yet. Activation happens at the next crew provisioning — that action belongs to provisioning, not to this console, so no button pretends otherwise.";
   const METRICS_ABSENT_WHY = "Not provisioned — the environment map has one entry until the production account exists. An absent environment is not an outage and not a permissions problem; there is no environment to query.";
   const METRICS_FAILED_WHY = "The proxy did not answer this request. Nothing was substituted — the panel stays empty rather than showing an invented series.";
   // Ten panel names, exactly the proxy's vocabulary. The service= filter
@@ -1264,10 +1264,10 @@
     { key: "goroutines", title: "Goroutines", unit: "", scale: 1, group: "service", filterable: true, resolves: "go_goroutine_count" },
     { key: "memory_bytes", title: "Go heap in use", unit: "MiB", scale: 1 / (1024 * 1024), group: "service", filterable: true, resolves: "go_memory_used_bytes" },
     { key: "target_health", title: "Target health", unit: "", scale: 1, group: "service", filterable: false, resolves: "target_info", emptyByDesign: "Resolves to target_info. Push pipeline — there is no scrape up to report. Empty by construction, not by outage." },
-    { key: "llm_tokens", title: "Model tokens", unit: "tok/s", scale: 1, group: "crew", filterable: false, resolves: "openclaw_tokens_total" },
-    { key: "llm_cost_usd", title: "Model spend (1h)", unit: "USD", scale: 1, group: "crew", filterable: false, resolves: "openclaw_cost_usd_total" },
-    { key: "run_duration", title: "Run duration p95", unit: "s", scale: 1, group: "crew", filterable: false, resolves: "openclaw_run_duration_ms (histogram) → p95" },
-    { key: "queue_depth", title: "Agent queue depth", unit: "", scale: 1, group: "crew", filterable: false, resolves: "openclaw_queue_depth" }
+    { key: "llm_tokens", title: "Model tokens", unit: "tok/s", scale: 1, group: "crew", filterable: false, resolves: "crew runtime counter" },
+    { key: "llm_cost_usd", title: "Model spend (1h)", unit: "USD", scale: 1, group: "crew", filterable: false, resolves: "crew runtime counter" },
+    { key: "run_duration", title: "Run duration p95", unit: "s", scale: 1, group: "crew", filterable: false, resolves: "crew runtime histogram → p95" },
+    { key: "queue_depth", title: "Agent queue depth", unit: "", scale: 1, group: "crew", filterable: false, resolves: "crew runtime gauge" }
   ];
 
   const metricsState = {

@@ -51,8 +51,6 @@ expectations = {
   "privileged-control honesty" => "Privileged controls stay unavailable until they are auditable",
   "metrics explorer" => %(data-metrics-grid),
   "metrics query echo" => %(data-metrics-query-echo),
-  "reference" => %(id="reference"),
-  "signoff lock contract" => "/internal/v1/prd-signoff-locks",
   "self-hosted font policy" => "font-src 'self'",
   "design tokens" => %(href="#{expected_base_path}/assets/css/tokens/semantic.css"),
   "generated client" => %(src="#{expected_base_path}/assets/js/admin-api-client.js"),
