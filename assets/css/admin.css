@@ -282,7 +282,8 @@ svg.dn-icon {
 .ad-rail__who { flex: 1; min-width: 0; }
 .ad-rail__foot .dn-avatar:empty { display: none; }
 .ad-rail__name { display: block; font: var(--type-ui-sm); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.ad-rail__role {
+/* What authorized the session, not who the operator is claimed to be. */
+.ad-rail__authority {
   display: block;
   font: var(--fw-regular) var(--fs-micro)/1.3 var(--font-mono);
   color: var(--text-tertiary);

@@ -31,10 +31,14 @@ design_system_paths = %w[
 layer_paths = %w[ds type theme icon-motion].map { |name| site.join("assets", "css", "#{name}.css") }
 theme_script_path = site.join("assets", "js", "theme.js")
 icon_motion_script_path = site.join("assets", "js", "icon-motion.js")
+# The severity ladder. Miss it and every callout in the console renders achromatic
+# while looking otherwise correct, which is a silent failure of the one table that
+# says how loud a thing is.
+notice_levels_script_path = site.join("assets", "js", "notice-levels.js")
 font_paths = %w[bricolage-grotesque.woff2 instrument-sans.woff2 jetbrains-mono.woff2 FONTS-LICENSE.md].map { |name| site.join("assets", "fonts", name) }
 
 [index_path, callback_path, robots_path, stylesheet_path, admin_script_path, client_script_path, runtime_script_path,
- theme_script_path, icon_motion_script_path, *layer_paths, *design_system_paths, *font_paths].each do |path|
+ theme_script_path, icon_motion_script_path, notice_levels_script_path, *layer_paths, *design_system_paths, *font_paths].each do |path|
   abort "missing build output: #{path}" unless path.file?
 end
 
@@ -76,7 +80,8 @@ expectations = {
   "pre-paint theme script" => %(src="#{expected_base_path}/assets/js/theme.js"),
   "generated client" => %(src="#{expected_base_path}/assets/js/admin-api-client.js"),
   "stylesheet base path" => %(href="#{expected_base_path}/assets/css/admin.css"),
-  "application script" => %(src="#{expected_base_path}/assets/js/admin.js")
+  "application script" => %(src="#{expected_base_path}/assets/js/admin.js"),
+  "severity ladder" => %(src="#{expected_base_path}/assets/js/notice-levels.js")
 }
 expectations.each do |label, expected|
   abort "#{label} missing from #{index_path}" unless index_html.include?(expected)
@@ -88,8 +93,10 @@ end
   scrubber = html.index("callback-scrubber.js")
   runtime_config = html.index("runtime-config.js")
   generated_client = html.index("admin-api-client.js")
+  notice_levels = html.index("notice-levels.js")
   application = html.index("assets/js/admin.js")
   abort "security-sensitive script order is invalid" unless scrubber && runtime_config && generated_client && application && scrubber < runtime_config && runtime_config < generated_client && generated_client < application
+  abort "the severity ladder must load before the console reads it" unless notice_levels && notice_levels < application
 end
 
 # style-src 'self' refuses style ATTRIBUTES as well as <style> blocks, so an inline

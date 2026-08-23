@@ -85,11 +85,50 @@ test("the portal uses fresh PKCE and never persists bearer tokens", () => {
   assert.doesNotMatch(storageWrites[0], /accessToken|idToken|refreshToken/);
 });
 
-test("the role allowlist is code-owned and overview loading follows role verification", () => {
-  assert.match(source, /new Set\(\["admin", "founder"\]\)/);
+// This test used to assert the OPPOSITE: that the console kept its own allowlist of
+// platform roles and checked it before loading anything. That gate read as a security
+// control and was not one. The server holds the address allowlist and re-checks the
+// role on every administrator request, and a browser that decides for itself which
+// roles it likes can only ever be more permissive than the server, never less - the
+// value it was gating on had been handed to it by the network in the first place.
+//
+// What replaces it is the platform's own answer, taken from an administrator request.
+// A 200 is authorization; anything else is a refusal the console reports rather than
+// second-guesses.
+test("authorization is the platform's answer, not a gate in the browser", () => {
+  // No client-side role gate, in any of its parts.
+  assert.doesNotMatch(source, /allowedRoles/);
+  assert.doesNotMatch(source, /platformRoles/);
   assert.doesNotMatch(source, /config\.allowedRoles|config\.adminRoles/);
-  assert.ok(source.indexOf("allowedRoles.has(role)") < source.indexOf("await refreshDashboard()"));
-  assert.match(source, /No admin data request was sent/);
+
+  // And no path from this console to the CUSTOMER identity service. AuthService sits
+  // behind the customer authentication interceptor and the customer user pool; this
+  // console holds an operator-pool credential, so it could only ever be answered 401 -
+  // which is exactly what the founder saw after a successful Google sign-in.
+  //
+  // The procedure NAME is what the console would have to utter to reach it, so that is
+  // what is banned here; the service is banned by name where a comment cannot muddy
+  // the check, in the generated bundle that actually carries the call.
+  assert.doesNotMatch(source, /current_user/);
+  const bundle = readFileSync("assets/js/admin-api-client.js", "utf8");
+  for (const banned of ["current_user", "GetCurrentUser", "AuthService"]) {
+    assert.ok(!bundle.includes(banned), `the generated client can still reach ${banned}`);
+  }
+
+  // The probe is an administrator request, and it is the only thing standing between
+  // sign-in and the dashboard.
+  assert.match(source, /const AUTHORIZATION_PROBE = "admin_overview"/);
+  assert.match(source, /await adminApi\.request\(AUTHORIZATION_PROBE, \{\}/);
+  assert.ok(source.indexOf("const AUTHORIZATION_PROBE") < source.indexOf("await refreshDashboard(overview)"));
+
+  // One seam: authorization is established in exactly one function, with exactly one
+  // call site, so the day an identity RPC replaces the probe it is one edit.
+  assert.equal([...source.matchAll(/async function authorizeOperator\(/g)].length, 1);
+  assert.equal([...source.matchAll(/authorizeOperator\(idToken\)/g)].length, 2, "declaration plus its single call site");
+
+  // No admin data is requested until it has succeeded.
+  assert.match(source, /no admin data was displayed/);
+  assert.match(source, /no admin data was requested/);
 });
 
 test("all sensitive browser requests opt out of caches, cookies, redirects, and referrers", () => {

@@ -17,7 +17,7 @@
     signOut: document.querySelector("[data-sign-out]"),
     operatorSummary: document.querySelector("[data-operator-summary]"),
     operatorName: document.querySelector("[data-operator-name]"),
-    operatorRole: document.querySelector("[data-operator-role]"),
+    operatorAuthority: document.querySelector("[data-operator-authority]"),
     configurationState: document.querySelector("[data-configuration-state]"),
     configurationTitle: document.querySelector("[data-configuration-title]"),
     configurationMessage: document.querySelector("[data-configuration-message]"),
@@ -67,13 +67,18 @@
     runtimeRenderQueued: false,
     alertRenderQueued: false
   };
-  const allowedRoles = new Set(["admin", "founder"]);
   const environment = stringValue(config.environment) || "local";
   const oauthStorageKey = `deep-navy.admin.oauth.${stringValue(config.cognito_client_id) || environment}`;
   const sessionMaxAgeSeconds = boundedInteger(config.session_max_age_seconds, 300, 900, 900);
   const apiBaseUrl = normalizeServiceOrigin(config.api_base_url);
   const identity = identityConfiguration();
   const adminApi = createAdminApi();
+  // Severity is not decided in this file. assets/js/notice-levels.js is the design
+  // system's NOTICE_LEVELS ladder - the site console's copy, byte for byte - and it is
+  // the only place in this product that says what a level is, what it is called and how
+  // loud it is. Two consoles with two opinions about what "error" looks like is exactly
+  // the drift it exists to prevent.
+  const noticeLevels = window.deepNavyNoticeLevels || null;
 
   function stringValue(value) {
     return typeof value === "string" ? value.trim() : "";
@@ -166,6 +171,9 @@
     if (!identity.callbackUrl) missing.push("same-origin callback URL");
     if (!identity.logoutUrl) missing.push("same-origin logout URL");
     if (!adminApi) missing.push("generated API client");
+    // Without the ladder this console cannot say how loud anything is, and a callout
+    // that guesses its own severity is worse than one that refuses to render.
+    if (!noticeLevels) missing.push("severity ladder");
 
     if (missing.length === 0) {
       setState(ui.configurationState, ui.configurationTitle, ui.configurationMessage, "positive", "Access configuration ready", "Cognito and the generated platform client are configured. The API must still verify every request.");
@@ -176,27 +184,48 @@
     ui.signIn.disabled = true;
   }
 
-  // The banner callouts are design-system callouts, so a tone is a modifier rather
-  // than a private class. One helper, because the configuration banner, the sign-in
-  // error and the projection banner all move through the same set of states.
-  const CALLOUT_FOR_TONE = { positive: " dn-callout--success", pending: " dn-callout--live", negative: " dn-callout--danger", neutral: "" };
+  // The banner callouts are design-system callouts, so a severity is a modifier rather
+  // than a private class. dn-callout carries four tone modifiers, so the only thing
+  // this table says is which modifier a ladder TONE has; the levels themselves, their
+  // words and their ranks stay in notice-levels.js. 'tip' and 'idle' are deliberately
+  // absent - the ladder makes them achromatic, and the base callout is achromatic.
+  const CALLOUT_FOR_LEVEL_TONE = { danger: " dn-callout--danger", attention: " dn-callout--attention", live: " dn-callout--live", success: " dn-callout--success" };
 
-  function setState(container, titleElement, messageElement, tone, title, message) {
+  // The projection banners speak in four words of their own - a projection either
+  // loaded, is loading, failed, or is simply absent. Those are ladder levels, so they
+  // are mapped onto the ladder here rather than given a second severity table: one
+  // vocabulary, one place, and this file adds nothing to it.
+  const LEVEL_FOR_TONE = { positive: "success", pending: "running", negative: "error", neutral: "info" };
+
+  function calloutClass(level) {
+    return `dn-callout${CALLOUT_FOR_LEVEL_TONE[noticeLevels?.level(level).tone] || ""}`;
+  }
+
+  function paintCallout(container, titleElement, messageElement, level, title, message) {
     if (!container || !titleElement || !messageElement) return;
-    container.dataset.tone = tone;
-    container.className = `dn-callout${CALLOUT_FOR_TONE[tone] || ""}`;
+    container.dataset.level = level;
+    container.className = calloutClass(level);
     titleElement.textContent = title;
     messageElement.textContent = message;
     container.hidden = false;
   }
 
-  function showAuthError(title, message, requestId = "") {
-    setState(ui.authState, ui.authTitle, ui.authMessage, "negative", title, message);
+  function setState(container, titleElement, messageElement, tone, title, message) {
+    paintCallout(container, titleElement, messageElement, LEVEL_FOR_TONE[tone] || "info", title, message);
+    if (container) container.dataset.tone = tone;
+  }
+
+  // A sign-in failure is reported at the level the ladder gives it, and the level is
+  // chosen by what the human has to do about it. "Start again" is part of that answer:
+  // offering it where signing in again cannot possibly help is the console telling the
+  // operator to go round the loop for nothing.
+  function showAuthNotice(level, title, message, requestId = "", canStartAgain = true) {
+    paintCallout(ui.authState, ui.authTitle, ui.authMessage, level, title, message);
     if (ui.authRequestReference) {
       ui.authRequestReference.textContent = requestId ? `Request reference: ${requestId}` : "";
       ui.authRequestReference.hidden = !requestId;
     }
-    ui.retrySignIn.hidden = !identity.ready;
+    ui.retrySignIn.hidden = !canStartAgain || !identity.ready;
   }
 
   function clearAuthError() {
@@ -252,7 +281,7 @@
   async function beginSignIn() {
     clearAuthError();
     if (!identity.ready || !adminApi || !window.crypto?.subtle) {
-      showAuthError("Sign-in is unavailable", "This deployment is missing public identity configuration, the generated API client, or required browser cryptography.");
+      showAuthNotice("error", "Sign-in is unavailable", "This deployment is missing public identity configuration, the generated API client, or required browser cryptography.");
       return;
     }
     ui.signIn.disabled = true;
@@ -305,7 +334,7 @@
       window.location.assign(authorizeUrl.toString());
     } catch {
       clearOAuthTransaction();
-      showAuthError("Could not start secure sign-in", "The browser could not create the PKCE transaction. No credentials were sent. Use a current browser with session storage enabled.");
+      showAuthNotice("error", "Could not start secure sign-in", "The browser could not create the PKCE transaction. No credentials were sent. Use a current browser with session storage enabled.");
       ui.signIn.disabled = !identity.ready;
       ui.retrySignIn.disabled = !identity.ready;
     }
@@ -402,7 +431,7 @@
     const oauthError = params.get("error");
     if (oauthError) {
       clearOAuthTransaction();
-      showAuthError("Sign-in did not complete", safeOAuthDescription(params.get("error")));
+      showAuthNotice("error", "Sign-in did not complete", safeOAuthDescription(params.get("error")));
       return;
     }
 
@@ -411,11 +440,11 @@
     const transaction = readOAuthTransaction();
     clearOAuthTransaction();
     if (!code || !returnedState) {
-      showAuthError("Incomplete sign-in callback", "The one-time authorization code and state are missing. Start a fresh sign-in.");
+      showAuthNotice("error", "Incomplete sign-in callback", "The one-time authorization code and state are missing. Start a fresh sign-in.");
       return;
     }
     if (!transaction || transaction.state !== returnedState || Date.now() - transaction.createdAt > 10 * 60 * 1000 || transaction.redirectUri !== identity.callbackUrl) {
-      showAuthError("Authorization state did not match", "This callback was not paired with a recent sign-in from this browser tab. No token request was sent.");
+      showAuthNotice("error", "Authorization state did not match", "This callback was not paired with a recent sign-in from this browser tab. No token request was sent.");
       return;
     }
 
@@ -445,10 +474,10 @@
       state.accessToken = accessToken;
       state.deadline = deadline;
       scheduleSessionExpiry();
-      await verifyOperator();
+      await authorizeOperator(idToken);
     } catch {
       clearSession();
-      showAuthError("Secure sign-in could not be verified", "The token exchange or validation failed. The code and any returned tokens were discarded. Start a new sign-in.");
+      showAuthNotice("error", "Secure sign-in could not be verified", "The token exchange or validation failed. The code and any returned tokens were discarded. Start a new sign-in.");
     }
   }
 
@@ -456,43 +485,123 @@
     return window.crypto.randomUUID ? window.crypto.randomUUID() : randomBase64Url(18);
   }
 
-  async function verifyOperator() {
-    if (!adminApi || !state.accessToken) throw new Error("admin_api_unavailable");
-    const clientRequestId = requestId();
-    try {
-      const response = await adminApi.request("current_user", {}, { accessToken: state.accessToken, requestId: clientRequestId });
-      const user = response?.user;
-      if (!user || typeof user !== "object") throw new Error("invalid_user_response");
-      const roles = Array.isArray(user.platformRoles) ? user.platformRoles.map((role) => stringValue(role).toLowerCase()) : [];
-      const authorizedRole = roles.find((role) => allowedRoles.has(role));
-      if (!authorizedRole) {
-        clearSession();
-        showAuthError("Founder or Admin access is required", "The platform verified this account, but it did not return an authorized platform role. No admin data request was sent.", clientRequestId);
-        return;
-      }
-      state.authorized = true;
-      showAuthenticated(user, authorizedRole);
-      clearAuthError();
-      await refreshDashboard();
-    } catch (error) {
-      const reference = stringValue(error?.requestId) || clientRequestId;
-      clearSession();
-      showAuthError("The platform could not authorize this operator", safeClientMessage(error, "The identity check failed. No admin data was displayed."), reference);
-    }
+  // ---- the authorization seam ----------------------------------------------
+  //
+  // "Who is this operator, and did the platform authorize them?" is answered HERE,
+  // once, with one call site. Everything downstream renders; nothing downstream
+  // decides.
+  //
+  // It used to ask AuthService.GetCurrentUser. That is the CUSTOMER identity service,
+  // behind the customer authentication interceptor and the customer user pool, and
+  // this console holds a credential minted by the dedicated operator pool. The two
+  // issuers are different, so the answer was always 401 - the founder signed in with
+  // Google successfully and the console then told them authorization had failed. The
+  // fix is not to teach the customer interceptor about the operator pool: that
+  // interceptor also guards teams, GitHub, organizations and billing, and an operator
+  // credential must not authenticate against a customer surface.
+  //
+  // So the probe is an ADMINISTRATOR request, on the only surface that knows this
+  // issuer. GetAdminOverview is what the console loads first anyway, so a 200 both
+  // authorizes the session and paints the first screen; nothing is fetched twice.
+  const AUTHORIZATION_PROBE = "admin_overview";
+
+  // Three answers, three different things for a human to do, which is the whole
+  // reason they are three messages and not one. Each says what happened, what it
+  // means, and what happens next, in that order.
+  //
+  // They are keyed by the CONNECT CODE rather than by anything about this particular
+  // RPC, so the mapping outlives the probe: an identity RPC that answers Unauthenticated
+  // versus PermissionDenied lands on exactly these branches unchanged.
+  const AUTHORIZATION_FAILURES = Object.freeze({
+    unauthenticated: Object.freeze({
+      level: "error",
+      title: "Sign-in was not accepted",
+      message: "The platform rejected this session's credential. It has expired, or it was not issued by the directory this console signs in against. Sign in again.",
+      canStartAgain: true
+    }),
+    permission_denied: Object.freeze({
+      level: "blocked",
+      title: "This operator is not permitted",
+      message: "The platform authenticated the account and refused the request. Permission is held by the platform, not by this console, so signing in again will not change it. Ask the account owner to grant this address operator access.",
+      canStartAgain: false
+    }),
+    unimplemented: Object.freeze({
+      level: "warning",
+      title: "The operator surface is not deployed",
+      message: "This deployment does not serve the operator surface, so it could not say whether this account is permitted. Nothing was authorized and no admin data was requested. This needs a deployment, not another sign-in.",
+      canStartAgain: false
+    }),
+    unreachable: Object.freeze({
+      level: "warning",
+      title: "The platform did not answer",
+      message: "The authorization check did not complete. Nothing about this operator was decided, and no admin data was displayed. Try again in a moment.",
+      canStartAgain: true
+    })
+  });
+
+  function authorizationFailure(code) {
+    const value = stringValue(code);
+    // A 404 from a service that is not mounted is the same fact as a 501.
+    if (value === "not_found") return AUTHORIZATION_FAILURES.unimplemented;
+    return AUTHORIZATION_FAILURES[value] || AUTHORIZATION_FAILURES.unreachable;
   }
 
-  function showAuthenticated(user, role) {
+  // The operator's name is COSMETIC, and it is read from the ID token this browser
+  // already holds rather than fetched: a display name is not an authorization fact,
+  // and the card on the sign-in screen says as much - the UI is not the authorization
+  // boundary. Google supplies name and email on the ID token; both are claims that
+  // were already checked for issuer, audience, nonce and expiry before we got here.
+  function operatorFromIdToken(idToken) {
+    const claims = decodeJwtPayload(idToken);
+    return {
+      name: stringValue(claims?.name).slice(0, 64),
+      email: stringValue(claims?.email).slice(0, 254)
+    };
+  }
+
+  async function authorizeOperator(idToken) {
+    if (!adminApi || !state.accessToken) throw new Error("admin_api_unavailable");
+    const operator = operatorFromIdToken(idToken);
+    const clientRequestId = requestId();
+    let overview;
+    try {
+      overview = await adminApi.request(AUTHORIZATION_PROBE, {}, { accessToken: state.accessToken, requestId: clientRequestId });
+    } catch (error) {
+      const failure = authorizationFailure(error?.code);
+      // The reference is the server's own request id when it sent one, and this
+      // console's otherwise. It is what turns "it failed" into a log line someone
+      // can find, so it is never dropped.
+      const reference = stringValue(error?.requestId) || clientRequestId;
+      clearSession();
+      showSignedOut();
+      showAuthNotice(failure.level, failure.title, failure.message, reference, failure.canStartAgain);
+      return;
+    }
+    state.authorized = true;
+    showAuthenticated(operator);
+    clearAuthError();
+    // The probe's own answer IS the first overview.
+    await refreshDashboard(overview);
+  }
+
+  function showAuthenticated(operator) {
     ui.signedOut.hidden = true;
     ui.authenticated.hidden = false;
     ui.signOut.hidden = false;
     ui.operatorSummary.hidden = false;
-    ui.operatorName.textContent = stringValue(user.displayName) || stringValue(user.username) || "Authenticated operator";
-    ui.operatorRole.textContent = role === "founder" ? "Founder" : "Admin";
-    // The monogram is derived from whatever name the API returned, never from an
-    // email local-part or an identifier the operator did not choose to display.
+    ui.operatorName.textContent = operator.name || operator.email || "Signed-in operator";
+    // There used to be a role here - "Founder" or "Admin" - chosen by a client-side
+    // allowlist over a role the browser had been handed. It read as a security
+    // control and was not one: the server holds the address allowlist and checks the
+    // role on every administrator request, and a browser cannot grant itself anything
+    // by writing a word into its own sidebar. What replaced it is the only thing this
+    // console can honestly claim, and it is displayed only once the platform has
+    // actually answered an administrator request for this credential.
+    if (ui.operatorAuthority) ui.operatorAuthority.textContent = "Authorized by the platform";
+    // The monogram comes from a name the operator chose to display, never from an
+    // email local-part or an identifier they did not.
     document.querySelectorAll("[data-operator-initials]").forEach((element) => {
-      const label = stringValue(ui.operatorName.textContent);
-      element.textContent = label.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0].toUpperCase()).join("");
+      element.textContent = operator.name.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0].toUpperCase()).join("");
     });
     ui.refresh.disabled = false;
     updateSessionExpiryLabel();
@@ -500,6 +609,7 @@
 
   function showSignedOut() {
     document.querySelectorAll("[data-operator-initials]").forEach((element) => { element.textContent = ""; });
+    if (ui.operatorAuthority) ui.operatorAuthority.textContent = "";
     ui.signedOut.hidden = false;
     ui.authenticated.hidden = true;
     ui.signOut.hidden = true;
@@ -538,7 +648,7 @@
   function expireSession() {
     clearSession();
     showSignedOut();
-    showAuthError("Operator session expired", "The short-lived admin session reached its browser ceiling. Sign in again to request a fresh, MFA-backed session.");
+    showAuthNotice("warning", "Operator session expired", "The short-lived admin session reached its browser ceiling. Sign in again to request a fresh, MFA-backed session.");
   }
 
   function safeClientMessage(error, fallback) {
@@ -896,11 +1006,18 @@
     });
   }
 
-  async function loadOverview(signal) {
+  // `seeded` is the answer the authorization probe already received - the same
+  // projection, from the same RPC, seconds earlier. Passing it through means signing
+  // in costs ONE overview request rather than two. When the probe stops returning an
+  // overview, the seed is simply absent and this fetches, exactly as the refresh
+  // button already does.
+  async function loadOverview(signal, seeded) {
     const clientRequestId = requestId();
-    setDataState("pending", "Loading authorized overview", "Requesting AdminService.GetAdminOverview through the pinned generated client.");
+    setDataState("pending", "Loading authorized overview", seeded
+      ? "Using the authorized overview the platform returned when it authorized this operator."
+      : "Requesting AdminService.GetAdminOverview through the pinned generated client.");
     try {
-      const response = await adminApi.request("admin_overview", {}, { accessToken: state.accessToken, requestId: clientRequestId, signal });
+      const response = seeded || await adminApi.request("admin_overview", {}, { accessToken: state.accessToken, requestId: clientRequestId, signal });
       renderOverview(response);
       return true;
     } catch (error) {
@@ -2776,7 +2893,7 @@
     }
   }
 
-  async function refreshDashboard() {
+  async function refreshDashboard(seededOverview) {
     if (!state.authorized || !state.accessToken || Date.now() >= state.deadline || !adminApi) {
       expireSession();
       return;
@@ -2798,7 +2915,7 @@
     try {
       setDataState("pending", "Loading authorized operations data", "Requesting current business, customer, economics, fleet, billing, alert, and audit projections.");
       const results = await Promise.all([
-        loadOverview(state.refreshController.signal),
+        loadOverview(state.refreshController.signal, seededOverview),
         loadCustomers(state.refreshController.signal),
         loadEconomics(state.refreshController.signal),
         loadOperations(state.refreshController.signal),
@@ -2902,7 +3019,7 @@
   ui.signIn.addEventListener("click", beginSignIn);
   ui.retrySignIn.addEventListener("click", beginSignIn);
   ui.signOut.addEventListener("click", signOut);
-  ui.refresh.addEventListener("click", refreshDashboard);
+  ui.refresh.addEventListener("click", () => refreshDashboard());
   document.querySelector("[data-customer-rows]")?.addEventListener("click", openCustomerDetail);
   ui.customerDetailClose.addEventListener("click", closeCustomerDetail);
   ui.customerReliabilityMore.addEventListener("click", loadMoreCustomerReliability);

@@ -5,11 +5,17 @@ import {
   AdminEconomicsDimension,
   AdminService
 } from "../vendor/platform-protos/deepnavy/v1/admin_pb.js";
-import { AuthService } from "../vendor/platform-protos/deepnavy/v1/auth_pb.js";
+
+// AuthService is deliberately absent. It is the CUSTOMER identity service, mounted
+// behind the customer authentication interceptor and the customer user pool; this
+// console holds a credential from the dedicated admin pool, which that interceptor
+// does not know. Asking it who the operator is could only ever answer 401 — it did,
+// for every operator sign-in, and the console reported it as an authorization
+// failure. The operator surface is AdminService, and it is the only surface this
+// client can reach, so there is no path from the admin console to a customer one.
 
 export const PLATFORM_PROTOS_REVISION = "350acd91b0a15da08fd6a13282f75f36849ce4bf";
 export const SUPPORTED_PROCEDURES = Object.freeze([
-  "current_user",
   "admin_overview",
   "admin_customers",
   "admin_customer",
@@ -206,7 +212,6 @@ export function createAdminApi(options: AdminApiOptions) {
     useHttpGet: false
   });
   const admin = createClient(AdminService, transport);
-  const auth = createClient(AuthService, transport);
 
   async function request(name: ProcedureName, input: unknown, options: AdminCallOptions): Promise<unknown> {
     const payload = inputRecord(input);
@@ -225,8 +230,6 @@ export function createAdminApi(options: AdminApiOptions) {
 
     try {
       switch (name) {
-        case "current_user":
-          return await auth.getCurrentUser({}, callOptions);
         case "admin_overview":
           return await admin.getAdminOverview({}, callOptions);
         case "admin_customers":

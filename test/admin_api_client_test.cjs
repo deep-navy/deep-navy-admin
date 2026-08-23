@@ -42,11 +42,39 @@ function parseStreamRequestBody(body) {
 test("the browser bundle exposes the pinned read-only admin launch procedures", () => {
   assert.equal(generated.PLATFORM_PROTOS_REVISION, "350acd91b0a15da08fd6a13282f75f36849ce4bf");
   assert.deepEqual([...generated.SUPPORTED_PROCEDURES], [
-    "current_user", "admin_overview", "admin_customers", "admin_customer",
+    "admin_overview", "admin_customers", "admin_customer",
     "admin_customer_reliability", "admin_economics", "admin_team_economics",
     "admin_fleet", "admin_runtimes", "admin_billing", "admin_billing_accounts",
     "admin_reconciliation_issues", "admin_alerts", "admin_audit_events"
   ]);
+});
+
+// The console asked AuthService.GetCurrentUser who the operator was while holding a
+// credential from the OPERATOR pool. That service is mounted behind the CUSTOMER
+// authentication interceptor, which does not know that issuer, so it answered 401 to
+// every successful sign-in - and the console reported it as "the platform could not
+// authorize this operator".
+//
+// The repair is not a wider interceptor; that same interceptor guards teams, GitHub,
+// organizations and billing, and an operator credential must never authenticate
+// against a customer surface. So the reachable set is AdminService and nothing else,
+// and this is the test that keeps it that way: the client cannot be asked for the
+// customer identity service, and the shipped bundle does not contain it.
+test("the admin bundle has no path to the customer identity service", () => {
+  assert.ok(!generated.SUPPORTED_PROCEDURES.includes("current_user"));
+  for (const banned of ["AuthService", "GetCurrentUser", "current_user"]) {
+    assert.ok(!source.includes(banned), `the shipped admin bundle still references ${banned}`);
+  }
+});
+
+test("an unsupported procedure reaches no network at all", async () => {
+  let fetched = false;
+  const api = generated.createAdminApi({
+    baseUrl: "https://dev.api.deep.navy",
+    fetch: async () => { fetched = true; return new Response("{}", { status: 200 }); }
+  });
+  assert.equal(await api.request("current_user", {}, { accessToken: "access-token", requestId: "request-0" }), undefined);
+  assert.equal(fetched, false);
 });
 
 test("the browser bundle exposes the live admin streaming procedures", () => {
@@ -89,18 +117,21 @@ test("the generated stream rejects an unauthenticated caller before opening a co
   assert.equal(fetched, false);
 });
 
-test("the generated current-user request carries bearer identity without cookies or caching", async () => {
+// The authorization probe. It is an ADMINISTRATOR request, on the only surface that
+// knows the operator pool's issuer, and it carries the operator's bearer credential
+// with no cookie, no cache entry, no redirect and no referrer.
+test("the authorization probe carries bearer identity without cookies or caching", async () => {
   const calls = [];
   const api = generated.createAdminApi({
     baseUrl: "https://dev.api.deep.navy",
     fetch: async (input, init) => {
       calls.push({ input: String(input), init });
-      return new Response(JSON.stringify({ user: { id: "user-1", displayName: "Founder", platformRoles: ["Founder"] } }), { status: 200, headers: { "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ overview: { activeTeams: "6" } }), { status: 200, headers: { "Content-Type": "application/json" } });
     }
   });
-  const response = await api.request("current_user", {}, { accessToken: "access-token", requestId: "request-1" });
-  assert.equal(response.user.displayName, "Founder");
-  assert.equal(calls[0].input, "https://dev.api.deep.navy/deepnavy.v1.AuthService/GetCurrentUser");
+  const response = await api.request("admin_overview", {}, { accessToken: "access-token", requestId: "request-1" });
+  assert.equal(response.overview.activeTeams, 6n);
+  assert.equal(calls[0].input, "https://dev.api.deep.navy/deepnavy.v1.AdminService/GetAdminOverview");
   assert.equal(new Headers(calls[0].init.headers).get("authorization"), "Bearer access-token");
   assert.equal(new Headers(calls[0].init.headers).get("x-request-id"), "request-1");
   assert.equal(calls[0].init.cache, "no-store");

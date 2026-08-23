@@ -71,9 +71,20 @@ expected to be calm about them.
   minutes. Access and ID tokens are held only in JavaScript memory. Only the
   transient PKCE verifier, state, nonce, redirect URI, and creation time enter
   `sessionStorage`; no bearer or refresh token is persisted.
-- `AuthService.GetCurrentUser` verifies the bearer identity through the platform
-  API. The admin overview is requested only after that response contains a
-  case-insensitive `Founder` or `Admin` platform role.
+- `AdminService.GetAdminOverview` is the authorization probe: a 200 is the
+  platform authorizing this operator, and it is the console's first screen, so
+  signing in costs one request rather than two. The operator's display name is
+  read from the ID token the browser already holds, because a display name is
+  cosmetic and is not an authorization fact. There is no client-side role gate:
+  the API holds the address allowlist and re-checks the role on every admin
+  request. A refusal is reported as one of three things a human acts on
+  differently — credential rejected (sign in again), authenticated but not
+  permitted (signing in again will not help), platform unreachable (retry) —
+  always with the request reference the platform returned.
+- The customer identity service is unreachable from this console by
+  construction. It sits behind the customer authentication interceptor and the
+  customer user pool, and this console holds an operator-pool credential, so it
+  could only ever answer 401; the generated client no longer binds it.
 - The read-only overview, customer, team economics, fleet, runtime, billing,
   reconciliation, and alert projections are consumed through TypeScript
   generated from `platform-protos` revision
@@ -167,14 +178,14 @@ accept a separate admin app-client audience.
 
 The user pool must keep MFA `ON`. The browser session limit is defense in depth;
 the API must independently enforce admin/founder role, MFA policy, and recent
-authentication for every protected admin RPC.
+authentication for every protected admin RPC. It is the only thing that enforces
+them: this console makes no authorization decision of its own.
 
 ## API routes
 
 The generated browser client issues ConnectRPC JSON `POST` requests to:
 
 ```text
-/deepnavy.v1.AuthService/GetCurrentUser
 /deepnavy.v1.AdminService/GetAdminOverview
 /deepnavy.v1.AdminService/ListAdminCustomers
 /deepnavy.v1.AdminService/GetAdminCustomer
