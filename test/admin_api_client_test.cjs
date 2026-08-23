@@ -74,7 +74,7 @@ test("an unsupported procedure reaches no network at all", async () => {
     baseUrl: "https://dev.api.deep.navy",
     fetch: async () => { fetched = true; return new Response("{}", { status: 200 }); }
   });
-  assert.equal(await api.request("current_user", {}, { accessToken: "access-token", requestId: "request-0" }), undefined);
+  assert.equal(await api.request("current_user", {}, { bearerToken: "id-token", requestId: "request-0" }), undefined);
   assert.equal(fetched, false);
 });
 
@@ -96,9 +96,9 @@ test("the generated client resumes the runtime stream past a cursor and delivers
       ]), { status: 200, headers: { "Content-Type": "application/connect+json" } });
     }
   });
-  await api.stream("admin_runtimes_stream", { afterSequence: "5" }, { accessToken: "access-token", requestId: "stream-1" }, (message) => messages.push(message));
+  await api.stream("admin_runtimes_stream", { afterSequence: "5" }, { bearerToken: "id-token", requestId: "stream-1" }, (message) => messages.push(message));
   assert.equal(calls[0].input, "https://dev.api.deep.navy/deepnavy.v1.AdminService/StreamAdminRuntimeInstances");
-  assert.equal(calls[0].headers.get("authorization"), "Bearer access-token");
+  assert.equal(calls[0].headers.get("authorization"), "Bearer id-token");
   assert.equal(calls[0].headers.get("x-request-id"), "stream-1");
   assert.equal(calls[0].body.afterSequence, "5");
   assert.equal(messages.length, 1);
@@ -110,7 +110,7 @@ test("the generated client resumes the runtime stream past a cursor and delivers
 test("the generated stream rejects an unauthenticated caller before opening a connection", async () => {
   let fetched = false;
   const api = generated.createAdminApi({ baseUrl: "https://dev.api.deep.navy", fetch: async () => { fetched = true; return new Response(null, { status: 200 }); } });
-  await assert.rejects(api.stream("admin_alerts_stream", { afterSequence: "0" }, { accessToken: "  ", requestId: "stream-2" }, () => {}), (error) => {
+  await assert.rejects(api.stream("admin_alerts_stream", { afterSequence: "0" }, { bearerToken: "  ", requestId: "stream-2" }, () => {}), (error) => {
     assert.equal(error.name, "AdminClientError");
     assert.equal(error.code, "unauthenticated");
     return true;
@@ -130,10 +130,10 @@ test("the authorization probe carries bearer identity without cookies or caching
       return new Response(JSON.stringify({ overview: { activeTeams: "6" } }), { status: 200, headers: { "Content-Type": "application/json" } });
     }
   });
-  const response = await api.request("admin_overview", {}, { accessToken: "access-token", requestId: "request-1" });
+  const response = await api.request("admin_overview", {}, { bearerToken: "id-token", requestId: "request-1" });
   assert.equal(response.overview.activeTeams, 6n);
   assert.equal(calls[0].input, "https://dev.api.deep.navy/deepnavy.v1.AdminService/GetAdminOverview");
-  assert.equal(new Headers(calls[0].init.headers).get("authorization"), "Bearer access-token");
+  assert.equal(new Headers(calls[0].init.headers).get("authorization"), "Bearer id-token");
   assert.equal(new Headers(calls[0].init.headers).get("x-request-id"), "request-1");
   assert.equal(calls[0].init.cache, "no-store");
   assert.equal(calls[0].init.credentials, "omit");
@@ -155,7 +155,7 @@ test("the generated admin request decodes Protobuf money and int64 fields", asyn
       } }), { status: 200, headers: { "Content-Type": "application/json" } });
     }
   });
-  const response = await api.request("admin_overview", {}, { accessToken: "access-token", requestId: "request-2" });
+  const response = await api.request("admin_overview", {}, { bearerToken: "id-token", requestId: "request-2" });
   assert.equal(requestUrl, "https://dev.api.deep.navy/deepnavy.v1.AdminService/GetAdminOverview");
   assert.equal(response.overview.monthlyRecurringRevenue.units, 1250n);
   assert.equal(response.overview.activeTeams, 6n);
@@ -170,7 +170,7 @@ test("Connect errors expose the safe top-level message and server request ID", a
       headers: { "Content-Type": "application/json", "X-Request-ID": "server-reference" }
     })
   });
-  await assert.rejects(api.request("admin_overview", {}, { accessToken: "access-token", requestId: "client-reference" }), (error) => {
+  await assert.rejects(api.request("admin_overview", {}, { bearerToken: "id-token", requestId: "client-reference" }), (error) => {
     assert.equal(error.name, "AdminClientError");
     assert.equal(error.code, "permission_denied");
     assert.equal(error.status, 403);
@@ -189,7 +189,7 @@ test("the generated client requests team economics and operational resources thr
       return new Response(JSON.stringify({ economicsSlices: [] }), { status: 200, headers: { "Content-Type": "application/json" } });
     }
   });
-  await api.request("admin_team_economics", { page: { pageSize: 100 } }, { accessToken: "access-token", requestId: "economics-1" });
+  await api.request("admin_team_economics", { page: { pageSize: 100 } }, { bearerToken: "id-token", requestId: "economics-1" });
   assert.equal(calls[0].input, "https://dev.api.deep.navy/deepnavy.v1.AdminService/ListAdminEconomicsSlices");
   assert.deepEqual(calls[0].body, { dimension: "ADMIN_ECONOMICS_DIMENSION_TEAM", page: { pageSize: 100 } });
 });

@@ -371,3 +371,32 @@ test("the sign-in error never renders text the query string supplied", () => {
   assert.match(safeOAuthDescription("access_denied"), /admits one address/);
   assert.match(safeOAuthDescription("some_unknown_code"), /some_unknown_code/);
 });
+
+// An operator signed in with Google, reached the right service, and was still
+// refused: "The platform rejected this session's credential… it was not issued
+// by the directory this console signs in against." True, but for the wrong
+// reason — the console was sending Cognito's ACCESS token while platform-api
+// verifies an ID token (auth.NewCognitoIDTokenVerifier, which checks `aud`).
+// A federated user's access token carries no `aud` at all, so every admin
+// request failed verification.
+//
+// This was masked until today: requests used to go to the customer AuthService,
+// which rejected them on issuer grounds first. Fixing the routing revealed it.
+test("the bearer sent to the platform is the ID token, never the access token", () => {
+  // The access token is validated and then dropped; it must never be stored.
+  assert.doesNotMatch(source, /state\.\w*[Tt]oken\s*=\s*accessToken\b/,
+    "the access token must not become the bearer");
+  assert.match(source, /state\.bearerToken\s*=\s*idToken\b/,
+    "the ID token is what platform-api's operator verifier accepts");
+
+  // And no site may reach for an access token as the credential.
+  assert.doesNotMatch(source, /state\.accessToken/,
+    "a field named accessToken holding an ID token is how this regresses");
+
+  // Every request path uses the one bearer, so a future call site cannot pick
+  // the wrong credential — there is only one to pick.
+  const bearers = [...source.matchAll(/bearerToken:\s*state\.(\w+)/g)].map((m) => m[1]);
+  assert.ok(bearers.length >= 4, `expected the bearer at several call sites, found ${bearers.length}`);
+  assert.deepEqual([...new Set(bearers)], ["bearerToken"],
+    "every request must send the same credential");
+});

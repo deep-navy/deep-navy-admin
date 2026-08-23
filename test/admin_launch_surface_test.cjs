@@ -62,7 +62,7 @@ test("metrics panels are proxied, side-by-side, and honest about absence", () =>
   const html = readFileSync("_includes/admin-console.html", "utf8");
   assert.match(js, /METRICS_ENVIRONMENTS = \["development", "production"\]/);
   assert.match(js, /\/admin\/v1\/metrics\/query_range/);
-  assert.match(js, /Authorization: `Bearer \$\{state\.accessToken\}`/);
+  assert.match(js, /Authorization: `Bearer \$\{state\.bearerToken\}`/);
   assert.match(js, /"unprovisioned"/);
   assert.match(js, /Not provisioned/);
   assert.match(js, /No data yet/);

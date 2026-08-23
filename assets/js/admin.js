@@ -45,7 +45,8 @@
   if (!ui.signIn || !ui.signedOut || !ui.authenticated) return;
 
   const state = {
-    accessToken: "",
+    // The ID token. See the token exchange for why it is not the access token.
+    bearerToken: "",
     authorized: false,
     deadline: 0,
     sessionTimer: 0,
@@ -471,7 +472,19 @@
       const idToken = stringValue(tokenResponse.id_token);
       if (!response.ok || !accessToken || !idToken) throw new Error("token_exchange_failed");
       const deadline = validateTokens(idToken, accessToken, transaction);
-      state.accessToken = accessToken;
+      // The platform verifies an ID token, not an access token. platform-api
+      // builds the operator verifier with auth.NewCognitoIDTokenVerifier, which
+      // checks `aud` against the app client — and a Cognito access token for a
+      // FEDERATED user carries no `aud` at all (it carries client_id instead),
+      // which auth.go:200 says in as many words. Sending the access token
+      // therefore fails verification for every admin request, and the operator
+      // is told the credential "was not issued by the directory this console
+      // signs in against" — true, but for the wrong reason.
+      //
+      // The access token is validated above and then deliberately dropped: every
+      // request this console makes goes to our own API, so nothing needs it, and
+      // an unused credential in memory is one more thing to leak.
+      state.bearerToken = idToken;
       state.deadline = deadline;
       scheduleSessionExpiry();
       await authorizeOperator(idToken);
@@ -600,11 +613,11 @@
   }
 
   async function authorizeOperator(idToken) {
-    if (!adminApi || !state.accessToken) throw new Error("admin_api_unavailable");
+    if (!adminApi || !state.bearerToken) throw new Error("admin_api_unavailable");
     const clientRequestId = requestId();
     let identity;
     try {
-      identity = await adminApi.request(AUTHORIZATION_PROBE, {}, { accessToken: state.accessToken, requestId: clientRequestId })
+      identity = await adminApi.request(AUTHORIZATION_PROBE, {}, { bearerToken: state.bearerToken, requestId: clientRequestId })
         .then((response) => response?.identity);
     } catch (error) {
       const failure = authorizationFailure(error?.code);
@@ -723,7 +736,7 @@
   }
 
   function clearSession() {
-    state.accessToken = "";
+    state.bearerToken = "";
     state.authorized = false;
     state.deadline = 0;
     if (state.sessionTimer) window.clearTimeout(state.sessionTimer);
@@ -1104,7 +1117,7 @@
     const clientRequestId = requestId();
     setDataState("pending", "Loading authorized overview", "Requesting AdminService.GetAdminOverview through the pinned generated client.");
     try {
-      const response = await adminApi.request("admin_overview", {}, { accessToken: state.accessToken, requestId: clientRequestId, signal });
+      const response = await adminApi.request("admin_overview", {}, { bearerToken: state.bearerToken, requestId: clientRequestId, signal });
       renderOverview(response);
       return true;
     } catch (error) {
@@ -1128,7 +1141,7 @@
   async function adminRequest(name, input, signal) {
     const clientRequestId = requestId();
     try {
-      return await adminApi.request(name, input, { accessToken: state.accessToken, requestId: clientRequestId, signal });
+      return await adminApi.request(name, input, { bearerToken: state.bearerToken, requestId: clientRequestId, signal });
     } catch (error) {
       throw error;
     }
@@ -1471,7 +1484,7 @@
   async function openCustomerDetail(event) {
     const button = event.target.closest("[data-customer-detail-id]");
     const organizationId = safeResourceId(button?.dataset.customerDetailId);
-    if (!button || !organizationId || !state.authorized || !state.accessToken) return;
+    if (!button || !organizationId || !state.authorized || !state.bearerToken) return;
     if (state.customerDetailController) state.customerDetailController.abort();
     const controller = new AbortController();
     state.customerDetailController = controller;
@@ -1991,7 +2004,7 @@
       credentials: "omit",
       redirect: "error",
       referrerPolicy: "no-referrer",
-      headers: { Accept: "application/json", Authorization: `Bearer ${state.accessToken}` },
+      headers: { Accept: "application/json", Authorization: `Bearer ${state.bearerToken}` },
       signal
     });
     if (response.status === 404) return { state: "unprovisioned" };
@@ -2320,7 +2333,7 @@
   // strip is showing at that moment.
   async function reloadMetricsGrid() {
     renderMetricsQueryBar();
-    if (!state.authorized || !state.accessToken || Date.now() >= state.deadline) {
+    if (!state.authorized || !state.bearerToken || Date.now() >= state.deadline) {
       updateMetricsGridBasis();
       return;
     }
@@ -2635,7 +2648,7 @@
       try {
         await adminApi.stream(streamName,
           { afterSequence: state[cursorKey].toString() },
-          { accessToken: state.accessToken, requestId: requestId(), signal: controller.signal },
+          { bearerToken: state.bearerToken, requestId: requestId(), signal: controller.signal },
           apply);
         backoff = streamBaseBackoff;
       } catch (error) {
@@ -2656,7 +2669,7 @@
 
   function startStreams() {
     stopStreams();
-    if (!state.authorized || !state.accessToken || !adminApi || typeof adminApi.stream !== "function") return;
+    if (!state.authorized || !state.bearerToken || !adminApi || typeof adminApi.stream !== "function") return;
     const controller = new AbortController();
     state.streamController = controller;
     void runStream("admin_runtimes_stream", "runtimeCursor", controller, applyRuntimeUpsert);
@@ -2697,7 +2710,7 @@
     if (auditState.action === action) return;
     auditState.action = action;
     renderAuditFilter();
-    if (!state.authorized || !state.accessToken || Date.now() >= state.deadline) return;
+    if (!state.authorized || !state.bearerToken || Date.now() >= state.deadline) return;
     void loadAudit();
   }
 
@@ -2987,7 +3000,7 @@
   // only be a place for a click Event to arrive if anyone ever wired this to a
   // listener directly.
   async function refreshDashboard() {
-    if (!state.authorized || !state.accessToken || Date.now() >= state.deadline || !adminApi) {
+    if (!state.authorized || !state.bearerToken || Date.now() >= state.deadline || !adminApi) {
       expireSession();
       return;
     }
@@ -3132,7 +3145,7 @@
       if (item === button) item.dataset.active = "true";
       else delete item.dataset.active;
     });
-    if (state.authorized && state.accessToken && Date.now() < state.deadline) void loadEconomics();
+    if (state.authorized && state.bearerToken && Date.now() < state.deadline) void loadEconomics();
   });
 
   // The customer filter and search narrow a COMPLETE set (see customersState), so

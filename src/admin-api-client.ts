@@ -62,7 +62,18 @@ function streamCursor(value: unknown): bigint {
 }
 
 export interface AdminCallOptions {
-  accessToken: string;
+  /**
+   * The credential to present as the Bearer token. It is the Cognito ID token,
+   * NOT the access token: platform-api builds the operator verifier with
+   * auth.NewCognitoIDTokenVerifier, which checks `aud` — and a federated user's
+   * access token carries `client_id` instead, with no `aud` to check.
+   *
+   * The field used to be named for the wrong one of the two while holding the
+   * right one, which is how the console spent a day sending a credential the
+   * server could not verify and reading the 401 as an issuer problem. This name
+   * states the role the token plays and makes no claim about its kind.
+   */
+  bearerToken: string;
   requestId: string;
   signal?: AbortSignal;
 }
@@ -223,14 +234,14 @@ export function createAdminApi(options: AdminApiOptions) {
 
   async function request(name: ProcedureName, input: unknown, options: AdminCallOptions): Promise<unknown> {
     const payload = inputRecord(input);
-    const accessToken = options.accessToken.trim();
+    const bearerToken = options.bearerToken.trim();
     const requestId = options.requestId.trim();
-    if (!accessToken) throw new AdminClientError("Sign-in is required.", "unauthenticated", 401, requestId);
+    if (!bearerToken) throw new AdminClientError("Sign-in is required.", "unauthenticated", 401, requestId);
     if (!requestId) throw new AdminClientError("A request ID is required.", "invalid_argument", 400, "");
 
     const callOptions: CallOptions = {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${bearerToken}`,
         "X-Request-ID": requestId
       },
       signal: options.signal
@@ -293,16 +304,16 @@ export function createAdminApi(options: AdminApiOptions) {
 
   async function stream(name: StreamName, input: unknown, options: AdminCallOptions, onMessage: (message: unknown) => void): Promise<void> {
     const payload = inputRecord(input);
-    const accessToken = options.accessToken.trim();
+    const bearerToken = options.bearerToken.trim();
     const requestId = options.requestId.trim();
-    if (!accessToken) throw new AdminClientError("Sign-in is required.", "unauthenticated", 401, requestId);
+    if (!bearerToken) throw new AdminClientError("Sign-in is required.", "unauthenticated", 401, requestId);
     if (!requestId) throw new AdminClientError("A request ID is required.", "invalid_argument", 400, "");
     if (typeof onMessage !== "function") throw new AdminClientError("A stream handler is required.", "invalid_argument", 400, requestId);
 
     const afterSequence = streamCursor(payload.afterSequence);
     const callOptions: CallOptions = {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${bearerToken}`,
         "X-Request-ID": requestId
       },
       signal: options.signal,
