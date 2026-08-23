@@ -269,10 +269,14 @@
         nonce,
         code_challenge_method: "S256",
         code_challenge: challenge,
-        // The pool supports exactly one identity provider, so naming it here
-        // skips Cognito's chooser and lands the operator on Google directly.
-        // The button says "Sign in with Google"; an interstitial asking which
-        // provider would make that promise a lie.
+        // The pool supports exactly one identity provider, so name it. Verified
+        // against the live pool: managed login (the v2 branding this pool uses)
+        // consumes this parameter and still renders its own page, which offers
+        // exactly one choice - "Sign in with Google". The classic hosted UI
+        // bounced straight through. Keeping it costs nothing and takes effect
+        // if the managed branding is ever removed; what it does NOT do today is
+        // skip the interstitial, and claiming otherwise in a comment is how the
+        // next person loses an hour.
         identity_provider: "Google",
         prompt: "login"
       }).toString();
