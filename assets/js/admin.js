@@ -1945,7 +1945,14 @@
   // (push pipeline, no scrape up) and says so; a failed request is a
   // failure, never a substitute series. Nothing is invented browser-side.
   const METRICS_ENVIRONMENTS = ["development", "production"];
-  const METRICS_SERVICES = ["platform-api", "builder", "gateway"];
+  // Exactly the services that emit these series, verified against OTEL_SERVICE_NAME
+  // on each deployment. "builder" and "gateway" were here and are not services we
+  // run — selecting either filtered on {service_name="builder"}, which matches
+  // nothing, so the panel went empty and looked like an outage rather than a
+  // filter that can never match. Four real services were missing at the same time.
+  // Keep this list in step with OTEL_SERVICE_NAME; a name that does not exist is
+  // indistinguishable from a service that is down.
+  const METRICS_SERVICES = ["agent-stream-service", "economics-service", "github-service", "platform-api", "team-provisioner"];
   const METRICS_WINDOWS = ["1h", "6h", "24h"];
   const METRICS_STEP_SECONDS = "30";
   const METRICS_PENDING_WHY = "Wired, but no crew-runtime series has reached this workspace yet. Activation happens at the next crew provisioning — that action belongs to provisioning, not to this console, so no button pretends otherwise.";

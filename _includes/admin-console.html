@@ -347,7 +347,21 @@
       <section class="ad-page" data-view="economics" id="economics" aria-labelledby="economics-title" hidden>
         <div class="ad-head">
           <div>
-            <div class="dn-eyebrow">Unit economics · <span data-economics-period>reporting period</span></div>
+            {%- comment -%}
+            The eyebrow used to read "Unit economics · reporting period", where
+            "reporting period" was literal text no script ever replaced — the
+            only unwritten hook in the shell. A placeholder that reads like a
+            value is worse than no label: an operator cannot tell "we do not
+            compute a period" from "the period failed to load", which is the
+            distinction the four empty states exist to keep.
+
+            AdminEconomics carries generatedAt and observedAt but no period
+            bounds, and generatedAt means "when this was computed", not "what
+            it covers" — labelling it as the period would swap one wrong claim
+            for another. So the eyebrow states only what is true. Restore the
+            span, wired, if period bounds are added to the response.
+            {%- endcomment -%}
+            <div class="dn-eyebrow">Unit economics</div>
             <h1 class="ad-head__title" id="economics-title">Engineering economics</h1>
             <p class="ad-lede">Fully-loaded direct cost against recognized revenue, sliced by any dimension the ledger carries. A slice the ledger cannot produce is not offered here.</p>
           </div>

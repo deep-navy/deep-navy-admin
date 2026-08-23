@@ -89,7 +89,11 @@ test("the metrics explorer speaks the proxy's real vocabulary", () => {
   ]);
   assert.equal([...js.matchAll(/filterable: true/g)].length, 5);
   assert.ok(panelOrder.slice(5).every((key) => new RegExp(`key: "${key}"[^\\n]*filterable: false`).test(js)));
-  assert.match(js, /METRICS_SERVICES = \["platform-api", "builder", "gateway"\]/);
+  // This pin previously named "builder" and "gateway" — neither is a service we
+  // run, so the filter they produced could never match a series and the panel
+  // read as an outage. The list must equal the deployments' OTEL_SERVICE_NAME
+  // values; a name that does not exist is indistinguishable from one that is down.
+  assert.match(js, /METRICS_SERVICES = \["agent-stream-service", "economics-service", "github-service", "platform-api", "team-provisioner"\]/);
   assert.match(js, /METRICS_WINDOWS = \["1h", "6h", "24h"\]/);
   assert.match(js, /windowKey: "24h"/);
   assert.match(js, /METRICS_STEP_SECONDS = "30"/);
