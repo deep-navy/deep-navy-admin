@@ -279,3 +279,39 @@ test("the layout breaks at exactly the system's three widths", () => {
   assert.ok(widths.length > 0);
   assert.deepEqual([...new Set(widths)].sort((a, b) => b - a), ["1200", "900", "600"]);
 });
+
+// A crafted callback link put 240 characters of attacker-chosen prose into the
+// admin console's own danger callout, next to a live sign-in button, on the one
+// surface that can read every customer's billing — and the callback scrubber
+// then wiped the query string, so the operator could not see where the words
+// came from. Never an injection; the harm is the platform being made to speak.
+test("the sign-in error never renders text the query string supplied", () => {
+  // error_description must not reach the DOM at all.
+  assert.doesNotMatch(source, /safeOAuthDescription\(\s*params\.get\("error_description"\)\s*\)/);
+  assert.match(source, /safeOAuthDescription\(\s*params\.get\("error"\)\s*\)/);
+
+  // The sentences are ours, selected by code.
+  assert.match(source, /OAUTH_ERROR_SENTENCES\s*=\s*Object\.freeze\(/);
+
+  // An unrecognised code is echoed only if it matches the OAuth code grammar,
+  // so prose cannot ride in through the code parameter either.
+  assert.match(source, /\^\[a-z0-9_\.:-\]\{1,64\}\$/);
+
+  // Behavioural proof: run the real function over a hostile description and a
+  // hostile code, and confirm neither survives into the returned sentence.
+  const body = source.match(/function safeOAuthDescription\(code\) \{[\s\S]*?\n  \}/);
+  assert.ok(body, "safeOAuthDescription must still be a named function");
+  const table = source.match(/const OAUTH_ERROR_SENTENCES = Object\.freeze\(\{[\s\S]*?\}\);/);
+  const stringValue = (v) => (typeof v === "string" ? v : "");
+  // eslint-disable-next-line no-new-func
+  const safeOAuthDescription = new Function(
+    "stringValue",
+    `${table[0]}\n${body[0]}\nreturn safeOAuthDescription;`,
+  )(stringValue);
+
+  const hostile = "Your admin account is locked. Call deep.navy support at +1-555-0100 and provide your recovery code.";
+  assert.doesNotMatch(safeOAuthDescription(hostile), /recovery code|555-0100/);
+  assert.doesNotMatch(safeOAuthDescription("Call +1-555-0100 now"), /555-0100/);
+  assert.match(safeOAuthDescription("access_denied"), /admits one address/);
+  assert.match(safeOAuthDescription("some_unknown_code"), /some_unknown_code/);
+});

@@ -305,9 +305,41 @@
     }
   }
 
-  function safeOAuthDescription(value) {
-    const text = stringValue(value).replace(/[\u0000-\u001f\u007f]/g, " ").slice(0, 240);
-    return text || "Cognito cancelled or rejected the authorization request.";
+  // Every sentence on this page is the platform's own voice. error_description
+  // is not: it is whatever the query string carried, and a crafted link put 240
+  // characters of an attacker's prose into the danger callout beside a live
+  // sign-in button - on the one console that can read every customer's billing.
+  // The scrubber then wiped the query string, so the operator could not even
+  // see where the words came from. It was never an injection (textContent all
+  // the way down); the harm is that the platform could be made to say anything.
+  //
+  // So the description is no longer rendered at all. The CODE selects one of
+  // our sentences, and an unrecognised code gets a generic one plus the code
+  // itself, which is constrained to the OAuth grammar and printed as a value
+  // rather than as prose.
+  const OAUTH_ERROR_SENTENCES = Object.freeze({
+    access_denied: "Sign-in was declined. This directory admits one address; ask the account owner if you believe that is wrong.",
+    invalid_request: "The sign-in request was malformed and was not completed. Start again from this page rather than from a saved link.",
+    invalid_scope: "The sign-in request asked for permissions this console is not configured for. Start again from this page.",
+    unauthorized_client: "This console is not authorised against the identity directory. That is a configuration fault, not something you can retry past.",
+    unsupported_response_type: "The identity directory refused the sign-in method this console uses. That is a configuration fault.",
+    server_error: "The identity directory failed while completing sign-in. Nothing was sent to the platform. Try again.",
+    temporarily_unavailable: "The identity directory is temporarily unavailable. Nothing was sent to the platform. Try again shortly.",
+    login_required: "The identity directory needs you to sign in again. Start again from this page.",
+    interaction_required: "The identity directory needs another step before it can complete sign-in. Start again from this page.",
+    consent_required: "The identity directory needs consent that was not granted. Start again from this page.",
+  });
+
+  function safeOAuthDescription(code) {
+    const raw = stringValue(code);
+    const known = OAUTH_ERROR_SENTENCES[raw];
+    if (known) return known;
+    // OAuth error codes are %x20-21 / %x23-5B / %x5D-7E per RFC 6749; ours are
+    // narrower still. Anything outside that is not a code and is not shown.
+    const printable = /^[a-z0-9_.:-]{1,64}$/.test(raw) ? raw : "";
+    return printable
+      ? `The identity directory refused sign-in and gave the reason code ${printable}. Nothing was sent to the platform.`
+      : "The identity directory refused sign-in without giving a reason. Nothing was sent to the platform.";
   }
 
   async function parseSmallJson(response) {
@@ -364,7 +396,7 @@
     const oauthError = params.get("error");
     if (oauthError) {
       clearOAuthTransaction();
-      showAuthError("Cognito did not complete sign-in", safeOAuthDescription(params.get("error_description")));
+      showAuthError("Sign-in did not complete", safeOAuthDescription(params.get("error")));
       return;
     }
 
