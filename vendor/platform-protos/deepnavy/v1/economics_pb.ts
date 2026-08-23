@@ -14,7 +14,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file deepnavy/v1/economics.proto.
  */
 export const file_deepnavy_v1_economics: GenFile = /*@__PURE__*/
-  fileDesc("ChtkZWVwbmF2eS92MS9lY29ub21pY3MucHJvdG8SC2RlZXBuYXZ5LnYxIksKDkVjb25vbWljc1Njb3BlEi0KBHR5cGUYASABKA4yHy5kZWVwbmF2eS52MS5FY29ub21pY3NTY29wZVR5cGUSCgoCaWQYAiABKAkiwgQKEEVjb25vbWljc1N1bW1hcnkSFgoKc2NvcGVfdHlwZRgBIAEoCUICGAESFAoIc2NvcGVfaWQYAiABKAlCAhgBEicKC2RpcmVjdF9jb3N0GAMgASgLMhIuZGVlcG5hdnkudjEuTW9uZXkSIwoHcmV2ZW51ZRgEIAEoCzISLmRlZXBuYXZ5LnYxLk1vbmV5EigKDGdyb3NzX3Byb2ZpdBgFIAEoCzISLmRlZXBuYXZ5LnYxLk1vbmV5EhgKDGdyb3NzX21hcmdpbhgGIAEoAUICGAESGwoTY3JlZGl0c191c2VkX21pY3JvcxgHIAEoAxIgChhjcmVkaXRzX3JlbWFpbmluZ19taWNyb3MYCCABKAMSLwoLbWVhc3VyZWRfYXQYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEioKBXNjb3BlGAogASgLMhsuZGVlcG5hdnkudjEuRWNvbm9taWNzU2NvcGUSHwoSZ3Jvc3NfbWFyZ2luX3JhdGlvGAsgASgBSACIAQESNgoQcmVwb3J0aW5nX3BlcmlvZBgMIAEoCzIcLmRlZXBuYXZ5LnYxLlJlcG9ydGluZ1BlcmlvZBIUCgxpbnB1dF90b2tlbnMYDSABKAMSFQoNb3V0cHV0X3Rva2VucxgOIAEoAxIZChFjYWNoZV9yZWFkX3Rva2VucxgPIAEoAxIaChJjYWNoZV93cml0ZV90b2tlbnMYECABKANCFQoTX2dyb3NzX21hcmdpbl9yYXRpbyLaAQoTR2V0RWNvbm9taWNzUmVxdWVzdBIWCgpzY29wZV90eXBlGAEgASgJQgIYARIUCghzY29wZV9pZBgCIAEoCUICGAESKgoFc2NvcGUYAyABKAsyGy5kZWVwbmF2eS52MS5FY29ub21pY3NTY29wZRI2ChByZXBvcnRpbmdfcGVyaW9kGAQgASgLMhwuZGVlcG5hdnkudjEuUmVwb3J0aW5nUGVyaW9kEjEKDHBhcmVudF9zY29wZRgFIAEoCzIbLmRlZXBuYXZ5LnYxLkVjb25vbWljc1Njb3BlIkgKFEdldEVjb25vbWljc1Jlc3BvbnNlEjAKCWVjb25vbWljcxgBIAEoCzIdLmRlZXBuYXZ5LnYxLkVjb25vbWljc1N1bW1hcnkiiAMKEkVjb25vbWljc0JyZWFrZG93bhIqCgVzY29wZRgBIAEoCzIbLmRlZXBuYXZ5LnYxLkVjb25vbWljc1Njb3BlEhQKDGRpc3BsYXlfbmFtZRgCIAEoCRIZChF1c2FnZV9ldmVudF9jb3VudBgDIAEoAxInCgtkaXJlY3RfY29zdBgEIAEoCzISLmRlZXBuYXZ5LnYxLk1vbmV5EhsKE2NyZWRpdHNfdXNlZF9taWNyb3MYBSABKAMSNQoRZmlyc3Rfb2NjdXJyZWRfYXQYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjQKEGxhc3Rfb2NjdXJyZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhQKDGlucHV0X3Rva2VucxgIIAEoAxIVCg1vdXRwdXRfdG9rZW5zGAkgASgDEhkKEWNhY2hlX3JlYWRfdG9rZW5zGAogASgDEhoKEmNhY2hlX3dyaXRlX3Rva2VucxgLIAEoAyLlAQoeTGlzdEVjb25vbWljc0JyZWFrZG93bnNSZXF1ZXN0EjEKDHBhcmVudF9zY29wZRgBIAEoCzIbLmRlZXBuYXZ5LnYxLkVjb25vbWljc1Njb3BlEjEKCGdyb3VwX2J5GAIgASgOMh8uZGVlcG5hdnkudjEuRWNvbm9taWNzU2NvcGVUeXBlEjYKEHJlcG9ydGluZ19wZXJpb2QYAyABKAsyHC5kZWVwbmF2eS52MS5SZXBvcnRpbmdQZXJpb2QSEQoJcGFnZV9zaXplGAQgASgFEhIKCnBhZ2VfdG9rZW4YBSABKAki2AEKH0xpc3RFY29ub21pY3NCcmVha2Rvd25zUmVzcG9uc2USMwoKYnJlYWtkb3ducxgBIAMoCzIfLmRlZXBuYXZ5LnYxLkVjb25vbWljc0JyZWFrZG93bhIXCg9uZXh0X3BhZ2VfdG9rZW4YAiABKAkSNgoQcmVwb3J0aW5nX3BlcmlvZBgDIAEoCzIcLmRlZXBuYXZ5LnYxLlJlcG9ydGluZ1BlcmlvZBIvCgttZWFzdXJlZF9hdBgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAi1AMKE0Vjb25vbWljc1VzYWdlRXZlbnQSLwoLbWVhc3VyZWRfYXQYASABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhIKCmFnZW50X3JvbGUYAiABKAkSFgoOb3BlcmF0aW9uX3R5cGUYAyABKAkSDQoFbW9kZWwYBCABKAkSEAoIcHJvdmlkZXIYBSABKAkSFAoMb2JqZWN0aXZlX2lkGAYgASgJEhUKDWluaXRpYXRpdmVfaWQYByABKAkSGwoTZ2l0aHViX2lzc3VlX251bWJlchgIIAEoAxIiChpnaXRodWJfcHVsbF9yZXF1ZXN0X251bWJlchgJIAEoAxIUCgxpbnB1dF90b2tlbnMYCiABKAMSFQoNb3V0cHV0X3Rva2VucxgLIAEoAxIZChFjYWNoZV9yZWFkX3Rva2VucxgMIAEoAxIaChJjYWNoZV93cml0ZV90b2tlbnMYDSABKAMSGwoTY3JlZGl0c191c2VkX21pY3JvcxgOIAEoAxInCgtkaXJlY3RfY29zdBgPIAEoCzISLmRlZXBuYXZ5LnYxLk1vbmV5Eg4KBnNvdXJjZRgQIAEoCRIXCg9zb3VyY2VfZXZlbnRfaWQYESABKAki3wEKH0xpc3RFY29ub21pY3NVc2FnZUV2ZW50c1JlcXVlc3QSKgoFc2NvcGUYASABKAsyGy5kZWVwbmF2eS52MS5FY29ub21pY3NTY29wZRIxCgxwYXJlbnRfc2NvcGUYAiABKAsyGy5kZWVwbmF2eS52MS5FY29ub21pY3NTY29wZRI2ChByZXBvcnRpbmdfcGVyaW9kGAMgASgLMhwuZGVlcG5hdnkudjEuUmVwb3J0aW5nUGVyaW9kEhEKCXBhZ2Vfc2l6ZRgEIAEoBRISCgpwYWdlX3Rva2VuGAUgASgJItYBCiBMaXN0RWNvbm9taWNzVXNhZ2VFdmVudHNSZXNwb25zZRIwCgZldmVudHMYASADKAsyIC5kZWVwbmF2eS52MS5FY29ub21pY3NVc2FnZUV2ZW50EhcKD25leHRfcGFnZV90b2tlbhgCIAEoCRI2ChByZXBvcnRpbmdfcGVyaW9kGAMgASgLMhwuZGVlcG5hdnkudjEuUmVwb3J0aW5nUGVyaW9kEi8KC21lYXN1cmVkX2F0GAQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCKFAQoURWNvbm9taWNzRGFpbHlCdWNrZXQSJwoDZGF5GAEgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBInCgtkaXJlY3RfY29zdBgCIAEoCzISLmRlZXBuYXZ5LnYxLk1vbmV5EhsKE2NyZWRpdHNfdXNlZF9taWNyb3MYAyABKAMifwoZTGlzdEVjb25vbWljc0RhaWx5UmVxdWVzdBIqCgVzY29wZRgBIAEoCzIbLmRlZXBuYXZ5LnYxLkVjb25vbWljc1Njb3BlEjYKEHJlcG9ydGluZ19wZXJpb2QYAiABKAsyHC5kZWVwbmF2eS52MS5SZXBvcnRpbmdQZXJpb2QitgEKGkxpc3RFY29ub21pY3NEYWlseVJlc3BvbnNlEi8KBGRheXMYASADKAsyIS5kZWVwbmF2eS52MS5FY29ub21pY3NEYWlseUJ1Y2tldBI2ChByZXBvcnRpbmdfcGVyaW9kGAIgASgLMhwuZGVlcG5hdnkudjEuUmVwb3J0aW5nUGVyaW9kEi8KC21lYXN1cmVkX2F0GAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCqmBAoSRWNvbm9taWNzU2NvcGVUeXBlEiQKIEVDT05PTUlDU19TQ09QRV9UWVBFX1VOU1BFQ0lGSUVEEAASIQodRUNPTk9NSUNTX1NDT1BFX1RZUEVfUExBVEZPUk0QARIlCiFFQ09OT01JQ1NfU0NPUEVfVFlQRV9PUkdBTklaQVRJT04QAhIdChlFQ09OT01JQ1NfU0NPUEVfVFlQRV9URUFNEAMSHgoaRUNPTk9NSUNTX1NDT1BFX1RZUEVfQUdFTlQQBBIjCh9FQ09OT01JQ1NfU0NPUEVfVFlQRV9BR0VOVF9ST0xFEAUSIgoeRUNPTk9NSUNTX1NDT1BFX1RZUEVfT0JKRUNUSVZFEAYSIwofRUNPTk9NSUNTX1NDT1BFX1RZUEVfSU5JVElBVElWRRAHEh4KGkVDT05PTUlDU19TQ09QRV9UWVBFX0lTU1VFEAgSJQohRUNPTk9NSUNTX1NDT1BFX1RZUEVfUFVMTF9SRVFVRVNUEAkSIwofRUNPTk9NSUNTX1NDT1BFX1RZUEVfUkVQT1NJVE9SWRAKEiAKHEVDT05PTUlDU19TQ09QRV9UWVBFX1NFU1NJT04QCxIeChpFQ09OT01JQ1NfU0NPUEVfVFlQRV9NT0RFTBAMEiEKHUVDT05PTUlDU19TQ09QRV9UWVBFX1BST1ZJREVSEA0SIgoeRUNPTk9NSUNTX1NDT1BFX1RZUEVfT1BFUkFUSU9OEA4yvQMKEEVjb25vbWljc1NlcnZpY2USUwoMR2V0RWNvbm9taWNzEiAuZGVlcG5hdnkudjEuR2V0RWNvbm9taWNzUmVxdWVzdBohLmRlZXBuYXZ5LnYxLkdldEVjb25vbWljc1Jlc3BvbnNlEnQKF0xpc3RFY29ub21pY3NCcmVha2Rvd25zEisuZGVlcG5hdnkudjEuTGlzdEVjb25vbWljc0JyZWFrZG93bnNSZXF1ZXN0GiwuZGVlcG5hdnkudjEuTGlzdEVjb25vbWljc0JyZWFrZG93bnNSZXNwb25zZRJ3ChhMaXN0RWNvbm9taWNzVXNhZ2VFdmVudHMSLC5kZWVwbmF2eS52MS5MaXN0RWNvbm9taWNzVXNhZ2VFdmVudHNSZXF1ZXN0Gi0uZGVlcG5hdnkudjEuTGlzdEVjb25vbWljc1VzYWdlRXZlbnRzUmVzcG9uc2USZQoSTGlzdEVjb25vbWljc0RhaWx5EiYuZGVlcG5hdnkudjEuTGlzdEVjb25vbWljc0RhaWx5UmVxdWVzdBonLmRlZXBuYXZ5LnYxLkxpc3RFY29ub21pY3NEYWlseVJlc3BvbnNlQkRaQmdpdGh1Yi5jb20vZGVlcC1uYXZ5L3BsYXRmb3JtLXByb3Rvcy9nZW4vZ28vZGVlcG5hdnkvdjE7ZGVlcG5hdnl2MWIGcHJvdG8z", [file_deepnavy_v1_common, file_google_protobuf_timestamp]);
+  fileDesc("ChtkZWVwbmF2eS92MS9lY29ub21pY3MucHJvdG8SC2RlZXBuYXZ5LnYxIksKDkVjb25vbWljc1Njb3BlEi0KBHR5cGUYASABKA4yHy5kZWVwbmF2eS52MS5FY29ub21pY3NTY29wZVR5cGUSCgoCaWQYAiABKAkiwgQKEEVjb25vbWljc1N1bW1hcnkSFgoKc2NvcGVfdHlwZRgBIAEoCUICGAESFAoIc2NvcGVfaWQYAiABKAlCAhgBEicKC2RpcmVjdF9jb3N0GAMgASgLMhIuZGVlcG5hdnkudjEuTW9uZXkSIwoHcmV2ZW51ZRgEIAEoCzISLmRlZXBuYXZ5LnYxLk1vbmV5EigKDGdyb3NzX3Byb2ZpdBgFIAEoCzISLmRlZXBuYXZ5LnYxLk1vbmV5EhgKDGdyb3NzX21hcmdpbhgGIAEoAUICGAESGwoTY3JlZGl0c191c2VkX21pY3JvcxgHIAEoAxIgChhjcmVkaXRzX3JlbWFpbmluZ19taWNyb3MYCCABKAMSLwoLbWVhc3VyZWRfYXQYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEioKBXNjb3BlGAogASgLMhsuZGVlcG5hdnkudjEuRWNvbm9taWNzU2NvcGUSHwoSZ3Jvc3NfbWFyZ2luX3JhdGlvGAsgASgBSACIAQESNgoQcmVwb3J0aW5nX3BlcmlvZBgMIAEoCzIcLmRlZXBuYXZ5LnYxLlJlcG9ydGluZ1BlcmlvZBIUCgxpbnB1dF90b2tlbnMYDSABKAMSFQoNb3V0cHV0X3Rva2VucxgOIAEoAxIZChFjYWNoZV9yZWFkX3Rva2VucxgPIAEoAxIaChJjYWNoZV93cml0ZV90b2tlbnMYECABKANCFQoTX2dyb3NzX21hcmdpbl9yYXRpbyLaAQoTR2V0RWNvbm9taWNzUmVxdWVzdBIWCgpzY29wZV90eXBlGAEgASgJQgIYARIUCghzY29wZV9pZBgCIAEoCUICGAESKgoFc2NvcGUYAyABKAsyGy5kZWVwbmF2eS52MS5FY29ub21pY3NTY29wZRI2ChByZXBvcnRpbmdfcGVyaW9kGAQgASgLMhwuZGVlcG5hdnkudjEuUmVwb3J0aW5nUGVyaW9kEjEKDHBhcmVudF9zY29wZRgFIAEoCzIbLmRlZXBuYXZ5LnYxLkVjb25vbWljc1Njb3BlIkgKFEdldEVjb25vbWljc1Jlc3BvbnNlEjAKCWVjb25vbWljcxgBIAEoCzIdLmRlZXBuYXZ5LnYxLkVjb25vbWljc1N1bW1hcnkiiAMKEkVjb25vbWljc0JyZWFrZG93bhIqCgVzY29wZRgBIAEoCzIbLmRlZXBuYXZ5LnYxLkVjb25vbWljc1Njb3BlEhQKDGRpc3BsYXlfbmFtZRgCIAEoCRIZChF1c2FnZV9ldmVudF9jb3VudBgDIAEoAxInCgtkaXJlY3RfY29zdBgEIAEoCzISLmRlZXBuYXZ5LnYxLk1vbmV5EhsKE2NyZWRpdHNfdXNlZF9taWNyb3MYBSABKAMSNQoRZmlyc3Rfb2NjdXJyZWRfYXQYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjQKEGxhc3Rfb2NjdXJyZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhQKDGlucHV0X3Rva2VucxgIIAEoAxIVCg1vdXRwdXRfdG9rZW5zGAkgASgDEhkKEWNhY2hlX3JlYWRfdG9rZW5zGAogASgDEhoKEmNhY2hlX3dyaXRlX3Rva2VucxgLIAEoAyLlAQoeTGlzdEVjb25vbWljc0JyZWFrZG93bnNSZXF1ZXN0EjEKDHBhcmVudF9zY29wZRgBIAEoCzIbLmRlZXBuYXZ5LnYxLkVjb25vbWljc1Njb3BlEjEKCGdyb3VwX2J5GAIgASgOMh8uZGVlcG5hdnkudjEuRWNvbm9taWNzU2NvcGVUeXBlEjYKEHJlcG9ydGluZ19wZXJpb2QYAyABKAsyHC5kZWVwbmF2eS52MS5SZXBvcnRpbmdQZXJpb2QSEQoJcGFnZV9zaXplGAQgASgFEhIKCnBhZ2VfdG9rZW4YBSABKAki2AEKH0xpc3RFY29ub21pY3NCcmVha2Rvd25zUmVzcG9uc2USMwoKYnJlYWtkb3ducxgBIAMoCzIfLmRlZXBuYXZ5LnYxLkVjb25vbWljc0JyZWFrZG93bhIXCg9uZXh0X3BhZ2VfdG9rZW4YAiABKAkSNgoQcmVwb3J0aW5nX3BlcmlvZBgDIAEoCzIcLmRlZXBuYXZ5LnYxLlJlcG9ydGluZ1BlcmlvZBIvCgttZWFzdXJlZF9hdBgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAi1AMKE0Vjb25vbWljc1VzYWdlRXZlbnQSLwoLbWVhc3VyZWRfYXQYASABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhIKCmFnZW50X3JvbGUYAiABKAkSFgoOb3BlcmF0aW9uX3R5cGUYAyABKAkSDQoFbW9kZWwYBCABKAkSEAoIcHJvdmlkZXIYBSABKAkSFAoMb2JqZWN0aXZlX2lkGAYgASgJEhUKDWluaXRpYXRpdmVfaWQYByABKAkSGwoTZ2l0aHViX2lzc3VlX251bWJlchgIIAEoAxIiChpnaXRodWJfcHVsbF9yZXF1ZXN0X251bWJlchgJIAEoAxIUCgxpbnB1dF90b2tlbnMYCiABKAMSFQoNb3V0cHV0X3Rva2VucxgLIAEoAxIZChFjYWNoZV9yZWFkX3Rva2VucxgMIAEoAxIaChJjYWNoZV93cml0ZV90b2tlbnMYDSABKAMSGwoTY3JlZGl0c191c2VkX21pY3JvcxgOIAEoAxInCgtkaXJlY3RfY29zdBgPIAEoCzISLmRlZXBuYXZ5LnYxLk1vbmV5Eg4KBnNvdXJjZRgQIAEoCRIXCg9zb3VyY2VfZXZlbnRfaWQYESABKAki3wEKH0xpc3RFY29ub21pY3NVc2FnZUV2ZW50c1JlcXVlc3QSKgoFc2NvcGUYASABKAsyGy5kZWVwbmF2eS52MS5FY29ub21pY3NTY29wZRIxCgxwYXJlbnRfc2NvcGUYAiABKAsyGy5kZWVwbmF2eS52MS5FY29ub21pY3NTY29wZRI2ChByZXBvcnRpbmdfcGVyaW9kGAMgASgLMhwuZGVlcG5hdnkudjEuUmVwb3J0aW5nUGVyaW9kEhEKCXBhZ2Vfc2l6ZRgEIAEoBRISCgpwYWdlX3Rva2VuGAUgASgJItYBCiBMaXN0RWNvbm9taWNzVXNhZ2VFdmVudHNSZXNwb25zZRIwCgZldmVudHMYASADKAsyIC5kZWVwbmF2eS52MS5FY29ub21pY3NVc2FnZUV2ZW50EhcKD25leHRfcGFnZV90b2tlbhgCIAEoCRI2ChByZXBvcnRpbmdfcGVyaW9kGAMgASgLMhwuZGVlcG5hdnkudjEuUmVwb3J0aW5nUGVyaW9kEi8KC21lYXN1cmVkX2F0GAQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCKFAQoURWNvbm9taWNzRGFpbHlCdWNrZXQSJwoDZGF5GAEgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBInCgtkaXJlY3RfY29zdBgCIAEoCzISLmRlZXBuYXZ5LnYxLk1vbmV5EhsKE2NyZWRpdHNfdXNlZF9taWNyb3MYAyABKAMifwoZTGlzdEVjb25vbWljc0RhaWx5UmVxdWVzdBIqCgVzY29wZRgBIAEoCzIbLmRlZXBuYXZ5LnYxLkVjb25vbWljc1Njb3BlEjYKEHJlcG9ydGluZ19wZXJpb2QYAiABKAsyHC5kZWVwbmF2eS52MS5SZXBvcnRpbmdQZXJpb2QitgEKGkxpc3RFY29ub21pY3NEYWlseVJlc3BvbnNlEi8KBGRheXMYASADKAsyIS5kZWVwbmF2eS52MS5FY29ub21pY3NEYWlseUJ1Y2tldBI2ChByZXBvcnRpbmdfcGVyaW9kGAIgASgLMhwuZGVlcG5hdnkudjEuUmVwb3J0aW5nUGVyaW9kEi8KC21lYXN1cmVkX2F0GAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCLaAQoZQ3JlZGl0TW92ZW1lbnRBdHRyaWJ1dGlvbhIQCghhZ2VudF9pZBgBIAEoCRISCgphZ2VudF9yb2xlGAIgASgJEhQKDG9iamVjdGl2ZV9pZBgDIAEoCRIVCg1pbml0aWF0aXZlX2lkGAQgASgJEhIKCnNlc3Npb25faWQYBSABKAkSFQoNcmVwb3NpdG9yeV9pZBgGIAEoAxIbChNnaXRodWJfaXNzdWVfbnVtYmVyGAcgASgDEiIKGmdpdGh1Yl9wdWxsX3JlcXVlc3RfbnVtYmVyGAggASgDIscDCg5DcmVkaXRNb3ZlbWVudBIQCghzZXF1ZW5jZRgBIAEoAxIXCg9vcmdhbml6YXRpb25faWQYAiABKAkSDwoHdGVhbV9pZBgDIAEoCRIXCg90ZWFtX2dlbmVyYXRpb24YBCABKAMSLQoEa2luZBgFIAEoDjIfLmRlZXBuYXZ5LnYxLkNyZWRpdE1vdmVtZW50S2luZBIWCg5vcGVyYXRpb25fdHlwZRgGIAEoCRIMCgR1bml0GAcgASgJEhAKCHF1YW50aXR5GAggASgDEhQKDGRlbHRhX21pY3JvcxgJIAEoAxIhChl0ZWFtX2JhbGFuY2VfYWZ0ZXJfbWljcm9zGAogASgDEikKIW9yZ2FuaXphdGlvbl9iYWxhbmNlX2FmdGVyX21pY3JvcxgLIAEoAxInCgtkaXJlY3RfY29zdBgMIAEoCzISLmRlZXBuYXZ5LnYxLk1vbmV5EjsKC2F0dHJpYnV0aW9uGA0gASgLMiYuZGVlcG5hdnkudjEuQ3JlZGl0TW92ZW1lbnRBdHRyaWJ1dGlvbhIvCgtvY2N1cnJlZF9hdBgOIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiRwocU3RyZWFtQ3JlZGl0TW92ZW1lbnRzUmVxdWVzdBIPCgd0ZWFtX2lkGAEgASgJEhYKDmFmdGVyX3NlcXVlbmNlGAIgASgDIk4KHVN0cmVhbUNyZWRpdE1vdmVtZW50c1Jlc3BvbnNlEi0KCG1vdmVtZW50GAEgASgLMhsuZGVlcG5hdnkudjEuQ3JlZGl0TW92ZW1lbnQqpgQKEkVjb25vbWljc1Njb3BlVHlwZRIkCiBFQ09OT01JQ1NfU0NPUEVfVFlQRV9VTlNQRUNJRklFRBAAEiEKHUVDT05PTUlDU19TQ09QRV9UWVBFX1BMQVRGT1JNEAESJQohRUNPTk9NSUNTX1NDT1BFX1RZUEVfT1JHQU5JWkFUSU9OEAISHQoZRUNPTk9NSUNTX1NDT1BFX1RZUEVfVEVBTRADEh4KGkVDT05PTUlDU19TQ09QRV9UWVBFX0FHRU5UEAQSIwofRUNPTk9NSUNTX1NDT1BFX1RZUEVfQUdFTlRfUk9MRRAFEiIKHkVDT05PTUlDU19TQ09QRV9UWVBFX09CSkVDVElWRRAGEiMKH0VDT05PTUlDU19TQ09QRV9UWVBFX0lOSVRJQVRJVkUQBxIeChpFQ09OT01JQ1NfU0NPUEVfVFlQRV9JU1NVRRAIEiUKIUVDT05PTUlDU19TQ09QRV9UWVBFX1BVTExfUkVRVUVTVBAJEiMKH0VDT05PTUlDU19TQ09QRV9UWVBFX1JFUE9TSVRPUlkQChIgChxFQ09OT01JQ1NfU0NPUEVfVFlQRV9TRVNTSU9OEAsSHgoaRUNPTk9NSUNTX1NDT1BFX1RZUEVfTU9ERUwQDBIhCh1FQ09OT01JQ1NfU0NPUEVfVFlQRV9QUk9WSURFUhANEiIKHkVDT05PTUlDU19TQ09QRV9UWVBFX09QRVJBVElPThAOKr8BChJDcmVkaXRNb3ZlbWVudEtpbmQSJAogQ1JFRElUX01PVkVNRU5UX0tJTkRfVU5TUEVDSUZJRUQQABIgChxDUkVESVRfTU9WRU1FTlRfS0lORF9SRVNFUlZFEAESHwobQ1JFRElUX01PVkVNRU5UX0tJTkRfU0VUVExFEAISIAocQ1JFRElUX01PVkVNRU5UX0tJTkRfUkVMRUFTRRADEh4KGkNSRURJVF9NT1ZFTUVOVF9LSU5EX0dSQU5UEAQyrwQKEEVjb25vbWljc1NlcnZpY2USUwoMR2V0RWNvbm9taWNzEiAuZGVlcG5hdnkudjEuR2V0RWNvbm9taWNzUmVxdWVzdBohLmRlZXBuYXZ5LnYxLkdldEVjb25vbWljc1Jlc3BvbnNlEnQKF0xpc3RFY29ub21pY3NCcmVha2Rvd25zEisuZGVlcG5hdnkudjEuTGlzdEVjb25vbWljc0JyZWFrZG93bnNSZXF1ZXN0GiwuZGVlcG5hdnkudjEuTGlzdEVjb25vbWljc0JyZWFrZG93bnNSZXNwb25zZRJ3ChhMaXN0RWNvbm9taWNzVXNhZ2VFdmVudHMSLC5kZWVwbmF2eS52MS5MaXN0RWNvbm9taWNzVXNhZ2VFdmVudHNSZXF1ZXN0Gi0uZGVlcG5hdnkudjEuTGlzdEVjb25vbWljc1VzYWdlRXZlbnRzUmVzcG9uc2USZQoSTGlzdEVjb25vbWljc0RhaWx5EiYuZGVlcG5hdnkudjEuTGlzdEVjb25vbWljc0RhaWx5UmVxdWVzdBonLmRlZXBuYXZ5LnYxLkxpc3RFY29ub21pY3NEYWlseVJlc3BvbnNlEnAKFVN0cmVhbUNyZWRpdE1vdmVtZW50cxIpLmRlZXBuYXZ5LnYxLlN0cmVhbUNyZWRpdE1vdmVtZW50c1JlcXVlc3QaKi5kZWVwbmF2eS52MS5TdHJlYW1DcmVkaXRNb3ZlbWVudHNSZXNwb25zZTABQkRaQmdpdGh1Yi5jb20vZGVlcC1uYXZ5L3BsYXRmb3JtLXByb3Rvcy9nZW4vZ28vZGVlcG5hdnkvdjE7ZGVlcG5hdnl2MWIGcHJvdG8z", [file_deepnavy_v1_common, file_google_protobuf_timestamp]);
 
 /**
  * EconomicsScope identifies a deep navy accounting scope. id is empty only
@@ -736,6 +736,251 @@ export const ListEconomicsDailyResponseSchema: GenMessage<ListEconomicsDailyResp
   messageDesc(file_deepnavy_v1_economics, 12);
 
 /**
+ * CreditMovementAttribution is the deep navy work a movement belongs to. Every
+ * field is optional and an empty one is ordinary rather than missing data:
+ * agents do work that belongs to no initiative, and a grant is attributed to
+ * nothing at all. Identifiers are deep navy resource IDs; agent_role is the
+ * same stable, non-secret alias ListEconomicsBreakdowns groups by, and the
+ * GitHub numbers are repository-relative, so neither is a key on its own.
+ *
+ * @generated from message deepnavy.v1.CreditMovementAttribution
+ */
+export type CreditMovementAttribution = Message<"deepnavy.v1.CreditMovementAttribution"> & {
+  /**
+   * @generated from field: string agent_id = 1;
+   */
+  agentId: string;
+
+  /**
+   * @generated from field: string agent_role = 2;
+   */
+  agentRole: string;
+
+  /**
+   * @generated from field: string objective_id = 3;
+   */
+  objectiveId: string;
+
+  /**
+   * @generated from field: string initiative_id = 4;
+   */
+  initiativeId: string;
+
+  /**
+   * @generated from field: string session_id = 5;
+   */
+  sessionId: string;
+
+  /**
+   * @generated from field: int64 repository_id = 6;
+   */
+  repositoryId: bigint;
+
+  /**
+   * @generated from field: int64 github_issue_number = 7;
+   */
+  githubIssueNumber: bigint;
+
+  /**
+   * @generated from field: int64 github_pull_request_number = 8;
+   */
+  githubPullRequestNumber: bigint;
+};
+
+/**
+ * Describes the message deepnavy.v1.CreditMovementAttribution.
+ * Use `create(CreditMovementAttributionSchema)` to create a new message.
+ */
+export const CreditMovementAttributionSchema: GenMessage<CreditMovementAttribution> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_economics, 13);
+
+/**
+ * CreditMovement is one entry in the credit ledger, published so a console can
+ * watch the balance move as agents work instead of re-reading a total and
+ * inferring what changed. It is an immutable accounting fact: an entry is never
+ * edited, and a correction arrives as a further movement.
+ *
+ * The stream deliberately lags the ledger by a small, server-chosen interval.
+ * A movement's sequence is assigned when its row is inserted but only becomes
+ * visible when its transaction commits, so two concurrent transactions can
+ * commit out of sequence order for a moment. Emitting the instant a row appears
+ * would step the cursor past a lower sequence that has not committed yet and
+ * lose that charge permanently, so the server withholds the newest movements
+ * until their ordering is settled. A client therefore sees every movement in
+ * sequence order, about a second late, and must treat "nothing new" as "nothing
+ * has settled yet" rather than "the team has stopped spending".
+ *
+ * @generated from message deepnavy.v1.CreditMovement
+ */
+export type CreditMovement = Message<"deepnavy.v1.CreditMovement"> & {
+  /**
+   * sequence is monotonically increasing across the credit ledger and is the
+   * resume cursor for StreamCreditMovements. It is not contiguous within one
+   * stream: a team sees its own movements and its organization's grants, not
+   * every movement in the ledger.
+   *
+   * @generated from field: int64 sequence = 1;
+   */
+  sequence: bigint;
+
+  /**
+   * @generated from field: string organization_id = 2;
+   */
+  organizationId: string;
+
+  /**
+   * team_id is empty for an organization-scoped movement such as the grant that
+   * funds a billing period. Such a movement still appears on a team's stream,
+   * because it moves the organization pool the team spends from.
+   *
+   * @generated from field: string team_id = 3;
+   */
+  teamId: string;
+
+  /**
+   * team_generation is the generation of the team runtime the movement was
+   * metered against. Zero means the movement is not attributable to one, which
+   * is ordinary for a grant.
+   *
+   * @generated from field: int64 team_generation = 4;
+   */
+  teamGeneration: bigint;
+
+  /**
+   * @generated from field: deepnavy.v1.CreditMovementKind kind = 5;
+   */
+  kind: CreditMovementKind;
+
+  /**
+   * operation_type is the stable, non-secret platform alias of the operation the
+   * credits were moved for, and is empty when the movement is not one, such as
+   * a grant.
+   *
+   * @generated from field: string operation_type = 6;
+   */
+  operationType: string;
+
+  /**
+   * unit is the stable, non-secret name of what was metered - "tokens" for a
+   * model call - and quantity is how many of them. An empty unit means the
+   * movement metered nothing, and quantity is then not a count of zero but no
+   * count at all. quantity explains the size of the work; it is never a price.
+   * Token classes are rated differently and are added together here, so nothing
+   * may reconstruct a cost from it: delta_micros and direct_cost remain the only
+   * authoritative amounts.
+   *
+   * @generated from field: string unit = 7;
+   */
+  unit: string;
+
+  /**
+   * @generated from field: int64 quantity = 8;
+   */
+  quantity: bigint;
+
+  /**
+   * delta_micros is the signed change this movement made, in microcredits,
+   * where 1,000,000 equals one credit. A hold or a charge is negative; a release
+   * or a grant is positive.
+   *
+   * @generated from field: int64 delta_micros = 9;
+   */
+  deltaMicros: bigint;
+
+  /**
+   * team_balance_after_micros and organization_balance_after_micros are the
+   * balances immediately after this movement, computed from the same ledger sum
+   * a balance read returns, so the last movement on a stream and a fresh balance
+   * read agree. The team figure is the team's own entries; the organization
+   * figure is the shared prepaid pool, which is what a team can actually spend.
+   *
+   * @generated from field: int64 team_balance_after_micros = 10;
+   */
+  teamBalanceAfterMicros: bigint;
+
+  /**
+   * @generated from field: int64 organization_balance_after_micros = 11;
+   */
+  organizationBalanceAfterMicros: bigint;
+
+  /**
+   * direct_cost is the provider cost recorded for this movement. It is present
+   * only once a call has settled and its real cost is known; its absence on a
+   * reservation is not missing data. It is never what the customer paid - the
+   * ledger converts cost to credits at the published rate - so nothing may
+   * present it as customer impact.
+   *
+   * @generated from field: deepnavy.v1.Money direct_cost = 12;
+   */
+  directCost?: Money | undefined;
+
+  /**
+   * @generated from field: deepnavy.v1.CreditMovementAttribution attribution = 13;
+   */
+  attribution?: CreditMovementAttribution | undefined;
+
+  /**
+   * occurred_at is when the movement was metered, not when it was streamed.
+   *
+   * @generated from field: google.protobuf.Timestamp occurred_at = 14;
+   */
+  occurredAt?: Timestamp | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.CreditMovement.
+ * Use `create(CreditMovementSchema)` to create a new message.
+ */
+export const CreditMovementSchema: GenMessage<CreditMovement> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_economics, 14);
+
+/**
+ * @generated from message deepnavy.v1.StreamCreditMovementsRequest
+ */
+export type StreamCreditMovementsRequest = Message<"deepnavy.v1.StreamCreditMovementsRequest"> & {
+  /**
+   * The authenticated principal must be a current member of the team's
+   * organization. Membership is re-checked while the stream runs, so a revoked
+   * member's stream ends rather than idling.
+   *
+   * @generated from field: string team_id = 1;
+   */
+  teamId: string;
+
+  /**
+   * Movements with sequence greater than after_sequence are emitted. Zero starts
+   * from the oldest retained movement. A negative value is rejected.
+   *
+   * @generated from field: int64 after_sequence = 2;
+   */
+  afterSequence: bigint;
+};
+
+/**
+ * Describes the message deepnavy.v1.StreamCreditMovementsRequest.
+ * Use `create(StreamCreditMovementsRequestSchema)` to create a new message.
+ */
+export const StreamCreditMovementsRequestSchema: GenMessage<StreamCreditMovementsRequest> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_economics, 15);
+
+/**
+ * @generated from message deepnavy.v1.StreamCreditMovementsResponse
+ */
+export type StreamCreditMovementsResponse = Message<"deepnavy.v1.StreamCreditMovementsResponse"> & {
+  /**
+   * @generated from field: deepnavy.v1.CreditMovement movement = 1;
+   */
+  movement?: CreditMovement | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.StreamCreditMovementsResponse.
+ * Use `create(StreamCreditMovementsResponseSchema)` to create a new message.
+ */
+export const StreamCreditMovementsResponseSchema: GenMessage<StreamCreditMovementsResponse> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_economics, 16);
+
+/**
  * @generated from enum deepnavy.v1.EconomicsScopeType
  */
 export enum EconomicsScopeType {
@@ -822,6 +1067,49 @@ export const EconomicsScopeTypeSchema: GenEnum<EconomicsScopeType> = /*@__PURE__
   enumDesc(file_deepnavy_v1_economics, 0);
 
 /**
+ * CreditMovementKind is what moved the money. The four kinds are the whole
+ * lifecycle of a credit: a RESERVE holds credits before an agent makes a model
+ * call, a SETTLE finalises that hold against what the call actually cost, a
+ * RELEASE returns a hold the platform decided will never be spent, and a GRANT
+ * funds the organization's pool. Any other shape is UNSPECIFIED and a client
+ * renders it from its own fields rather than guessing a lifecycle for it.
+ *
+ * @generated from enum deepnavy.v1.CreditMovementKind
+ */
+export enum CreditMovementKind {
+  /**
+   * @generated from enum value: CREDIT_MOVEMENT_KIND_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * @generated from enum value: CREDIT_MOVEMENT_KIND_RESERVE = 1;
+   */
+  RESERVE = 1,
+
+  /**
+   * @generated from enum value: CREDIT_MOVEMENT_KIND_SETTLE = 2;
+   */
+  SETTLE = 2,
+
+  /**
+   * @generated from enum value: CREDIT_MOVEMENT_KIND_RELEASE = 3;
+   */
+  RELEASE = 3,
+
+  /**
+   * @generated from enum value: CREDIT_MOVEMENT_KIND_GRANT = 4;
+   */
+  GRANT = 4,
+}
+
+/**
+ * Describes the enum deepnavy.v1.CreditMovementKind.
+ */
+export const CreditMovementKindSchema: GenEnum<CreditMovementKind> = /*@__PURE__*/
+  enumDesc(file_deepnavy_v1_economics, 1);
+
+/**
  * @generated from service deepnavy.v1.EconomicsService
  */
 export const EconomicsService: GenService<{
@@ -866,6 +1154,22 @@ export const EconomicsService: GenService<{
     methodKind: "unary";
     input: typeof ListEconomicsDailyRequestSchema;
     output: typeof ListEconomicsDailyResponseSchema;
+  },
+  /**
+   * StreamCreditMovements follows one team's credit ledger live: every hold,
+   * settlement, release and organization grant that moves the balance the team
+   * spends from, in sequence order, with the balance after each one. It is the
+   * subscription behind a console that shows credits moving while agents work,
+   * and it replaces polling a total and guessing what changed. Replay from a
+   * cursor is bounded; a cursor that would replay more than the server's limit
+   * is answered with RESOURCE_EXHAUSTED rather than a truncated history.
+   *
+   * @generated from rpc deepnavy.v1.EconomicsService.StreamCreditMovements
+   */
+  streamCreditMovements: {
+    methodKind: "server_streaming";
+    input: typeof StreamCreditMovementsRequestSchema;
+    output: typeof StreamCreditMovementsResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_deepnavy_v1_economics, 0);

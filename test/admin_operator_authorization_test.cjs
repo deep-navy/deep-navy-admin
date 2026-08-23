@@ -39,7 +39,8 @@ function lift(pattern, name) {
 const failureTable = lift(/const AUTHORIZATION_FAILURES = Object\.freeze\(\{[\s\S]*?\n {2}\}\);/, "AUTHORIZATION_FAILURES");
 const failureLookup = lift(/function authorizationFailure\(code\) \{[\s\S]*?\n {2}\}/, "authorizationFailure");
 const decodeJwt = lift(/function decodeJwtPayload\(token\) \{[\s\S]*?\n {2}\}/, "decodeJwtPayload");
-const operatorClaims = lift(/function operatorFromIdToken\(idToken\) \{[\s\S]*?\n {2}\}/, "operatorFromIdToken");
+const basisWords = lift(/const AUTHORIZATION_BASIS_WORDS = Object\.freeze\(\{[\s\S]*?\n {2}\}\);/, "AUTHORIZATION_BASIS_WORDS");
+const operatorShape = lift(/function operatorFromIdentity\(identity\) \{[\s\S]*?\n {2}\}/, "operatorFromIdentity");
 
 // eslint-disable-next-line no-new-func
 const authorizationFailure = new Function(
@@ -48,11 +49,10 @@ const authorizationFailure = new Function(
 )(stringValue);
 
 // eslint-disable-next-line no-new-func
-const operatorFromIdToken = new Function(
+const operatorFromIdentity = new Function(
   "stringValue",
-  "window",
-  `${decodeJwt}\n${operatorClaims}\nreturn operatorFromIdToken;`
-)(stringValue, { atob });
+  `${basisWords}\n${operatorShape}\nreturn operatorFromIdentity;`
+)(stringValue);
 
 function idToken(claims) {
   const segment = (value) => Buffer.from(JSON.stringify(value)).toString("base64url");
@@ -87,23 +87,61 @@ test("the console never asks the customer identity service who the operator is",
 /* ---- one seam ----------------------------------------------------------- */
 
 test("authorization is established once, by an administrator request", () => {
-  assert.match(source, /const AUTHORIZATION_PROBE = "admin_overview"/);
+  assert.match(source, /const AUTHORIZATION_PROBE = "admin_identity"/);
   assert.equal([...source.matchAll(/async function authorizeOperator\(/g)].length, 1);
   assert.equal([...source.matchAll(/authorizeOperator\(idToken\)/g)].length, 2,
     "the seam must have exactly one call site, or replacing the probe is not one edit");
   // Only the platform's answer sits inside the seam's try: a render that throws must
   // not be reported to an operator as an authorization failure.
-  assert.match(source, /let overview;\n {4}try \{\n {6}overview = await adminApi\.request\(AUTHORIZATION_PROBE/);
+  assert.match(source, /let identity;\n {4}try \{\n {6}identity = await adminApi\.request\(AUTHORIZATION_PROBE/);
   // The session is only marked authorized after the platform has answered.
-  assert.ok(source.indexOf("overview = await adminApi.request(AUTHORIZATION_PROBE") < source.indexOf("state.authorized = true;\n    showAuthenticated(operator)"));
+  assert.ok(source.indexOf("identity = await adminApi.request(AUTHORIZATION_PROBE") < source.indexOf("state.authorized = true;\n    showAuthenticated(operator)"));
 });
 
-test("the probe's answer is the first overview, so signing in costs one request", () => {
-  assert.match(source, /await refreshDashboard\(overview\)/);
-  assert.match(source, /async function loadOverview\(signal, seeded\)/);
-  assert.match(source, /const response = seeded \|\| await adminApi\.request\("admin_overview"/);
-  assert.match(source, /loadOverview\(state\.refreshController\.signal, seededOverview\)/);
-  // The refresh button must never hand its own click event to the seed parameter.
+test("a response that is not an identity is never read as authorization", () => {
+  // request() answers `undefined` for a procedure it holds no case for, rather than
+  // throwing. Without a guard, a probe pointed at a name the generated client does
+  // not serve would take the success path: no exception, so straight through to
+  // state.authorized = true. That is the one way this seam can fail open.
+  const seam = source.slice(
+    source.indexOf("async function authorizeOperator("),
+    source.indexOf("function adoptServerSessionCeiling(")
+  );
+  const guard = seam.indexOf("stringValue(identity?.subject) ? operatorFromIdentity(identity) : null");
+  assert.notEqual(guard, -1, "the identity shape must be checked before it authorizes anything");
+  assert.ok(guard < seam.indexOf("state.authorized = true"), "the guard precedes the authorization");
+  // And it refuses through the same table as every other refusal, rather than
+  // inventing a fifth message for it.
+  assert.match(seam.slice(guard), /AUTHORIZATION_FAILURES\.unreachable/);
+});
+
+test("the session countdown is the server's ceiling, and is never widened by it", () => {
+  const adopt = source.slice(
+    source.indexOf("function adoptServerSessionCeiling("),
+    source.indexOf("function showAuthenticated(")
+  );
+  // session_expires_at replaces counting locally against an assumption of our own.
+  assert.match(source, /adoptServerSessionCeiling\(operator\.sessionExpiresAt\)/);
+  // Tighter only. A server saying "later" must not extend a session whose token
+  // expires first.
+  assert.match(adopt, /serverDeadline < state\.deadline/);
+  assert.match(adopt, /scheduleSessionExpiry\(\)/);
+  // A missing or nonsensical timestamp leaves the local deadline exactly as it was.
+  assert.match(adopt, /if \(!Number\.isFinite\(seconds\) \|\| seconds <= 0\) return;/);
+});
+
+test("the identity probe carries no overview, so the seed is gone rather than empty", () => {
+  // The probe used to BE an overview request, and its answer was passed straight to
+  // the first render. An identity response has no overview in it, so the seed is
+  // removed outright: a parameter nothing can ever fill is a place for the wrong
+  // thing to arrive.
+  assert.match(source, /await refreshDashboard\(\);/);
+  assert.doesNotMatch(source, /refreshDashboard\(overview\)/);
+  assert.doesNotMatch(source, /seededOverview/);
+  assert.match(source, /async function loadOverview\(signal\)/);
+  assert.match(source, /const response = await adminApi\.request\("admin_overview"/);
+  assert.match(source, /loadOverview\(state\.refreshController\.signal\)/);
+  // The refresh button still hands nothing at all to it.
   assert.match(source, /ui\.refresh\.addEventListener\("click", \(\) => refreshDashboard\(\)\)/);
 });
 
@@ -212,20 +250,44 @@ test("severity is the design system's ladder, ported rather than reinvented", ()
 
 /* ---- the operator's name is cosmetic, and is labelled as such ----------- */
 
-test("the operator's name comes from the ID token the browser already holds", () => {
-  const operator = operatorFromIdToken(idToken({ name: "Perris Wilcox", email: "perris@deep.navy" }));
-  assert.equal(operator.name, "Perris Wilcox");
-  assert.equal(operator.email, "perris@deep.navy");
+test("the operator comes from the verified principal, not from a token in our own hand", () => {
+  // The browser no longer decodes Google's claims to decide who is signed in. The
+  // decode is DELETED rather than kept as a fallback: a fallback here would be the
+  // console quietly overriding the server on the one question the server owns.
+  assert.doesNotMatch(source, /operatorFromIdToken/);
+  assert.doesNotMatch(source, /claims\?\.name/);
+  // decodeJwtPayload stays - token validation still needs it.
+  assert.match(source, /function decodeJwtPayload\(token\)/);
 
-  // A token with no name still identifies the account, and still never produces a
-  // monogram out of an email local-part.
-  const anonymous = operatorFromIdToken(idToken({ email: "perris@deep.navy" }));
-  assert.equal(anonymous.name, "");
-  assert.equal(anonymous.email, "perris@deep.navy");
-  assert.deepEqual(operatorFromIdToken("not-a-token"), { name: "", email: "" });
+  const operator = operatorFromIdentity({
+    subject: "perris@deep.navy",
+    email: "perris@deep.navy",
+    emailVerified: true,
+    displayName: "perris@deep.navy",
+    platformRoles: [],
+    authorizationBasis: 1
+  });
+  assert.equal(operator.subject, "perris@deep.navy");
+  assert.equal(operator.emailVerified, true);
+  assert.equal(operator.basis, "Allowlisted Google account");
+  // The operator pool asserts no groups, and that emptiness is ORDINARY - it is not
+  // an absence of authorization and must not be reported as one.
+  assert.deepEqual(operator.roles, []);
 
-  assert.match(source, /ui\.operatorName\.textContent = operator\.name \|\| operator\.email \|\| "Signed-in operator"/);
-  assert.match(source, /element\.textContent = operator\.name\.split/);
+  const directory = operatorFromIdentity({
+    subject: "d-9931", displayName: "Perris Wilcox", email: "perris@deep.navy",
+    platformRoles: ["founder"], authorizationBasis: 2
+  });
+  assert.equal(directory.basis, "Directory role with MFA");
+  assert.deepEqual(directory.roles, ["founder"]);
+
+  // An unspecified basis names nothing rather than guessing one.
+  assert.equal(operatorFromIdentity({ subject: "x", authorizationBasis: 0 }).basis, "");
+  // A response that is not an identity yields an empty operator, never a partial one
+  // that could read as authorized.
+  assert.equal(operatorFromIdentity(undefined).subject, "");
+
+  assert.match(source, /ui\.operatorName\.textContent = operator\.name \|\| operator\.email \|\| operator\.subject \|\| "Signed-in operator"/);
 });
 
 test("the sidebar states what authorized the session instead of claiming a role", () => {
@@ -234,7 +296,11 @@ test("the sidebar states what authorized the session instead of claiming a role"
   assert.doesNotMatch(shell, /data-operator-role/);
   assert.doesNotMatch(source, /data-operator-role/);
   assert.match(shell, /data-operator-authority/);
-  assert.match(source, /ui\.operatorAuthority\.textContent = "Authorized by the platform"/);
+  // It no longer says only "Authorized by the platform". The platform now says WHY,
+  // so the console reports the server's own basis, and falls back to the old vague
+  // line only when the server names no basis at all.
+  assert.match(source, /operator\.basis \|\| "Authorized by the platform"/);
+  assert.match(source, /asserted \|\| "Authorized by the platform"/);
   // And it is cleared with the rest of the operator chrome on sign-out, so it can
   // never outlive the session it describes.
   assert.match(source, /function showSignedOut\(\) \{[\s\S]*?ui\.operatorAuthority\.textContent = "";/);

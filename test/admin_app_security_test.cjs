@@ -96,10 +96,27 @@ test("the portal uses fresh PKCE and never persists bearer tokens", () => {
 // A 200 is authorization; anything else is a refusal the console reports rather than
 // second-guesses.
 test("authorization is the platform's answer, not a gate in the browser", () => {
-  // No client-side role gate, in any of its parts.
+  // No client-side role gate, in any of its parts. The gate was `allowedRoles.has()`
+  // over a role list the browser had been handed: it read as a security control and
+  // was not one, because a browser deciding which roles it likes can only ever be
+  // more permissive than the server.
   assert.doesNotMatch(source, /allowedRoles/);
-  assert.doesNotMatch(source, /platformRoles/);
   assert.doesNotMatch(source, /config\.allowedRoles|config\.adminRoles/);
+
+  // platform_roles is now READ - GetAdminIdentity returns the groups the server saw,
+  // and the sidebar names them so the console can say what the platform asserted
+  // instead of only that something was authorized. Reading them is not the thing that
+  // was banned; DECIDING with them is. So the ban moves from the field's name to its
+  // use: it may reach the sidebar, and it may not reach a conditional.
+  const roleReads = [...source.matchAll(/platformRoles/g)];
+  assert.ok(roleReads.length > 0, "the server-asserted roles are read");
+  assert.doesNotMatch(source, /platformRoles[^\n]*\.(?:includes|has|some|indexOf)\(/,
+    "platform roles must never be tested in the browser - the server decides permission");
+  assert.doesNotMatch(source, /if\s*\([^)]*platformRoles/,
+    "platform roles must never gate a branch in this console");
+  // And they are never treated as a capability: what an operator may do is decided
+  // per RPC by the server, not from this message.
+  assert.doesNotMatch(source, /state\.authorized\s*=\s*[^;]*roles/);
 
   // And no path from this console to the CUSTOMER identity service. AuthService sits
   // behind the customer authentication interceptor and the customer user pool; this
@@ -117,9 +134,9 @@ test("authorization is the platform's answer, not a gate in the browser", () => 
 
   // The probe is an administrator request, and it is the only thing standing between
   // sign-in and the dashboard.
-  assert.match(source, /const AUTHORIZATION_PROBE = "admin_overview"/);
+  assert.match(source, /const AUTHORIZATION_PROBE = "admin_identity"/);
   assert.match(source, /await adminApi\.request\(AUTHORIZATION_PROBE, \{\}/);
-  assert.ok(source.indexOf("const AUTHORIZATION_PROBE") < source.indexOf("await refreshDashboard(overview)"));
+  assert.ok(source.indexOf("const AUTHORIZATION_PROBE") < source.indexOf("await refreshDashboard();"));
 
   // One seam: authorization is established in exactly one function, with exactly one
   // call site, so the day an identity RPC replaces the probe it is one edit.

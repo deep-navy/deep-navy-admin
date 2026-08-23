@@ -40,8 +40,9 @@ function parseStreamRequestBody(body) {
 }
 
 test("the browser bundle exposes the pinned read-only admin launch procedures", () => {
-  assert.equal(generated.PLATFORM_PROTOS_REVISION, "350acd91b0a15da08fd6a13282f75f36849ce4bf");
+  assert.equal(generated.PLATFORM_PROTOS_REVISION, "31a489d8f0b073fd499207ab86bdea0f2faea0b7");
   assert.deepEqual([...generated.SUPPORTED_PROCEDURES], [
+    "admin_identity",
     "admin_overview", "admin_customers", "admin_customer",
     "admin_customer_reliability", "admin_economics", "admin_team_economics",
     "admin_fleet", "admin_runtimes", "admin_billing", "admin_billing_accounts",

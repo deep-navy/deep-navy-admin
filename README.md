@@ -71,16 +71,44 @@ expected to be calm about them.
   minutes. Access and ID tokens are held only in JavaScript memory. Only the
   transient PKCE verifier, state, nonce, redirect URI, and creation time enter
   `sessionStorage`; no bearer or refresh token is persisted.
-- `AdminService.GetAdminOverview` is the authorization probe: a 200 is the
-  platform authorizing this operator, and it is the console's first screen, so
-  signing in costs one request rather than two. The operator's display name is
-  read from the ID token the browser already holds, because a display name is
-  cosmetic and is not an authorization fact. There is no client-side role gate:
-  the API holds the address allowlist and re-checks the role on every admin
-  request. A refusal is reported as one of three things a human acts on
+- `AdminService.GetAdminIdentity` is the authorization probe: a 200 is the
+  platform authorizing this operator, and its answer is the operator the
+  sidebar reports. It replaced `GetAdminOverview`, which was a stand-in — an
+  overview answers "may I read this?", not "who am I?", so everything the
+  console said about the operator had to be read out of the ID token in the
+  browser's own hand, and the strongest honest claim it could make was that
+  something had been authorized.
+- The operator now comes from the verified principal, not from a self-supplied
+  token: `subject`, the pool-asserted `email`/`email_verified` and
+  `display_name`, any `platform_roles` the pool asserts, and
+  `authorization_basis` — the server's own account of *why* this operator is
+  permitted, which is a fact no token carries. The sidebar names that basis
+  ("Allowlisted Google account", "Directory role with MFA") instead of the
+  vaguer "Authorized by the platform". `platform_roles` is empty for an
+  allowlisted Google account because that pool asserts no groups; that
+  emptiness is ordinary and is not an absence of authorization, so it is simply
+  not mentioned.
+- There is still no client-side role gate. The roles are displayed, never
+  tested: the API holds the address allowlist and re-checks permission on every
+  admin request, and what an operator may do is decided per RPC rather than
+  read off this message. A test holds that line — `platform_roles` may reach
+  the sidebar and may not reach a conditional.
+- `session_expires_at` is the server's own ceiling on the session, the earlier
+  of the token's expiry and the maximum session age it enforces. The console
+  adopts it in place of counting against an assumption of its own, and only
+  ever tightens: a server saying "later" never extends a session whose token
+  expires first.
+- A response that is not an identity is refused rather than believed. The
+  generated client answers `undefined` for a procedure it holds no case for
+  instead of throwing, so the seam checks the shape before it authorizes
+  anything — otherwise a probe pointed at an unserved name would fail open.
+- A refusal is reported as one of three things a human acts on
   differently — credential rejected (sign in again), authenticated but not
   permitted (signing in again will not help), platform unreachable (retry) —
-  always with the request reference the platform returned.
+  always with the request reference the platform returned. These are keyed on
+  the Connect code, not on which RPC produced it, so they carried over to the
+  new probe unchanged: `UNAUTHENTICATED` means the token was rejected,
+  `PERMISSION_DENIED` means the operator authenticated but is not permitted.
 - The customer identity service is unreachable from this console by
   construction. It sits behind the customer authentication interceptor and the
   customer user pool, and this console holds an operator-pool credential, so it
@@ -88,7 +116,7 @@ expected to be calm about them.
 - The read-only overview, customer, team economics, fleet, runtime, billing,
   reconciliation, and alert projections are consumed through TypeScript
   generated from `platform-protos` revision
-  `350acd91b0a15da08fd6a13282f75f36849ce4bf`.
+  `31a489d8f0b073fd499207ab86bdea0f2faea0b7`.
 - Every list follows the AdminService snapshot cursor until complete, so the
   customer, team, runtime, billing-account, reconciliation, and alert tables do
   not silently stop at the first 100 records.
@@ -186,6 +214,7 @@ them: this console makes no authorization decision of its own.
 The generated browser client issues ConnectRPC JSON `POST` requests to:
 
 ```text
+/deepnavy.v1.AdminService/GetAdminIdentity
 /deepnavy.v1.AdminService/GetAdminOverview
 /deepnavy.v1.AdminService/ListAdminCustomers
 /deepnavy.v1.AdminService/GetAdminCustomer

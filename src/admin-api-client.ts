@@ -14,8 +14,16 @@ import {
 // failure. The operator surface is AdminService, and it is the only surface this
 // client can reach, so there is no path from the admin console to a customer one.
 
-export const PLATFORM_PROTOS_REVISION = "350acd91b0a15da08fd6a13282f75f36849ce4bf";
+export const PLATFORM_PROTOS_REVISION = "31a489d8f0b073fd499207ab86bdea0f2faea0b7";
 export const SUPPORTED_PROCEDURES = Object.freeze([
+  // The operator's own identity. It is first because it is the first call the
+  // console makes: it is the authorization probe, and its answer is what the
+  // sidebar reports. It lives on AdminService rather than AuthService for the
+  // reason the note above gives - AuthService trusts only the customer pool,
+  // so an operator token presented there is rejected as unauthenticated, and
+  // widening that interceptor would let an operator credential authenticate
+  // against every customer surface.
+  "admin_identity",
   "admin_overview",
   "admin_customers",
   "admin_customer",
@@ -230,6 +238,8 @@ export function createAdminApi(options: AdminApiOptions) {
 
     try {
       switch (name) {
+        case "admin_identity":
+          return await admin.getAdminIdentity({}, callOptions);
         case "admin_overview":
           return await admin.getAdminOverview({}, callOptions);
         case "admin_customers":

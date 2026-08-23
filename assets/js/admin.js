@@ -154,7 +154,7 @@
   }
 
   function createAdminApi() {
-    if (!apiBaseUrl || generated?.PLATFORM_PROTOS_REVISION !== "350acd91b0a15da08fd6a13282f75f36849ce4bf" || typeof generated.createAdminApi !== "function") return null;
+    if (!apiBaseUrl || generated?.PLATFORM_PROTOS_REVISION !== "31a489d8f0b073fd499207ab86bdea0f2faea0b7" || typeof generated.createAdminApi !== "function") return null;
     try {
       return generated.createAdminApi({ baseUrl: apiBaseUrl, defaultTimeoutMs: 12_000 });
     } catch {
@@ -501,9 +501,20 @@
   // credential must not authenticate against a customer surface.
   //
   // So the probe is an ADMINISTRATOR request, on the only surface that knows this
-  // issuer. GetAdminOverview is what the console loads first anyway, so a 200 both
-  // authorizes the session and paints the first screen; nothing is fetched twice.
-  const AUTHORIZATION_PROBE = "admin_overview";
+  // issuer.
+  //
+  // It used to be GetAdminOverview, chosen because a 200 both authorized the session
+  // and painted the first screen. That was a stand-in: an overview answers "may I
+  // read this?", not "who am I?", so everything the sidebar said about the operator
+  // had to come from the ID token in the browser's own hand, and the strongest claim
+  // the console could honestly make was that SOMETHING had been authorized.
+  //
+  // GetAdminIdentity is the real question, and it reports only what the server
+  // established while authorizing the call - including WHY this operator is
+  // permitted, which until now only the server knew. The three failures a caller
+  // must tell apart stay exactly where they were, because they are keyed on the
+  // Connect code and not on which RPC produced it.
+  const AUTHORIZATION_PROBE = "admin_identity";
 
   // Three answers, three different things for a human to do, which is the whole
   // reason they are three messages and not one. Each says what happened, what it
@@ -546,26 +557,55 @@
     return AUTHORIZATION_FAILURES[value] || AUTHORIZATION_FAILURES.unreachable;
   }
 
-  // The operator's name is COSMETIC, and it is read from the ID token this browser
-  // already holds rather than fetched: a display name is not an authorization fact,
-  // and the card on the sign-in screen says as much - the UI is not the authorization
-  // boundary. Google supplies name and email on the ID token; both are claims that
-  // were already checked for issuer, audience, nonce and expiry before we got here.
-  function operatorFromIdToken(idToken) {
-    const claims = decodeJwtPayload(idToken);
+  // The operator no longer comes from the ID token in this browser's hand.
+  //
+  // It used to: a helper here decoded the Google claims and the sidebar drew
+  // its name and monogram from them. That was defensible only while the console had
+  // no way to ask - a display name is cosmetic, and the sign-in card says plainly
+  // that the UI is not the authorization boundary. But it meant the one surface whose
+  // job is to say who is signed in was reading a self-supplied token rather than the
+  // server's answer, and the two can disagree.
+  //
+  // GetAdminIdentity returns the principal the server ACTUALLY authorized, so the
+  // decode is gone rather than kept as a fallback: a fallback here would be the
+  // browser quietly overriding the server on the one question the server owns.
+  // decodeJwtPayload survives because token validation still needs it.
+  //
+  // Every field below is read defensively. The response is trusted, but a shape that
+  // is not an identity must not be mistaken for one - see the guard in
+  // authorizeOperator.
+  const AUTHORIZATION_BASIS_WORDS = Object.freeze({
+    1: "Allowlisted Google account",
+    2: "Directory role with MFA"
+  });
+
+  function operatorFromIdentity(identity) {
+    const email = stringValue(identity?.email).slice(0, 254);
+    const roles = Array.isArray(identity?.platformRoles)
+      ? identity.platformRoles.map((role) => stringValue(role)).filter(Boolean)
+      : [];
+    const basis = AUTHORIZATION_BASIS_WORDS[Number(identity?.authorizationBasis || 0)] || "";
     return {
-      name: stringValue(claims?.name).slice(0, 64),
-      email: stringValue(claims?.email).slice(0, 254)
+      subject: stringValue(identity?.subject).slice(0, 254),
+      // display_name is the most human-readable name the POOL asserts, and the
+      // operator pool maps only the email address from Google - so it is often the
+      // address itself. It is never a name the caller supplied.
+      name: stringValue(identity?.displayName).slice(0, 64),
+      email,
+      emailVerified: identity?.emailVerified === true,
+      roles,
+      basis,
+      sessionExpiresAt: identity?.sessionExpiresAt || null
     };
   }
 
   async function authorizeOperator(idToken) {
     if (!adminApi || !state.accessToken) throw new Error("admin_api_unavailable");
-    const operator = operatorFromIdToken(idToken);
     const clientRequestId = requestId();
-    let overview;
+    let identity;
     try {
-      overview = await adminApi.request(AUTHORIZATION_PROBE, {}, { accessToken: state.accessToken, requestId: clientRequestId });
+      identity = await adminApi.request(AUTHORIZATION_PROBE, {}, { accessToken: state.accessToken, requestId: clientRequestId })
+        .then((response) => response?.identity);
     } catch (error) {
       const failure = authorizationFailure(error?.code);
       // The reference is the server's own request id when it sent one, and this
@@ -577,11 +617,44 @@
       showAuthNotice(failure.level, failure.title, failure.message, reference, failure.canStartAgain);
       return;
     }
+    // A response that is not an identity must never be read as authorization.
+    // request() answers `undefined` for a procedure it has no case for rather than
+    // throwing, so a probe wired to a name the client does not serve raises nothing
+    // and would otherwise fall straight through into the authorized branch below.
+    // That is the sharpest edge in this seam, and this is the guard on it.
+    const operator = stringValue(identity?.subject) ? operatorFromIdentity(identity) : null;
+    if (!operator) {
+      const failure = AUTHORIZATION_FAILURES.unreachable;
+      clearSession();
+      showSignedOut();
+      showAuthNotice(failure.level, failure.title, failure.message, clientRequestId, failure.canStartAgain);
+      return;
+    }
+    // The server publishes its own ceiling on this session - the earlier of the
+    // token's expiry and the maximum session age it enforces. Counting locally
+    // against an assumption of our own could only ever disagree with it, so the
+    // server's answer replaces the local deadline when it is the tighter one.
+    adoptServerSessionCeiling(operator.sessionExpiresAt);
     state.authorized = true;
     showAuthenticated(operator);
     clearAuthError();
-    // The probe's own answer IS the first overview.
-    await refreshDashboard(overview);
+    // The probe no longer returns an overview, so there is nothing to seed with and
+    // the dashboard fetches it exactly as the refresh button does.
+    await refreshDashboard();
+  }
+
+  // The session ceiling, as the SERVER states it. Never widened by it: if the server
+  // says later than we already believe, the local deadline is the tighter of the two
+  // and stays. A console must not extend its own session on a server's say-so when
+  // the token in its hand expires first.
+  function adoptServerSessionCeiling(timestamp) {
+    const seconds = timestamp && typeof timestamp === "object" ? Number(timestamp.seconds || 0) : 0;
+    if (!Number.isFinite(seconds) || seconds <= 0) return;
+    const serverDeadline = seconds * 1000;
+    if (!state.deadline || serverDeadline < state.deadline) {
+      state.deadline = serverDeadline;
+      scheduleSessionExpiry();
+    }
   }
 
   function showAuthenticated(operator) {
@@ -589,19 +662,34 @@
     ui.authenticated.hidden = false;
     ui.signOut.hidden = false;
     ui.operatorSummary.hidden = false;
-    ui.operatorName.textContent = operator.name || operator.email || "Signed-in operator";
+    ui.operatorName.textContent = operator.name || operator.email || operator.subject || "Signed-in operator";
     // There used to be a role here - "Founder" or "Admin" - chosen by a client-side
     // allowlist over a role the browser had been handed. It read as a security
-    // control and was not one: the server holds the address allowlist and checks the
-    // role on every administrator request, and a browser cannot grant itself anything
-    // by writing a word into its own sidebar. What replaced it is the only thing this
-    // console can honestly claim, and it is displayed only once the platform has
-    // actually answered an administrator request for this credential.
-    if (ui.operatorAuthority) ui.operatorAuthority.textContent = "Authorized by the platform";
-    // The monogram comes from a name the operator chose to display, never from an
-    // email local-part or an identifier they did not.
+    // control and was not one, so it was deleted and replaced with the only thing
+    // this console could then honestly say: that the platform had authorized
+    // something.
+    //
+    // Now the platform says WHY, so the console can stop being vague. The basis is
+    // the server's own account of what permits this operator - an allowlisted Google
+    // account, or a directory role with MFA - which is a fact no token carries and
+    // the browser could not have worked out. platform_roles is named beside it when
+    // the pool asserts any; the operator pool asserts none, and that emptiness is
+    // ORDINARY rather than an absence of authorization, so it is simply not
+    // mentioned instead of being reported as missing.
+    if (ui.operatorAuthority) {
+      const asserted = operator.roles.length ? `${operator.basis || "Authorized by the platform"} · ${operator.roles.join(", ")}` : operator.basis;
+      ui.operatorAuthority.textContent = asserted || "Authorized by the platform";
+    }
+    // The monogram comes from the name the POOL asserts. When that is an email
+    // address - which it is for an allowlisted Google account, because the pool maps
+    // only the address - the local part is not split into initials: two letters cut
+    // out of an address are not a monogram, so it falls back to one.
     document.querySelectorAll("[data-operator-initials]").forEach((element) => {
-      element.textContent = operator.name.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0].toUpperCase()).join("");
+      const name = stringValue(operator.name);
+      const words = name.includes("@") ? [] : name.split(/\s+/).filter(Boolean).slice(0, 2);
+      element.textContent = words.length
+        ? words.map((part) => part[0].toUpperCase()).join("")
+        : (name || operator.email || operator.subject).slice(0, 1).toUpperCase();
     });
     ui.refresh.disabled = false;
     updateSessionExpiryLabel();
@@ -1006,18 +1094,17 @@
     });
   }
 
-  // `seeded` is the answer the authorization probe already received - the same
-  // projection, from the same RPC, seconds earlier. Passing it through means signing
-  // in costs ONE overview request rather than two. When the probe stops returning an
-  // overview, the seed is simply absent and this fetches, exactly as the refresh
-  // button already does.
-  async function loadOverview(signal, seeded) {
+  // This used to accept a `seeded` overview - the answer the authorization probe had
+  // already received, passed through so signing in cost one overview request rather
+  // than two. The probe is now an identity request and returns no overview, so the
+  // seed is gone rather than left as a parameter nothing ever fills. The comment it
+  // carried anticipated exactly this: "when the probe stops returning an overview,
+  // the seed is simply absent and this fetches".
+  async function loadOverview(signal) {
     const clientRequestId = requestId();
-    setDataState("pending", "Loading authorized overview", seeded
-      ? "Using the authorized overview the platform returned when it authorized this operator."
-      : "Requesting AdminService.GetAdminOverview through the pinned generated client.");
+    setDataState("pending", "Loading authorized overview", "Requesting AdminService.GetAdminOverview through the pinned generated client.");
     try {
-      const response = seeded || await adminApi.request("admin_overview", {}, { accessToken: state.accessToken, requestId: clientRequestId, signal });
+      const response = await adminApi.request("admin_overview", {}, { accessToken: state.accessToken, requestId: clientRequestId, signal });
       renderOverview(response);
       return true;
     } catch (error) {
@@ -2893,7 +2980,13 @@
     }
   }
 
-  async function refreshDashboard(seededOverview) {
+  // No seed parameter. It existed because the authorization probe WAS an overview
+  // request, so signing in could hand its answer straight to the first render and
+  // cost one request rather than two. The probe is now an identity request, which
+  // carries no overview, so there is nothing to hand over and the parameter would
+  // only be a place for a click Event to arrive if anyone ever wired this to a
+  // listener directly.
+  async function refreshDashboard() {
     if (!state.authorized || !state.accessToken || Date.now() >= state.deadline || !adminApi) {
       expireSession();
       return;
@@ -2915,7 +3008,7 @@
     try {
       setDataState("pending", "Loading authorized operations data", "Requesting current business, customer, economics, fleet, billing, alert, and audit projections.");
       const results = await Promise.all([
-        loadOverview(state.refreshController.signal, seededOverview),
+        loadOverview(state.refreshController.signal),
         loadCustomers(state.refreshController.signal),
         loadEconomics(state.refreshController.signal),
         loadOperations(state.refreshController.signal),
