@@ -3,8 +3,11 @@
    the same tree and the same bytes the console repo vendored, with exactly two omissions,
    both required by this site's CSP (script-src 'self'; style-src 'self'; font-src 'self'):
      1. no @import of the Google Fonts CDN — the three faces are self-hosted in type.css;
-     2. no brand/ or icons-motion imports — the admin draws its own mark and inline SVG
-        icons, because a CDN icon font cannot load here at all.
+     2. components/components.css drops its brand/ import — the admin draws its own mark.
+   The icons-motion layer was dropped too, on the reasoning that a sprite could not carry
+   the system's seven motion families. It can: ds/components/core/core.css now keeps the
+   system's own `@import "icons-motion.css"` first line, and icon-motion.css re-points
+   those selectors at our sprite's DOM. See that file for what differs and why.
    Everything else is the system's own bytes. Do NOT hand-edit anything under ds/:
    re-vendor from the design system instead, or the console stops matching the mockups.
    Site-local layers that must not live inside ds/ — the self-hosted faces, the OS-preference

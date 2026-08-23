@@ -1,6 +1,12 @@
 (() => {
   "use strict";
 
+  // "Every icon animates — there are no still icons in this system." Every icon in this
+  // console is static markup in the shell, so one pass classifies the lot: icon-motion.js
+  // derives each glyph's family from its own sprite id, which means an icon added to the
+  // shell tomorrow animates without anyone remembering to classify it.
+  window.deepNavyIconMotion?.applyIconMotion(document);
+
   const config = window.deepNavyAdminRuntime || {};
   const generated = window.deepNavyAdminGeneratedClient || null;
   const ui = {

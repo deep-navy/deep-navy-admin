@@ -42,6 +42,13 @@
     <link rel="stylesheet" href="{{ '/assets/css/type.css' | relative_url }}">
     <link rel="stylesheet" href="{{ '/assets/css/theme.css' | relative_url }}">
     <link rel="stylesheet" href="{{ '/assets/css/admin.css' | relative_url }}">
+    {%- comment -%}
+      Re-points the vendored icon-motion selectors at this console's sprite DOM: the system
+      puts its motion class on a <span> around the glyph, and this console puts it on the
+      <svg> itself. Keyframes, durations and the hover gate all still come from
+      ds/components/core/icons-motion.css; that file only changes which element they hit.
+    {%- endcomment -%}
+    <link rel="stylesheet" href="{{ '/assets/css/icon-motion.css' | relative_url }}">
   </head>
   <body
     data-auth-callback="{{ page.auth_callback | default: false }}"
@@ -57,6 +64,7 @@
     <div class="toast" role="status" aria-live="polite" aria-atomic="true" data-toast hidden></div>
     <script src="{{ '/assets/js/runtime-config.js' | relative_url }}"></script>
     <script src="{{ '/assets/js/admin-api-client.js' | relative_url }}"></script>
+    <script src="{{ '/assets/js/icon-motion.js' | relative_url }}"></script>
     <script src="{{ '/assets/js/admin.js' | relative_url }}" defer></script>
   </body>
 </html>

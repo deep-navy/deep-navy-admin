@@ -1,0 +1,45 @@
+
+/* deep.navy — animated iconography.
+   Motion vocabulary reproduced natively from pqoqubbw/icons (lucide-animated.com,MIT),whose components are React + Motion and cannot be bundled here. Five families:
+     draw   path draws in           (activity,check,git glyphs)   pathLength 0→1,~0.5s linear
+     spin   spring rotate to 50deg  (refresh,rotate)               stiffness 250,damping 25
+     ring   wobble 0/-10/10/-10/0   (bell)                          0.5s ease-in-out
+     hop    up,left,settle        (search)                        1s,slight bounce
+     nudge  head slides back and out(arrows,chevrons)              0.4s
+   Each plays once on hover of the icon or of the control that hosts it,and never loops. */
+.dn-icon--draw svg > *{stroke-dasharray:1;stroke-dashoffset:0}
+@keyframes dn-i-draw{from{stroke-dashoffset:1;opacity:0}12%{opacity:1}to{stroke-dashoffset:0;opacity:1}}
+@keyframes dn-i-spin{from{transform:rotate(0)}to{transform:rotate(50deg)}}
+@keyframes dn-i-ring{0%{transform:rotate(0)}25%{transform:rotate(-10deg)}50%{transform:rotate(10deg)}75%{transform:rotate(-10deg)}100%{transform:rotate(0)}}
+@keyframes dn-i-hop{0%{transform:translate(0,0)}35%{transform:translate(0,-4px)}70%{transform:translate(-3px,0)}100%{transform:translate(0,0)}}
+@keyframes dn-i-nudge{0%{transform:translateX(0)}40%{transform:translateX(-3px)}100%{transform:translateX(0)}}
+@keyframes dn-i-pop{0%{transform:scale(1)}45%{transform:scale(1.18)}100%{transform:scale(1)}}
+@keyframes dn-i-jitter{0%,100%{transform:translateX(0)}20%{transform:translateX(-2px) rotate(-4deg)}45%{transform:translateX(2px) rotate(4deg)}70%{transform:translateX(-1px) rotate(-2deg)}}
+
+/* trigger="always" — an icon that animates because the system is doing something, not
+   because the reader is pointing at it. Loops; use only alongside a live state. */
+.dn-icon--loop.dn-icon--spin svg{animation:dn-spin var(--dur-loop-fast) linear infinite}
+.dn-icon--loop.dn-icon--draw svg > *{animation:dn-i-draw var(--dur-loop) linear infinite}
+.dn-icon--loop.dn-icon--pop svg{animation:dn-i-pop var(--dur-loop) var(--ease-in-out) infinite}
+.dn-icon--loop.dn-icon--ring svg{animation:dn-i-ring var(--dur-ambient) var(--ease-in-out) infinite}
+
+/* Hosts: hovering any of these plays the icons inside them. Gated on hover:hover — a tap on
+   iOS fires :hover and then leaves it stuck, so on a touch screen every icon in the row would
+   animate once and stay mid-pose. An iPad with a trackpad reports hover:hover and still gets it. */
+@media (hover:hover){
+:where(button,a,label,summary,.dn-ihost,.dn-nav,.dn-work,.dn-cmd__item,.dn-card--interactive,.dn-agentcard--interactive):hover .dn-icon--draw svg > *,
+.dn-icon--draw:hover svg > *{animation:dn-i-draw var(--dur-slower) linear both}
+:where(button,a,label,summary,.dn-ihost,.dn-nav,.dn-work,.dn-cmd__item,.dn-card--interactive,.dn-agentcard--interactive):hover .dn-icon--spin svg,
+.dn-icon--spin:hover svg{animation:dn-i-spin var(--dur-slow) var(--ease-spring) both}
+:where(button,a,label,summary,.dn-ihost,.dn-nav,.dn-work,.dn-cmd__item,.dn-card--interactive,.dn-agentcard--interactive):hover .dn-icon--ring svg,
+.dn-icon--ring:hover svg{animation:dn-i-ring var(--dur-slower) var(--ease-in-out) both;transform-origin:50% 15%}
+/* 480ms, not 700: nothing in this system runs longer than half a second on a pointer. */
+:where(button,a,label,summary,.dn-ihost,.dn-nav,.dn-work,.dn-cmd__item,.dn-card--interactive,.dn-agentcard--interactive):hover .dn-icon--hop svg,
+.dn-icon--hop:hover svg{animation:dn-i-hop var(--dur-slower) var(--ease-arrive) both}
+:where(button,a,label,summary,.dn-ihost,.dn-nav,.dn-work,.dn-cmd__item,.dn-card--interactive,.dn-agentcard--interactive):hover .dn-icon--nudge svg,
+.dn-icon--nudge:hover svg{animation:dn-i-nudge var(--dur-slow) var(--ease-out) both}
+:where(button,a,label,summary,.dn-ihost,.dn-nav,.dn-work,.dn-cmd__item,.dn-card--interactive,.dn-agentcard--interactive):hover .dn-icon--pop svg,
+.dn-icon--pop:hover svg{animation:dn-i-pop var(--dur-slow) var(--ease-arrive) both}
+:where(button,a,label,summary,.dn-ihost,.dn-nav,.dn-work,.dn-cmd__item,.dn-card--interactive,.dn-agentcard--interactive):hover .dn-icon--jitter svg,
+.dn-icon--jitter:hover svg{animation:dn-i-jitter var(--dur-slower) var(--ease-in-out) both}
+}

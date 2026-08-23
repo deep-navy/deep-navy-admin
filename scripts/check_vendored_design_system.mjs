@@ -24,13 +24,16 @@ const dsRoot = resolve(root, "assets/css/ds");
 // own bytes and nothing else, so "is this file ours?" has a one-word answer.
 const manifestPath = resolve(root, "assets/css/ds.MANIFEST.sha256");
 
-// The eleven files ds.css imports, plus the component index they fan out to. Listing
-// them explicitly means a file silently added to or dropped from the tree is an error
-// rather than a manifest that quietly grows.
+// The eleven files ds.css imports, plus the component index they fan out to, plus the
+// one file that index does not name: core/core.css opens with the design system's own
+// `@import "icons-motion.css"`, so the icon motion vocabulary arrives one level deeper
+// than ds.css can see. Listing them explicitly means a file silently added to or dropped
+// from the tree is an error rather than a manifest that quietly grows.
 const expectedFiles = [
   "components/agents/agents.css",
   "components/components.css",
   "components/core/core.css",
+  "components/core/icons-motion.css",
   "components/data/data.css",
   "components/feedback/feedback.css",
   "components/forms/forms.css",
@@ -76,7 +79,9 @@ if (!existsSync(manifestPath)) throw new Error("assets/css/ds.MANIFEST.sha256 is
 
 const recorded = new Map();
 for (const line of readFileSync(manifestPath, "utf8").trim().split("\n")) {
-  const match = line.match(/^([a-f0-9]{64})  ([a-z/]+\.css)$/);
+  // Hyphens are part of a design-system filename (icons-motion.css); a character class
+  // that forgot them rejected the manifest as invalid rather than reporting drift.
+  const match = line.match(/^([a-f0-9]{64})  ([a-z/-]+\.css)$/);
   if (!match) throw new Error(`Invalid design-system manifest entry: ${line}`);
   const [, hash, file] = match;
   if (recorded.has(file)) throw new Error(`Duplicate design-system manifest entry: ${file}`);

@@ -16,23 +16,39 @@
 
   Icons are one inline SVG sprite. The design system draws its icons from a CDN, which
   this CSP cannot reach; a sprite costs no request and no script.
+
+  EVERY SHAPE IN THE SPRITE CARRIES pathLength="1", AND THAT IS LOAD-BEARING.
+
+  The draw family (ds/components/core/icons-motion.css) animates stroke-dashoffset from the
+  full path length down to zero, and it expresses that length as 1 — stroke-dasharray:1,
+  stroke-dashoffset:1 -> 0. pathLength="1" is what makes 1 mean "the whole path": it tells
+  the browser to scale every distance computation as if the path were one unit long.
+
+  Without it, stroke-dasharray:1 is one user unit on a 24-unit grid, and the glyph renders
+  as a crawling row of dots rather than a line drawing itself in. It fails as WRONG MOTION,
+  not as no motion, which is why it gets a shout rather than a footnote. The design system
+  does the same thing by rewriting each fetched SVG; a sprite has to author it.
+
+  It is inert everywhere else: with no dash properties set, a pathLength changes nothing.
+  So add it to any glyph added here, whatever family that glyph is expected to land in —
+  icon-motion.js derives the family from the name, and the name can change.
 {%- endcomment -%}
 
 <svg class="visually-hidden" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <symbol id="i-dashboard" viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></symbol>
-    <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
-    <symbol id="i-gauge" viewBox="0 0 24 24"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></symbol>
-    <symbol id="i-server" viewBox="0 0 24 24"><rect width="20" height="8" x="2" y="2" rx="2"/><rect width="20" height="8" x="2" y="14" rx="2"/><path d="M6 6h.01"/><path d="M6 18h.01"/></symbol>
-    <symbol id="i-card" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></symbol>
-    <symbol id="i-activity" viewBox="0 0 24 24"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/></symbol>
-    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
-    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></symbol>
-    <symbol id="i-warn" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
-    <symbol id="i-critical" viewBox="0 0 24 24"><path d="M15.312 2a2 2 0 0 1 1.414.586l4.688 4.688A2 2 0 0 1 22 8.688v6.624a2 2 0 0 1-.586 1.414l-4.688 4.688a2 2 0 0 1-1.414.586H8.688a2 2 0 0 1-1.414-.586l-4.688-4.688A2 2 0 0 1 2 15.312V8.688a2 2 0 0 1 .586-1.414l4.688-4.688A2 2 0 0 1 8.688 2z"/><path d="M12 8v4"/><path d="M12 16h.01"/></symbol>
-    <symbol id="i-monitor" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></symbol>
-    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9"/></symbol>
-    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></symbol>
+    <symbol id="i-dashboard" viewBox="0 0 24 24"><rect pathLength="1" width="7" height="9" x="3" y="3" rx="1"/><rect pathLength="1" width="7" height="5" x="14" y="3" rx="1"/><rect pathLength="1" width="7" height="9" x="14" y="12" rx="1"/><rect pathLength="1" width="7" height="5" x="3" y="16" rx="1"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path pathLength="1" d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle pathLength="1" cx="9" cy="7" r="4"/><path pathLength="1" d="M22 21v-2a4 4 0 0 0-3-3.87"/><path pathLength="1" d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="i-gauge" viewBox="0 0 24 24"><path pathLength="1" d="m12 14 4-4"/><path pathLength="1" d="M3.34 19a10 10 0 1 1 17.32 0"/></symbol>
+    <symbol id="i-server" viewBox="0 0 24 24"><rect pathLength="1" width="20" height="8" x="2" y="2" rx="2"/><rect pathLength="1" width="20" height="8" x="2" y="14" rx="2"/><path pathLength="1" d="M6 6h.01"/><path pathLength="1" d="M6 18h.01"/></symbol>
+    <symbol id="i-card" viewBox="0 0 24 24"><rect pathLength="1" width="20" height="14" x="2" y="5" rx="2"/><path pathLength="1" d="M2 10h20"/></symbol>
+    <symbol id="i-activity" viewBox="0 0 24 24"><path pathLength="1" d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path pathLength="1" d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path pathLength="1" d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle pathLength="1" cx="12" cy="12" r="10"/><path pathLength="1" d="M12 16v-4"/><path pathLength="1" d="M12 8h.01"/></symbol>
+    <symbol id="i-warn" viewBox="0 0 24 24"><path pathLength="1" d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path pathLength="1" d="M12 9v4"/><path pathLength="1" d="M12 17h.01"/></symbol>
+    <symbol id="i-critical" viewBox="0 0 24 24"><path pathLength="1" d="M15.312 2a2 2 0 0 1 1.414.586l4.688 4.688A2 2 0 0 1 22 8.688v6.624a2 2 0 0 1-.586 1.414l-4.688 4.688a2 2 0 0 1-1.414.586H8.688a2 2 0 0 1-1.414-.586l-4.688-4.688A2 2 0 0 1 2 15.312V8.688a2 2 0 0 1 .586-1.414l4.688-4.688A2 2 0 0 1 8.688 2z"/><path pathLength="1" d="M12 8v4"/><path pathLength="1" d="M12 16h.01"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect pathLength="1" width="20" height="14" x="2" y="3" rx="2"/><path pathLength="1" d="M8 21h8"/><path pathLength="1" d="M12 17v4"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path pathLength="1" d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle pathLength="1" cx="12" cy="12" r="4"/><path pathLength="1" d="M12 2v2"/><path pathLength="1" d="M12 20v2"/><path pathLength="1" d="m4.93 4.93 1.41 1.41"/><path pathLength="1" d="m17.66 17.66 1.41 1.41"/><path pathLength="1" d="M2 12h2"/><path pathLength="1" d="M20 12h2"/><path pathLength="1" d="m6.34 17.66-1.41 1.41"/><path pathLength="1" d="m19.07 4.93-1.41 1.41"/></symbol>
   </defs>
 </svg>
 

@@ -21,17 +21,20 @@ runtime_script_path = site.join("assets", "js", "runtime-config.js")
 design_system_paths = %w[
   tokens/palette tokens/typography tokens/space tokens/breakpoints tokens/shape
   tokens/motion tokens/semantic tokens/roles tokens/base
-  components/components components/core/core components/forms/forms
+  components/components components/core/core components/core/icons-motion components/forms/forms
   components/navigation/navigation components/feedback/feedback components/notify/notify
   components/data/data components/agents/agents components/motion/motion
 ].map { |name| site.join("assets", "css", "ds", "#{name}.css") }
-# The three site-local layers the system deliberately leaves to the site.
-layer_paths = %w[ds type theme].map { |name| site.join("assets", "css", "#{name}.css") }
+# The site-local layers the system deliberately leaves to the site — plus icon-motion,
+# which re-points the vendored icon-motion selectors at this console's sprite DOM. Miss it
+# and every icon still renders, and none of them move.
+layer_paths = %w[ds type theme icon-motion].map { |name| site.join("assets", "css", "#{name}.css") }
 theme_script_path = site.join("assets", "js", "theme.js")
+icon_motion_script_path = site.join("assets", "js", "icon-motion.js")
 font_paths = %w[bricolage-grotesque.woff2 instrument-sans.woff2 jetbrains-mono.woff2 FONTS-LICENSE.md].map { |name| site.join("assets", "fonts", name) }
 
 [index_path, callback_path, robots_path, stylesheet_path, admin_script_path, client_script_path, runtime_script_path,
- theme_script_path, *layer_paths, *design_system_paths, *font_paths].each do |path|
+ theme_script_path, icon_motion_script_path, *layer_paths, *design_system_paths, *font_paths].each do |path|
   abort "missing build output: #{path}" unless path.file?
 end
 

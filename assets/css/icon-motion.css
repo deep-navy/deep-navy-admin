@@ -1,0 +1,77 @@
+/* deep.navy — the icon motion vocabulary, re-pointed at this console's sprite.
+   Companion to ds/components/core/icons-motion.css, which holds the actual vocabulary:
+   every @keyframes, every duration token and the hover gate come from there. This file
+   adds no motion of its own. It exists because of one difference in the DOM.
+
+   The design system's Icon component inlines each glyph and wraps it:
+
+       <span class="dn-icon dn-icon--spin"><svg>…</svg></span>
+
+   so its rules read `.dn-icon--spin svg`. This console draws icons from one inline sprite,
+   and the class sits on the <svg> itself:
+
+       <svg class="dn-icon dn-icon--spin"><use href="#i-refresh"/></svg>
+
+   `.dn-icon--spin svg` has no descendant svg to match there, so the vendored sheet is
+   inert over a sprite until its selectors are re-pointed — which is all that is below.
+   Same class names, same keyframes, same tokens, same @media (hover:hover) gate.
+
+   Two things the sprite changes, both proved in a browser rather than assumed:
+
+   1. draw DOES work through <use>. stroke-dasharray and stroke-dashoffset are inherited
+      SVG presentation properties, so setting them on the <use> element propagates into
+      the referenced symbol's shapes, and animating them on the <use> animates the clone.
+      Measured against the same glyph inlined: byte-identical renders at every offset.
+      It only works because each shape in the sprite in _includes/admin-console.html
+      carries pathLength="1" — without that, stroke-dasharray:1 is one user unit on a
+      24-unit grid and the glyph draws as a crawl of dots instead of a line. See the note
+      above the sprite.
+
+   2. draw is a STROKE animation and renders nothing on a glyph drawn as a filled shape.
+      Every glyph in this console's sprite is Lucide line art with no fill, so that does
+      not bite here — but icon-motion.js still checks each element's computed stroke
+      before handing it draw, because the two consoles share that module. */
+
+/* draw's resting state: the full path shown. The animation runs it in from nothing. */
+svg.dn-icon--draw > *{stroke-dasharray:1;stroke-dashoffset:0}
+
+/* Hosts: hovering any of these plays the icons inside them. The list is the system's own,
+   not an invention of this console's. Gated on hover:hover because a tap on iOS fires :hover
+   and then leaves it applied — an ungated icon animates once and holds its last pose. */
+@media (hover:hover){
+:where(button,a,label,summary,.dn-ihost,.dn-nav,.dn-work,.dn-cmd__item,.dn-card--interactive,.dn-agentcard--interactive):hover svg.dn-icon--draw > *,
+svg.dn-icon--draw:hover > *{animation:dn-i-draw var(--dur-slower) linear both}
+:where(button,a,label,summary,.dn-ihost,.dn-nav,.dn-work,.dn-cmd__item,.dn-card--interactive,.dn-agentcard--interactive):hover svg.dn-icon--spin,
+svg.dn-icon--spin:hover{animation:dn-i-spin var(--dur-slow) var(--ease-spring) both}
+:where(button,a,label,summary,.dn-ihost,.dn-nav,.dn-work,.dn-cmd__item,.dn-card--interactive,.dn-agentcard--interactive):hover svg.dn-icon--ring,
+svg.dn-icon--ring:hover{animation:dn-i-ring var(--dur-slower) var(--ease-in-out) both;transform-origin:50% 15%}
+:where(button,a,label,summary,.dn-ihost,.dn-nav,.dn-work,.dn-cmd__item,.dn-card--interactive,.dn-agentcard--interactive):hover svg.dn-icon--hop,
+svg.dn-icon--hop:hover{animation:dn-i-hop var(--dur-slower) var(--ease-arrive) both}
+:where(button,a,label,summary,.dn-ihost,.dn-nav,.dn-work,.dn-cmd__item,.dn-card--interactive,.dn-agentcard--interactive):hover svg.dn-icon--nudge,
+svg.dn-icon--nudge:hover{animation:dn-i-nudge var(--dur-slow) var(--ease-out) both}
+:where(button,a,label,summary,.dn-ihost,.dn-nav,.dn-work,.dn-cmd__item,.dn-card--interactive,.dn-agentcard--interactive):hover svg.dn-icon--pop,
+svg.dn-icon--pop:hover{animation:dn-i-pop var(--dur-slow) var(--ease-arrive) both}
+:where(button,a,label,summary,.dn-ihost,.dn-nav,.dn-work,.dn-cmd__item,.dn-card--interactive,.dn-agentcard--interactive):hover svg.dn-icon--jitter,
+svg.dn-icon--jitter:hover{animation:dn-i-jitter var(--dur-slower) var(--ease-in-out) both}
+}
+
+/* trigger="always" — an icon that animates because the system is doing something, not
+   because the reader is pointing at it. Loops; use only alongside a live state. */
+svg.dn-icon--loop.dn-icon--spin{animation:dn-spin var(--dur-loop-fast) linear infinite}
+svg.dn-icon--loop.dn-icon--draw > *{animation:dn-i-draw var(--dur-loop) linear infinite}
+svg.dn-icon--loop.dn-icon--pop{animation:dn-i-pop var(--dur-loop) var(--ease-in-out) infinite}
+svg.dn-icon--loop.dn-icon--ring{animation:dn-i-ring var(--dur-ambient) var(--ease-in-out) infinite}
+
+/* The global reduced-motion collapse in ds/tokens/motion.css sets animation-duration to 1ms, and
+   for six of the seven families that is enough: their last keyframe is the resting pose,
+   so a 0.01ms run lands back where it started. dn-i-spin is the exception — it ends at
+   rotate(50deg) with fill-mode `both`, so under the collapse a hover would snap the glyph
+   50 degrees and HOLD it for as long as the pointer stayed. Reduced motion has to mean no
+   pose change at all, so the families are switched off outright rather than sped up.
+   Both DOM shapes are named: this console's, and the system's own, for whatever lands next. */
+@media (prefers-reduced-motion:reduce){
+svg.dn-icon--draw,svg.dn-icon--spin,svg.dn-icon--ring,svg.dn-icon--hop,
+svg.dn-icon--nudge,svg.dn-icon--pop,svg.dn-icon--jitter,svg.dn-icon--draw > *,
+.dn-icon--spin svg,.dn-icon--ring svg,.dn-icon--hop svg,.dn-icon--nudge svg,
+.dn-icon--pop svg,.dn-icon--jitter svg,.dn-icon--draw svg > *{animation:none!important}
+}
