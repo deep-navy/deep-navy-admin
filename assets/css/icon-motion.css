@@ -64,7 +64,7 @@ svg.dn-icon--loop.dn-icon--ring{animation:dn-i-ring var(--dur-ambient) var(--eas
 
 /* The global reduced-motion collapse in ds/tokens/motion.css sets animation-duration to 1ms, and
    for six of the seven families that is enough: their last keyframe is the resting pose,
-   so a 0.01ms run lands back where it started. dn-i-spin is the exception — it ends at
+   so a 1ms run lands back where it started. dn-i-spin is the exception — it ends at
    rotate(50deg) with fill-mode `both`, so under the collapse a hover would snap the glyph
    50 degrees and HOLD it for as long as the pointer stayed. Reduced motion has to mean no
    pose change at all, so the families are switched off outright rather than sped up.
