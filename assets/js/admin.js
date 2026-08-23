@@ -277,8 +277,24 @@
         // page. Verified end to end against this pool - the click lands on
         // accounts.google.com, not on an interstitial. The button promises
         // Google; this is what keeps that promise true.
-        identity_provider: "Google",
-        prompt: "login"
+        identity_provider: "Google"
+        // prompt=login is deliberately ABSENT. The Cognito developer guide's
+        // own worked example shows what it does: "The authorization server
+        // redirects to the login endpoint, requiring re-authentication" -
+        // a 302 to /login. That is the managed login page, and it is what an
+        // operator hit AFTER authenticating with Google: back from the IdP,
+        // Cognito honoured prompt again and served its own page carrying a
+        // second "Sign in with Google" button. identity_provider says go
+        // straight to the IdP; prompt=login says stop at my page first. They
+        // contradict each other and prompt wins on the return leg.
+        //
+        // Nothing is lost by dropping it. The pool federates exactly one
+        // provider and admits exactly one address, so there is no account to
+        // choose between; Google still authenticates the operator on its own
+        // terms. The re-authentication prompt=login was reaching for is
+        // already enforced elsewhere and more strictly: auth_session_validity
+        // is 3 minutes, access and id tokens last 60, and the console holds
+        // tokens in memory only, so a refresh signs the operator out.
       }).toString();
       window.location.assign(authorizeUrl.toString());
     } catch {

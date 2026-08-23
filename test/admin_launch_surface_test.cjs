@@ -189,6 +189,14 @@ test("sign-in asks Cognito for the callback page terraform registers, and names 
   // interstitial would make the button's own promise false.
   assert.match(app, /identity_provider: "Google"/);
 
+  // prompt=login must never come back. Cognito's own documented behaviour for
+  // it is a 302 to /login - the managed login page - which it serves on the
+  // return leg from Google, so the operator authenticates and then lands on a
+  // generic page carrying a second "Sign in with Google" button. It directly
+  // contradicts identity_provider, and it wins.
+  assert.doesNotMatch(app, /prompt:\s*"login"/);
+  assert.doesNotMatch(app, /["']prompt["']\s*:\s*["']login["']/);
+
   // Google's own pre-approved asset, used verbatim in both themes. A custom
   // button is permitted only within their guidelines, and the one we had
   // breached the clearest of them: the colour "G" may not sit on a background
