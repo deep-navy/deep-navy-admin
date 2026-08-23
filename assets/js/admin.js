@@ -269,14 +269,14 @@
         nonce,
         code_challenge_method: "S256",
         code_challenge: challenge,
-        // The pool supports exactly one identity provider, so name it. Verified
-        // against the live pool: managed login (the v2 branding this pool uses)
-        // consumes this parameter and still renders its own page, which offers
-        // exactly one choice - "Sign in with Google". The classic hosted UI
-        // bounced straight through. Keeping it costs nothing and takes effect
-        // if the managed branding is ever removed; what it does NOT do today is
-        // skip the interstitial, and claiming otherwise in a comment is how the
-        // next person loses an hour.
+        // The pool supports exactly one identity provider, so name it and skip
+        // Cognito's chooser entirely. Per the Cognito developer guide the
+        // Authorize endpoint is a redirection endpoint: given identity_provider
+        // (or idp_identifier) it "redirects silently to your IdP, bypassing
+        // managed login", and otherwise falls through to the managed Login
+        // page. Verified end to end against this pool - the click lands on
+        // accounts.google.com, not on an interstitial. The button promises
+        // Google; this is what keeps that promise true.
         identity_provider: "Google",
         prompt: "login"
       }).toString();
