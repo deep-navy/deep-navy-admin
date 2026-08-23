@@ -269,6 +269,11 @@
         nonce,
         code_challenge_method: "S256",
         code_challenge: challenge,
+        // The pool supports exactly one identity provider, so naming it here
+        // skips Cognito's chooser and lands the operator on Google directly.
+        // The button says "Sign in with Google"; an interstitial asking which
+        // provider would make that promise a lie.
+        identity_provider: "Google",
         prompt: "login"
       }).toString();
       window.location.assign(authorizeUrl.toString());

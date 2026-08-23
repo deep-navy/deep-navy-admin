@@ -171,3 +171,31 @@ test("the public shell carries no internal architecture documentation", () => {
   assert.doesNotMatch(html, /<script/);
   assert.doesNotMatch(html, /\sstyle="/);
 });
+
+// On 2026-08-23 the sign-in button read as completely dead: it fired, Cognito
+// answered error=redirect_mismatch, and the operator saw a page that did
+// nothing. The cause was cross-repo — infrastructure registered the site root
+// as the app client's only callback while this console asks Cognito for
+// /auth/callback/, the page that scrubs the authorization code out of the
+// address bar. Cognito matches redirect_uri byte-for-byte, trailing slash
+// included. Terraform now asserts the same path from its side; this pins ours,
+// so the two can only drift if someone changes both.
+test("sign-in asks Cognito for the callback page terraform registers, and names Google", () => {
+  const writer = readFileSync("scripts/write_runtime_config.rb", "utf8");
+  assert.match(writer, /auth\/callback\//, "the runtime callback must be the scrubber page, not the site root");
+
+  // Straight to Google. The pool supports exactly one provider, so a chooser
+  // interstitial would make the button's own promise false.
+  assert.match(app, /identity_provider: "Google"/);
+
+  // The button says whose identity it uses, and carries the mark, because
+  // "Continue securely" told an operator nothing about what tapping it does.
+  assert.match(shell, /data-sign-in[^>]*>[\s\S]{0,220}?Sign in with Google/);
+  assert.match(shell, /<symbol id="i-google"/);
+  assert.match(shell, /href="#i-google"/);
+
+  // The mark is filled, not stroked: svg.dn-icon forces fill:none for outline
+  // glyphs, which would render Google's four paths as nothing at all.
+  const css = readFileSync("assets/css/admin.css", "utf8");
+  assert.match(css, /svg\.ad-gmark\s*\{[^}]*fill:\s*revert/);
+});

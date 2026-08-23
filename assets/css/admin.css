@@ -73,6 +73,24 @@ svg.dn-icon {
   stroke-linejoin: round;
 }
 
+/* Google's mark is the one glyph in this console that carries colour without
+   carrying meaning: it is an identity mark, not a status. It is filled rather
+   than stroked, so it must opt out of svg.dn-icon above or it renders as four
+   invisible outlines. Its colours are fixed by Google's branding guidelines and
+   are deliberately identical in both themes. */
+svg.ad-gmark {
+  fill: revert;
+  stroke: none;
+  flex: none;
+}
+
+.dn-btn.ad-gbtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2, 0.5rem);
+}
+
 /* ------------------------------------------------------------------- brand ---- */
 /* The mark and the dot are the two classes the vendored tree deliberately omits:
    ds.css skips the design system's brand/ module, because the mark is drawn here
