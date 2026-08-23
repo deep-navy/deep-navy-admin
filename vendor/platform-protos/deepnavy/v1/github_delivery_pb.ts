@@ -238,10 +238,11 @@ export const GitHubPullRequestSchema: GenMessage<GitHubPullRequest> = /*@__PURE_
  */
 export type ListGitHubIssuesRequest = Message<"deepnavy.v1.ListGitHubIssuesRequest"> & {
   /**
-   * All three identifiers are required and revalidated together. The caller
-   * must be a current organization member, the team must belong to that
-   * organization, and the repository must be selected for that team and still
-   * accessible through the organization's active GitHub App installation.
+   * organization_id and team_id are required and revalidated together: the
+   * caller must be a current organization member and the team must belong to
+   * that organization. The read is always bounded by the team's own repository
+   * grant — the server derives that grant server-side and never widens a read
+   * past it, whatever the request asks for.
    *
    * @generated from field: string organization_id = 1;
    */
@@ -253,6 +254,20 @@ export type ListGitHubIssuesRequest = Message<"deepnavy.v1.ListGitHubIssuesReque
   teamId: string;
 
   /**
+   * github_repository_id is optional. Zero — the unset value, and what a client
+   * that never chose a repository already sends — selects every repository
+   * currently granted to the team, so one call covers the whole grant instead
+   * of forcing the caller to fan out a request per repository. It is a sentinel
+   * rather than explicit field presence on purpose: no GitHub repository has id
+   * zero, so the two readings can never collide, and the field keeps implicit
+   * presence so existing generated clients keep compiling unchanged. A non-zero
+   * id narrows the read to that one repository, which must still be granted to
+   * the team and reachable through the organization's active GitHub App
+   * installation; otherwise the call fails exactly as an unknown repository
+   * does, without revealing whether a repository belonging to another tenant
+   * exists. Widening is never possible: an id outside the grant is refused, it
+   * is not silently ignored.
+   *
    * @generated from field: int64 github_repository_id = 3;
    */
   githubRepositoryId: bigint;
@@ -304,7 +319,9 @@ export const ListGitHubIssuesResponseSchema: GenMessage<ListGitHubIssuesResponse
  */
 export type ListGitHubPullRequestsRequest = Message<"deepnavy.v1.ListGitHubPullRequestsRequest"> & {
   /**
-   * Authorization and repository-selection semantics match ListGitHubIssues.
+   * Authorization and repository-scoping semantics match ListGitHubIssues,
+   * including the optional zero-means-the-whole-grant repository filter and the
+   * team grant that bounds it.
    *
    * @generated from field: string organization_id = 1;
    */

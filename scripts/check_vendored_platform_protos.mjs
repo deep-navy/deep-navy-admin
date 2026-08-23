@@ -1,10 +1,43 @@
+/* The platform contract under vendor/platform-protos/ is VENDORED, not authored here.
+ *
+ * This console decodes AdminService responses with descriptors generated from a specific
+ * platform-protos commit. Six places in this repository name that commit, and until
+ * 2026-08-23 nothing compared them to one another. They drifted into three different
+ * answers: the descriptors were vendored at bf790f80, REVISION agreed, but the browser
+ * bundle's PLATFORM_PROTOS_REVISION and admin.js's runtime guard both said 39ae2270 and
+ * the README said fa01d7cc. The runtime guard looked like protection - createAdminApi()
+ * refuses to build a client unless the bundle's constant matches the literal in admin.js -
+ * but both sides of that comparison came from the same stale source, so it was
+ * self-consistent and proved nothing. It would have happily decoded bf790f80 descriptors
+ * while asserting 39ae2270, and a field added between those commits would have decoded
+ * to the wrong shape with a green guard.
+ *
+ * So the revision now has exactly ONE source of truth - vendor/platform-protos/REVISION,
+ * the file that sits beside the bytes it names - and this script does two things:
+ *
+ *   1. Proves REVISION is not a lie, by checking the vendored descriptor bytes against
+ *      platform-protos' own output AT THAT COMMIT (not at whatever the sibling checkout
+ *      happens to have checked out). Without this the chain is anchored to a number
+ *      nobody verified.
+ *   2. Proves every other copy of the revision in this repository equals it, naming the
+ *      file and line of each one that does not.
+ *
+ * The runtime guard in admin.js keeps its literal on purpose. admin.js and
+ * admin-api-client.js are two separately-cached static files on GitHub Pages, so a stale
+ * bundle can pair with a fresh admin.js in a real browser, where no build-time check can
+ * reach. That guard is worth keeping - it just has to be pinned to the descriptors rather
+ * than to itself, which is what REVISION_SITES below enforces.
+ *
+ * To re-vendor: copy platform-protos gen/ts into vendor/platform-protos/, regenerate
+ * MANIFEST.sha256, write the new SHA into REVISION, update every site listed below, run
+ * `npm run build` so the bundle carries it, and commit the lot together.
+ */
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
-const expectedRevision = "bf790f80d44de9c35f91708743a4d9c236a28834";
 const expectedRuntimeVersions = Object.freeze({
   "@bufbuild/protobuf": "2.13.0",
   "@connectrpc/connect": "2.1.2",
@@ -12,8 +45,12 @@ const expectedRuntimeVersions = Object.freeze({
 });
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const vendorRoot = resolve(root, "vendor/platform-protos");
+
+// The one place the pinned revision is written down. Everything else is checked against it.
 const revision = readFileSync(resolve(vendorRoot, "REVISION"), "utf8").trim();
-if (revision !== expectedRevision) throw new Error(`Vendored platform-protos revision ${revision || "<empty>"} does not match ${expectedRevision}.`);
+if (!/^[0-9a-f]{40}$/.test(revision)) {
+  throw new Error(`vendor/platform-protos/REVISION must be a full 40-character commit SHA, got ${revision || "<empty>"}.`);
+}
 
 const manifestLines = readFileSync(resolve(vendorRoot, "MANIFEST.sha256"), "utf8").trim().split("\n");
 const required = new Set([
@@ -57,16 +94,89 @@ if (packageJson.allowScripts?.["esbuild@0.28.1"] !== true || Object.keys(package
   throw new Error("Only esbuild@0.28.1 may run a dependency install script.");
 }
 
-const siblingRoot = resolve(root, "../platform-protos");
-if (existsSync(resolve(siblingRoot, ".git"))) {
-  const result = spawnSync("git", ["-C", siblingRoot, "rev-parse", "HEAD"], { encoding: "utf8" });
-  if (result.status !== 0 || result.stdout.trim() !== expectedRevision) throw new Error("Sibling platform-protos revision does not match the pinned admin client.");
-  for (const line of manifestLines) {
-    const relativePath = line.split("  ")[1];
-    const vendored = readFileSync(resolve(vendorRoot, relativePath));
-    const generated = readFileSync(resolve(siblingRoot, "gen/ts", relativePath));
-    if (!vendored.equals(generated)) throw new Error(`Vendored ${relativePath} differs from platform-protos ${expectedRevision}.`);
+/* Every other place in this repository that names the pinned revision.
+ *
+ * `pattern` must capture the SHA in group 1 so a disagreement can be reported with its
+ * file and line. A site whose pattern matches nothing is itself a failure: it means the
+ * code moved and this list stopped watching it, which is precisely how the last drift
+ * went unnoticed. */
+const REVISION_SITES = [
+  {
+    file: "src/admin-api-client.ts",
+    what: "the constant the browser bundle exports",
+    pattern: /^export const PLATFORM_PROTOS_REVISION = "([0-9a-f]{40})";$/m
+  },
+  {
+    file: "assets/js/admin.js",
+    what: "the runtime guard in createAdminApi()",
+    pattern: /generated\?\.PLATFORM_PROTOS_REVISION !== "([0-9a-f]{40})"/
+  },
+  {
+    file: "assets/js/admin-api-client.js",
+    what: "the committed browser bundle (run `npm run build` after changing the source)",
+    // esbuild minifies the export name away from its value, so match the literal itself.
+    // The stray scan below is what makes that unambiguous: exactly one SHA may appear.
+    pattern: /"([0-9a-f]{40})"/
+  },
+  {
+    file: "test/admin_api_client_test.cjs",
+    what: "the bundle assertion",
+    pattern: /assert\.equal\(generated\.PLATFORM_PROTOS_REVISION, "([0-9a-f]{40})"\)/
+  },
+  {
+    file: "README.md",
+    what: "the documented contract revision",
+    pattern: /generated from `platform-protos` revision\s*\n?\s*`([0-9a-f]{40})`/
+  }
+];
+
+const disagreements = [];
+for (const site of REVISION_SITES) {
+  const text = readFileSync(resolve(root, site.file), "utf8");
+  const found = text.match(site.pattern);
+  if (!found) {
+    disagreements.push(`${site.file}: could not find ${site.what}. The revision cross-check has stopped watching this file - fix the pattern in scripts/check_vendored_platform_protos.mjs.`);
+    continue;
+  }
+  if (found[1] !== revision) {
+    const line = text.slice(0, found.index).split("\n").length;
+    disagreements.push(`${site.file}:${line}: ${site.what} says ${found[1]}, but the vendored descriptors are ${revision}.`);
+  }
+}
+if (disagreements.length) {
+  throw new Error(`The pinned platform-protos revision disagrees with itself.\n  vendor/platform-protos/REVISION: ${revision}\n${disagreements.map((entry) => `  ${entry}`).join("\n")}`);
+}
+
+/* A guarded file must not carry a SECOND revision-shaped constant that nobody checks -
+ * that is how a fourth copy would creep back in. Only the pinned SHA may appear. */
+for (const site of REVISION_SITES) {
+  const text = readFileSync(resolve(root, site.file), "utf8");
+  const strays = [...new Set(text.match(/\b[0-9a-f]{40}\b/g) || [])].filter((sha) => sha !== revision);
+  if (strays.length) {
+    throw new Error(`${site.file} names commit ${strays.join(", ")} alongside the pinned ${revision}. Every revision in a guarded file must be the pinned one.`);
   }
 }
 
-console.log(`Verified ${manifestLines.length} generated descriptors from platform-protos ${expectedRevision}.`);
+/* Prove REVISION itself. The vendored bytes must be what platform-protos generated at
+ * that exact commit - compared against the commit, not against sibling HEAD, so this
+ * still verifies provenance while platform-protos moves ahead. */
+const siblingRoot = resolve(root, "../platform-protos");
+let provenance = "not checked (no sibling platform-protos checkout)";
+if (existsSync(resolve(siblingRoot, ".git"))) {
+  const known = spawnSync("git", ["-C", siblingRoot, "cat-file", "-e", `${revision}^{commit}`]);
+  if (known.status !== 0) {
+    provenance = `not checked (sibling platform-protos does not contain ${revision})`;
+  } else {
+    for (const relativePath of manifestLines.map((line) => line.split("  ")[1])) {
+      const generated = spawnSync("git", ["-C", siblingRoot, "show", `${revision}:gen/ts/${relativePath}`], { maxBuffer: 64 * 1024 * 1024 });
+      if (generated.status !== 0) throw new Error(`platform-protos ${revision} has no gen/ts/${relativePath}; the vendored tree does not match that commit.`);
+      if (!readFileSync(resolve(vendorRoot, relativePath)).equals(generated.stdout)) {
+        throw new Error(`Vendored ${relativePath} is not what platform-protos generated at ${revision}. REVISION is naming a commit these bytes did not come from.`);
+      }
+    }
+    provenance = `byte-identical to platform-protos ${revision}`;
+  }
+}
+
+console.log(`Verified ${manifestLines.length} generated descriptors, ${provenance}.`);
+console.log(`Revision ${revision} agrees across REVISION and ${REVISION_SITES.length} dependent sites.`);

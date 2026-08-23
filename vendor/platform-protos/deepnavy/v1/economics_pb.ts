@@ -14,7 +14,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file deepnavy/v1/economics.proto.
  */
 export const file_deepnavy_v1_economics: GenFile = /*@__PURE__*/
-  fileDesc("ChtkZWVwbmF2eS92MS9lY29ub21pY3MucHJvdG8SC2RlZXBuYXZ5LnYxIksKDkVjb25vbWljc1Njb3BlEi0KBHR5cGUYASABKA4yHy5kZWVwbmF2eS52MS5FY29ub21pY3NTY29wZVR5cGUSCgoCaWQYAiABKAki3gMKEEVjb25vbWljc1N1bW1hcnkSFgoKc2NvcGVfdHlwZRgBIAEoCUICGAESFAoIc2NvcGVfaWQYAiABKAlCAhgBEicKC2RpcmVjdF9jb3N0GAMgASgLMhIuZGVlcG5hdnkudjEuTW9uZXkSIwoHcmV2ZW51ZRgEIAEoCzISLmRlZXBuYXZ5LnYxLk1vbmV5EigKDGdyb3NzX3Byb2ZpdBgFIAEoCzISLmRlZXBuYXZ5LnYxLk1vbmV5EhgKDGdyb3NzX21hcmdpbhgGIAEoAUICGAESGwoTY3JlZGl0c191c2VkX21pY3JvcxgHIAEoAxIgChhjcmVkaXRzX3JlbWFpbmluZ19taWNyb3MYCCABKAMSLwoLbWVhc3VyZWRfYXQYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEioKBXNjb3BlGAogASgLMhsuZGVlcG5hdnkudjEuRWNvbm9taWNzU2NvcGUSHwoSZ3Jvc3NfbWFyZ2luX3JhdGlvGAsgASgBSACIAQESNgoQcmVwb3J0aW5nX3BlcmlvZBgMIAEoCzIcLmRlZXBuYXZ5LnYxLlJlcG9ydGluZ1BlcmlvZEIVChNfZ3Jvc3NfbWFyZ2luX3JhdGlvItoBChNHZXRFY29ub21pY3NSZXF1ZXN0EhYKCnNjb3BlX3R5cGUYASABKAlCAhgBEhQKCHNjb3BlX2lkGAIgASgJQgIYARIqCgVzY29wZRgDIAEoCzIbLmRlZXBuYXZ5LnYxLkVjb25vbWljc1Njb3BlEjYKEHJlcG9ydGluZ19wZXJpb2QYBCABKAsyHC5kZWVwbmF2eS52MS5SZXBvcnRpbmdQZXJpb2QSMQoMcGFyZW50X3Njb3BlGAUgASgLMhsuZGVlcG5hdnkudjEuRWNvbm9taWNzU2NvcGUiSAoUR2V0RWNvbm9taWNzUmVzcG9uc2USMAoJZWNvbm9taWNzGAEgASgLMh0uZGVlcG5hdnkudjEuRWNvbm9taWNzU3VtbWFyeSKkAgoSRWNvbm9taWNzQnJlYWtkb3duEioKBXNjb3BlGAEgASgLMhsuZGVlcG5hdnkudjEuRWNvbm9taWNzU2NvcGUSFAoMZGlzcGxheV9uYW1lGAIgASgJEhkKEXVzYWdlX2V2ZW50X2NvdW50GAMgASgDEicKC2RpcmVjdF9jb3N0GAQgASgLMhIuZGVlcG5hdnkudjEuTW9uZXkSGwoTY3JlZGl0c191c2VkX21pY3JvcxgFIAEoAxI1ChFmaXJzdF9vY2N1cnJlZF9hdBgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASNAoQbGFzdF9vY2N1cnJlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAi5QEKHkxpc3RFY29ub21pY3NCcmVha2Rvd25zUmVxdWVzdBIxCgxwYXJlbnRfc2NvcGUYASABKAsyGy5kZWVwbmF2eS52MS5FY29ub21pY3NTY29wZRIxCghncm91cF9ieRgCIAEoDjIfLmRlZXBuYXZ5LnYxLkVjb25vbWljc1Njb3BlVHlwZRI2ChByZXBvcnRpbmdfcGVyaW9kGAMgASgLMhwuZGVlcG5hdnkudjEuUmVwb3J0aW5nUGVyaW9kEhEKCXBhZ2Vfc2l6ZRgEIAEoBRISCgpwYWdlX3Rva2VuGAUgASgJItgBCh9MaXN0RWNvbm9taWNzQnJlYWtkb3duc1Jlc3BvbnNlEjMKCmJyZWFrZG93bnMYASADKAsyHy5kZWVwbmF2eS52MS5FY29ub21pY3NCcmVha2Rvd24SFwoPbmV4dF9wYWdlX3Rva2VuGAIgASgJEjYKEHJlcG9ydGluZ19wZXJpb2QYAyABKAsyHC5kZWVwbmF2eS52MS5SZXBvcnRpbmdQZXJpb2QSLwoLbWVhc3VyZWRfYXQYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wKqYEChJFY29ub21pY3NTY29wZVR5cGUSJAogRUNPTk9NSUNTX1NDT1BFX1RZUEVfVU5TUEVDSUZJRUQQABIhCh1FQ09OT01JQ1NfU0NPUEVfVFlQRV9QTEFURk9STRABEiUKIUVDT05PTUlDU19TQ09QRV9UWVBFX09SR0FOSVpBVElPThACEh0KGUVDT05PTUlDU19TQ09QRV9UWVBFX1RFQU0QAxIeChpFQ09OT01JQ1NfU0NPUEVfVFlQRV9BR0VOVBAEEiMKH0VDT05PTUlDU19TQ09QRV9UWVBFX0FHRU5UX1JPTEUQBRIiCh5FQ09OT01JQ1NfU0NPUEVfVFlQRV9PQkpFQ1RJVkUQBhIjCh9FQ09OT01JQ1NfU0NPUEVfVFlQRV9JTklUSUFUSVZFEAcSHgoaRUNPTk9NSUNTX1NDT1BFX1RZUEVfSVNTVUUQCBIlCiFFQ09OT01JQ1NfU0NPUEVfVFlQRV9QVUxMX1JFUVVFU1QQCRIjCh9FQ09OT01JQ1NfU0NPUEVfVFlQRV9SRVBPU0lUT1JZEAoSIAocRUNPTk9NSUNTX1NDT1BFX1RZUEVfU0VTU0lPThALEh4KGkVDT05PTUlDU19TQ09QRV9UWVBFX01PREVMEAwSIQodRUNPTk9NSUNTX1NDT1BFX1RZUEVfUFJPVklERVIQDRIiCh5FQ09OT01JQ1NfU0NPUEVfVFlQRV9PUEVSQVRJT04QDjLdAQoQRWNvbm9taWNzU2VydmljZRJTCgxHZXRFY29ub21pY3MSIC5kZWVwbmF2eS52MS5HZXRFY29ub21pY3NSZXF1ZXN0GiEuZGVlcG5hdnkudjEuR2V0RWNvbm9taWNzUmVzcG9uc2USdAoXTGlzdEVjb25vbWljc0JyZWFrZG93bnMSKy5kZWVwbmF2eS52MS5MaXN0RWNvbm9taWNzQnJlYWtkb3duc1JlcXVlc3QaLC5kZWVwbmF2eS52MS5MaXN0RWNvbm9taWNzQnJlYWtkb3duc1Jlc3BvbnNlQkRaQmdpdGh1Yi5jb20vZGVlcC1uYXZ5L3BsYXRmb3JtLXByb3Rvcy9nZW4vZ28vZGVlcG5hdnkvdjE7ZGVlcG5hdnl2MWIGcHJvdG8z", [file_deepnavy_v1_common, file_google_protobuf_timestamp]);
+  fileDesc("ChtkZWVwbmF2eS92MS9lY29ub21pY3MucHJvdG8SC2RlZXBuYXZ5LnYxIksKDkVjb25vbWljc1Njb3BlEi0KBHR5cGUYASABKA4yHy5kZWVwbmF2eS52MS5FY29ub21pY3NTY29wZVR5cGUSCgoCaWQYAiABKAkiwgQKEEVjb25vbWljc1N1bW1hcnkSFgoKc2NvcGVfdHlwZRgBIAEoCUICGAESFAoIc2NvcGVfaWQYAiABKAlCAhgBEicKC2RpcmVjdF9jb3N0GAMgASgLMhIuZGVlcG5hdnkudjEuTW9uZXkSIwoHcmV2ZW51ZRgEIAEoCzISLmRlZXBuYXZ5LnYxLk1vbmV5EigKDGdyb3NzX3Byb2ZpdBgFIAEoCzISLmRlZXBuYXZ5LnYxLk1vbmV5EhgKDGdyb3NzX21hcmdpbhgGIAEoAUICGAESGwoTY3JlZGl0c191c2VkX21pY3JvcxgHIAEoAxIgChhjcmVkaXRzX3JlbWFpbmluZ19taWNyb3MYCCABKAMSLwoLbWVhc3VyZWRfYXQYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEioKBXNjb3BlGAogASgLMhsuZGVlcG5hdnkudjEuRWNvbm9taWNzU2NvcGUSHwoSZ3Jvc3NfbWFyZ2luX3JhdGlvGAsgASgBSACIAQESNgoQcmVwb3J0aW5nX3BlcmlvZBgMIAEoCzIcLmRlZXBuYXZ5LnYxLlJlcG9ydGluZ1BlcmlvZBIUCgxpbnB1dF90b2tlbnMYDSABKAMSFQoNb3V0cHV0X3Rva2VucxgOIAEoAxIZChFjYWNoZV9yZWFkX3Rva2VucxgPIAEoAxIaChJjYWNoZV93cml0ZV90b2tlbnMYECABKANCFQoTX2dyb3NzX21hcmdpbl9yYXRpbyLaAQoTR2V0RWNvbm9taWNzUmVxdWVzdBIWCgpzY29wZV90eXBlGAEgASgJQgIYARIUCghzY29wZV9pZBgCIAEoCUICGAESKgoFc2NvcGUYAyABKAsyGy5kZWVwbmF2eS52MS5FY29ub21pY3NTY29wZRI2ChByZXBvcnRpbmdfcGVyaW9kGAQgASgLMhwuZGVlcG5hdnkudjEuUmVwb3J0aW5nUGVyaW9kEjEKDHBhcmVudF9zY29wZRgFIAEoCzIbLmRlZXBuYXZ5LnYxLkVjb25vbWljc1Njb3BlIkgKFEdldEVjb25vbWljc1Jlc3BvbnNlEjAKCWVjb25vbWljcxgBIAEoCzIdLmRlZXBuYXZ5LnYxLkVjb25vbWljc1N1bW1hcnkiiAMKEkVjb25vbWljc0JyZWFrZG93bhIqCgVzY29wZRgBIAEoCzIbLmRlZXBuYXZ5LnYxLkVjb25vbWljc1Njb3BlEhQKDGRpc3BsYXlfbmFtZRgCIAEoCRIZChF1c2FnZV9ldmVudF9jb3VudBgDIAEoAxInCgtkaXJlY3RfY29zdBgEIAEoCzISLmRlZXBuYXZ5LnYxLk1vbmV5EhsKE2NyZWRpdHNfdXNlZF9taWNyb3MYBSABKAMSNQoRZmlyc3Rfb2NjdXJyZWRfYXQYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjQKEGxhc3Rfb2NjdXJyZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhQKDGlucHV0X3Rva2VucxgIIAEoAxIVCg1vdXRwdXRfdG9rZW5zGAkgASgDEhkKEWNhY2hlX3JlYWRfdG9rZW5zGAogASgDEhoKEmNhY2hlX3dyaXRlX3Rva2VucxgLIAEoAyLlAQoeTGlzdEVjb25vbWljc0JyZWFrZG93bnNSZXF1ZXN0EjEKDHBhcmVudF9zY29wZRgBIAEoCzIbLmRlZXBuYXZ5LnYxLkVjb25vbWljc1Njb3BlEjEKCGdyb3VwX2J5GAIgASgOMh8uZGVlcG5hdnkudjEuRWNvbm9taWNzU2NvcGVUeXBlEjYKEHJlcG9ydGluZ19wZXJpb2QYAyABKAsyHC5kZWVwbmF2eS52MS5SZXBvcnRpbmdQZXJpb2QSEQoJcGFnZV9zaXplGAQgASgFEhIKCnBhZ2VfdG9rZW4YBSABKAki2AEKH0xpc3RFY29ub21pY3NCcmVha2Rvd25zUmVzcG9uc2USMwoKYnJlYWtkb3ducxgBIAMoCzIfLmRlZXBuYXZ5LnYxLkVjb25vbWljc0JyZWFrZG93bhIXCg9uZXh0X3BhZ2VfdG9rZW4YAiABKAkSNgoQcmVwb3J0aW5nX3BlcmlvZBgDIAEoCzIcLmRlZXBuYXZ5LnYxLlJlcG9ydGluZ1BlcmlvZBIvCgttZWFzdXJlZF9hdBgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAi1AMKE0Vjb25vbWljc1VzYWdlRXZlbnQSLwoLbWVhc3VyZWRfYXQYASABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhIKCmFnZW50X3JvbGUYAiABKAkSFgoOb3BlcmF0aW9uX3R5cGUYAyABKAkSDQoFbW9kZWwYBCABKAkSEAoIcHJvdmlkZXIYBSABKAkSFAoMb2JqZWN0aXZlX2lkGAYgASgJEhUKDWluaXRpYXRpdmVfaWQYByABKAkSGwoTZ2l0aHViX2lzc3VlX251bWJlchgIIAEoAxIiChpnaXRodWJfcHVsbF9yZXF1ZXN0X251bWJlchgJIAEoAxIUCgxpbnB1dF90b2tlbnMYCiABKAMSFQoNb3V0cHV0X3Rva2VucxgLIAEoAxIZChFjYWNoZV9yZWFkX3Rva2VucxgMIAEoAxIaChJjYWNoZV93cml0ZV90b2tlbnMYDSABKAMSGwoTY3JlZGl0c191c2VkX21pY3JvcxgOIAEoAxInCgtkaXJlY3RfY29zdBgPIAEoCzISLmRlZXBuYXZ5LnYxLk1vbmV5Eg4KBnNvdXJjZRgQIAEoCRIXCg9zb3VyY2VfZXZlbnRfaWQYESABKAki3wEKH0xpc3RFY29ub21pY3NVc2FnZUV2ZW50c1JlcXVlc3QSKgoFc2NvcGUYASABKAsyGy5kZWVwbmF2eS52MS5FY29ub21pY3NTY29wZRIxCgxwYXJlbnRfc2NvcGUYAiABKAsyGy5kZWVwbmF2eS52MS5FY29ub21pY3NTY29wZRI2ChByZXBvcnRpbmdfcGVyaW9kGAMgASgLMhwuZGVlcG5hdnkudjEuUmVwb3J0aW5nUGVyaW9kEhEKCXBhZ2Vfc2l6ZRgEIAEoBRISCgpwYWdlX3Rva2VuGAUgASgJItYBCiBMaXN0RWNvbm9taWNzVXNhZ2VFdmVudHNSZXNwb25zZRIwCgZldmVudHMYASADKAsyIC5kZWVwbmF2eS52MS5FY29ub21pY3NVc2FnZUV2ZW50EhcKD25leHRfcGFnZV90b2tlbhgCIAEoCRI2ChByZXBvcnRpbmdfcGVyaW9kGAMgASgLMhwuZGVlcG5hdnkudjEuUmVwb3J0aW5nUGVyaW9kEi8KC21lYXN1cmVkX2F0GAQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCKFAQoURWNvbm9taWNzRGFpbHlCdWNrZXQSJwoDZGF5GAEgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBInCgtkaXJlY3RfY29zdBgCIAEoCzISLmRlZXBuYXZ5LnYxLk1vbmV5EhsKE2NyZWRpdHNfdXNlZF9taWNyb3MYAyABKAMifwoZTGlzdEVjb25vbWljc0RhaWx5UmVxdWVzdBIqCgVzY29wZRgBIAEoCzIbLmRlZXBuYXZ5LnYxLkVjb25vbWljc1Njb3BlEjYKEHJlcG9ydGluZ19wZXJpb2QYAiABKAsyHC5kZWVwbmF2eS52MS5SZXBvcnRpbmdQZXJpb2QitgEKGkxpc3RFY29ub21pY3NEYWlseVJlc3BvbnNlEi8KBGRheXMYASADKAsyIS5kZWVwbmF2eS52MS5FY29ub21pY3NEYWlseUJ1Y2tldBI2ChByZXBvcnRpbmdfcGVyaW9kGAIgASgLMhwuZGVlcG5hdnkudjEuUmVwb3J0aW5nUGVyaW9kEi8KC21lYXN1cmVkX2F0GAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCqmBAoSRWNvbm9taWNzU2NvcGVUeXBlEiQKIEVDT05PTUlDU19TQ09QRV9UWVBFX1VOU1BFQ0lGSUVEEAASIQodRUNPTk9NSUNTX1NDT1BFX1RZUEVfUExBVEZPUk0QARIlCiFFQ09OT01JQ1NfU0NPUEVfVFlQRV9PUkdBTklaQVRJT04QAhIdChlFQ09OT01JQ1NfU0NPUEVfVFlQRV9URUFNEAMSHgoaRUNPTk9NSUNTX1NDT1BFX1RZUEVfQUdFTlQQBBIjCh9FQ09OT01JQ1NfU0NPUEVfVFlQRV9BR0VOVF9ST0xFEAUSIgoeRUNPTk9NSUNTX1NDT1BFX1RZUEVfT0JKRUNUSVZFEAYSIwofRUNPTk9NSUNTX1NDT1BFX1RZUEVfSU5JVElBVElWRRAHEh4KGkVDT05PTUlDU19TQ09QRV9UWVBFX0lTU1VFEAgSJQohRUNPTk9NSUNTX1NDT1BFX1RZUEVfUFVMTF9SRVFVRVNUEAkSIwofRUNPTk9NSUNTX1NDT1BFX1RZUEVfUkVQT1NJVE9SWRAKEiAKHEVDT05PTUlDU19TQ09QRV9UWVBFX1NFU1NJT04QCxIeChpFQ09OT01JQ1NfU0NPUEVfVFlQRV9NT0RFTBAMEiEKHUVDT05PTUlDU19TQ09QRV9UWVBFX1BST1ZJREVSEA0SIgoeRUNPTk9NSUNTX1NDT1BFX1RZUEVfT1BFUkFUSU9OEA4yvQMKEEVjb25vbWljc1NlcnZpY2USUwoMR2V0RWNvbm9taWNzEiAuZGVlcG5hdnkudjEuR2V0RWNvbm9taWNzUmVxdWVzdBohLmRlZXBuYXZ5LnYxLkdldEVjb25vbWljc1Jlc3BvbnNlEnQKF0xpc3RFY29ub21pY3NCcmVha2Rvd25zEisuZGVlcG5hdnkudjEuTGlzdEVjb25vbWljc0JyZWFrZG93bnNSZXF1ZXN0GiwuZGVlcG5hdnkudjEuTGlzdEVjb25vbWljc0JyZWFrZG93bnNSZXNwb25zZRJ3ChhMaXN0RWNvbm9taWNzVXNhZ2VFdmVudHMSLC5kZWVwbmF2eS52MS5MaXN0RWNvbm9taWNzVXNhZ2VFdmVudHNSZXF1ZXN0Gi0uZGVlcG5hdnkudjEuTGlzdEVjb25vbWljc1VzYWdlRXZlbnRzUmVzcG9uc2USZQoSTGlzdEVjb25vbWljc0RhaWx5EiYuZGVlcG5hdnkudjEuTGlzdEVjb25vbWljc0RhaWx5UmVxdWVzdBonLmRlZXBuYXZ5LnYxLkxpc3RFY29ub21pY3NEYWlseVJlc3BvbnNlQkRaQmdpdGh1Yi5jb20vZGVlcC1uYXZ5L3BsYXRmb3JtLXByb3Rvcy9nZW4vZ28vZGVlcG5hdnkvdjE7ZGVlcG5hdnl2MWIGcHJvdG8z", [file_deepnavy_v1_common, file_google_protobuf_timestamp]);
 
 /**
  * EconomicsScope identifies a deep navy accounting scope. id is empty only
@@ -133,6 +133,35 @@ export type EconomicsSummary = Message<"deepnavy.v1.EconomicsSummary"> & {
    * @generated from field: deepnavy.v1.ReportingPeriod reporting_period = 12;
    */
   reportingPeriod?: ReportingPeriod | undefined;
+
+  /**
+   * Token counters are the raw metered volume behind direct_cost and
+   * credits_used_micros over reporting_period. They exist so a customer can see
+   * what the spend was made of; they are an input to cost, never a second
+   * currency. Nothing may price them client-side or reconcile a bill from them
+   * — direct_cost and credits_used_micros remain the only authoritative
+   * amounts, and rates change without these fields changing. Cache reads and
+   * cache writes are counted apart from input because they are rated
+   * differently and must not be folded back into it.
+   *
+   * @generated from field: int64 input_tokens = 13;
+   */
+  inputTokens: bigint;
+
+  /**
+   * @generated from field: int64 output_tokens = 14;
+   */
+  outputTokens: bigint;
+
+  /**
+   * @generated from field: int64 cache_read_tokens = 15;
+   */
+  cacheReadTokens: bigint;
+
+  /**
+   * @generated from field: int64 cache_write_tokens = 16;
+   */
+  cacheWriteTokens: bigint;
 };
 
 /**
@@ -251,6 +280,30 @@ export type EconomicsBreakdown = Message<"deepnavy.v1.EconomicsBreakdown"> & {
    * @generated from field: google.protobuf.Timestamp last_occurred_at = 7;
    */
   lastOccurredAt?: Timestamp | undefined;
+
+  /**
+   * Raw metered token volume for this group over the request's reporting
+   * period, with the same rules as EconomicsSummary: an explanation of the
+   * cost, never a substitute for it, and never priced client-side.
+   *
+   * @generated from field: int64 input_tokens = 8;
+   */
+  inputTokens: bigint;
+
+  /**
+   * @generated from field: int64 output_tokens = 9;
+   */
+  outputTokens: bigint;
+
+  /**
+   * @generated from field: int64 cache_read_tokens = 10;
+   */
+  cacheReadTokens: bigint;
+
+  /**
+   * @generated from field: int64 cache_write_tokens = 11;
+   */
+  cacheWriteTokens: bigint;
 };
 
 /**
@@ -339,6 +392,348 @@ export type ListEconomicsBreakdownsResponse = Message<"deepnavy.v1.ListEconomics
  */
 export const ListEconomicsBreakdownsResponseSchema: GenMessage<ListEconomicsBreakdownsResponse> = /*@__PURE__*/
   messageDesc(file_deepnavy_v1_economics, 6);
+
+/**
+ * EconomicsUsageEvent is one metered model call: the leaf fact every summary
+ * and breakdown in this service is aggregated from. It is exposed so a customer
+ * can see exactly what a period's credits were spent on, down to the individual
+ * request, instead of having to trust a total. It is an immutable accounting
+ * record — an event is never edited or backfilled in place, and a correction
+ * arrives as a further event — so a client may cache one forever but must never
+ * treat the absence of a later correction as proof a figure is final.
+ *
+ * @generated from message deepnavy.v1.EconomicsUsageEvent
+ */
+export type EconomicsUsageEvent = Message<"deepnavy.v1.EconomicsUsageEvent"> & {
+  /**
+   * measured_at is when the call was metered, not when it was ingested.
+   * Ordering and reporting_period filtering both use it, so a late-arriving
+   * event lands in the period it belongs to rather than the current one.
+   *
+   * @generated from field: google.protobuf.Timestamp measured_at = 1;
+   */
+  measuredAt?: Timestamp | undefined;
+
+  /**
+   * agent_role and operation_type are stable, non-secret platform aliases: the
+   * role of the agent that made the call and the operation it was made under.
+   * They are the same aliases ListEconomicsBreakdowns groups by.
+   *
+   * @generated from field: string agent_role = 2;
+   */
+  agentRole: string;
+
+  /**
+   * @generated from field: string operation_type = 3;
+   */
+  operationType: string;
+
+  /**
+   * model and provider are stable, non-secret platform aliases. Either may be
+   * empty when the source did not report it. Neither is ever a provider account,
+   * endpoint, or key, and neither may be used to route a call.
+   *
+   * @generated from field: string model = 4;
+   */
+  model: string;
+
+  /**
+   * @generated from field: string provider = 5;
+   */
+  provider: string;
+
+  /**
+   * objective_id and initiative_id attribute the spend to deep navy work
+   * resources. Empty means the call was not attributable to that dimension,
+   * which is ordinary — agents do work that belongs to no initiative — and must
+   * not be rendered as missing data or an error.
+   *
+   * @generated from field: string objective_id = 6;
+   */
+  objectiveId: string;
+
+  /**
+   * @generated from field: string initiative_id = 7;
+   */
+  initiativeId: string;
+
+  /**
+   * GitHub issue and pull request numbers are repository-relative and set only
+   * when the call was attributed to one. Zero means unattributed. They are not
+   * globally unique, so they must never be used as a key on their own.
+   *
+   * @generated from field: int64 github_issue_number = 8;
+   */
+  githubIssueNumber: bigint;
+
+  /**
+   * @generated from field: int64 github_pull_request_number = 9;
+   */
+  githubPullRequestNumber: bigint;
+
+  /**
+   * Raw metered token volume for this single call, with cache reads and writes
+   * counted apart from input because they are rated differently. They explain
+   * the cost and never replace it: nothing may price them client-side.
+   *
+   * @generated from field: int64 input_tokens = 10;
+   */
+  inputTokens: bigint;
+
+  /**
+   * @generated from field: int64 output_tokens = 11;
+   */
+  outputTokens: bigint;
+
+  /**
+   * @generated from field: int64 cache_read_tokens = 12;
+   */
+  cacheReadTokens: bigint;
+
+  /**
+   * @generated from field: int64 cache_write_tokens = 13;
+   */
+  cacheWriteTokens: bigint;
+
+  /**
+   * Engineering Credits use integer microcredits: 1,000,000 equals one credit.
+   *
+   * @generated from field: int64 credits_used_micros = 14;
+   */
+  creditsUsedMicros: bigint;
+
+  /**
+   * direct_cost is the provider cost recorded for this one call. All events in
+   * a response share one currency; the server rejects mixed-currency
+   * aggregation rather than converting silently, so a client may sum these
+   * amounts within a response but never across responses without checking.
+   *
+   * @generated from field: deepnavy.v1.Money direct_cost = 15;
+   */
+  directCost?: Money | undefined;
+
+  /**
+   * source is the ingesting system's stable name and source_event_id is that
+   * system's own identifier for this event. Together they are the uniqueness
+   * key that makes ingestion retry-safe, and they are the handle support uses
+   * to reconcile a disputed line against the upstream ledger. They are
+   * non-secret, but they are not deep navy resource IDs and no client may
+   * resolve, parse, or construct them.
+   *
+   * @generated from field: string source = 16;
+   */
+  source: string;
+
+  /**
+   * @generated from field: string source_event_id = 17;
+   */
+  sourceEventId: string;
+};
+
+/**
+ * Describes the message deepnavy.v1.EconomicsUsageEvent.
+ * Use `create(EconomicsUsageEventSchema)` to create a new message.
+ */
+export const EconomicsUsageEventSchema: GenMessage<EconomicsUsageEvent> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_economics, 7);
+
+/**
+ * @generated from message deepnavy.v1.ListEconomicsUsageEventsRequest
+ */
+export type ListEconomicsUsageEventsRequest = Message<"deepnavy.v1.ListEconomicsUsageEventsRequest"> & {
+  /**
+   * scope selects what to list and is revalidated against the caller on every
+   * page: an ORGANIZATION or TEAM the actor may read, or a narrower dimension
+   * nested under parent_scope. The scoping rules are exactly
+   * ListEconomicsBreakdowns'; a scope the actor may not read is
+   * indistinguishable from one with no events.
+   *
+   * @generated from field: deepnavy.v1.EconomicsScope scope = 1;
+   */
+  scope?: EconomicsScope | undefined;
+
+  /**
+   * Required for alias dimensions (agent role, session, model, provider, and
+   * operation) and optional for resource dimensions. Only ORGANIZATION or TEAM
+   * is accepted. It prevents an alias from aggregating across tenant scopes.
+   *
+   * @generated from field: deepnavy.v1.EconomicsScope parent_scope = 2;
+   */
+  parentScope?: EconomicsScope | undefined;
+
+  /**
+   * Empty selects the organization's current subscription period. The response
+   * always returns the exact applied reporting period.
+   *
+   * @generated from field: deepnavy.v1.ReportingPeriod reporting_period = 3;
+   */
+  reportingPeriod?: ReportingPeriod | undefined;
+
+  /**
+   * 1..100; zero selects the server default of 50.
+   *
+   * @generated from field: int32 page_size = 4;
+   */
+  pageSize: number;
+
+  /**
+   * Opaque cursor returned by the previous response. It is bound to the caller,
+   * the scope, and the period, and must not be parsed or constructed.
+   *
+   * @generated from field: string page_token = 5;
+   */
+  pageToken: string;
+};
+
+/**
+ * Describes the message deepnavy.v1.ListEconomicsUsageEventsRequest.
+ * Use `create(ListEconomicsUsageEventsRequestSchema)` to create a new message.
+ */
+export const ListEconomicsUsageEventsRequestSchema: GenMessage<ListEconomicsUsageEventsRequest> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_economics, 8);
+
+/**
+ * @generated from message deepnavy.v1.ListEconomicsUsageEventsResponse
+ */
+export type ListEconomicsUsageEventsResponse = Message<"deepnavy.v1.ListEconomicsUsageEventsResponse"> & {
+  /**
+   * events are ordered by measured_at descending and then by a stable server
+   * tiebreak, over a snapshot fixed when the first page is issued, so paging
+   * never repeats or skips an event while new usage is still arriving.
+   *
+   * @generated from field: repeated deepnavy.v1.EconomicsUsageEvent events = 1;
+   */
+  events: EconomicsUsageEvent[];
+
+  /**
+   * @generated from field: string next_page_token = 2;
+   */
+  nextPageToken: string;
+
+  /**
+   * @generated from field: deepnavy.v1.ReportingPeriod reporting_period = 3;
+   */
+  reportingPeriod?: ReportingPeriod | undefined;
+
+  /**
+   * measured_at is the time through which source ledgers were reconciled.
+   *
+   * @generated from field: google.protobuf.Timestamp measured_at = 4;
+   */
+  measuredAt?: Timestamp | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.ListEconomicsUsageEventsResponse.
+ * Use `create(ListEconomicsUsageEventsResponseSchema)` to create a new message.
+ */
+export const ListEconomicsUsageEventsResponseSchema: GenMessage<ListEconomicsUsageEventsResponse> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_economics, 9);
+
+/**
+ * EconomicsDailyBucket is one UTC calendar day of spend inside a reporting
+ * period. Buckets exist so a console can draw a trend without paging the whole
+ * event stream. They are a rollup of the very events ListEconomicsUsageEvents
+ * returns, never a separate ledger, so a bucket total and the sum of that day's
+ * events must agree and a discrepancy is a defect, not a rounding allowance.
+ *
+ * @generated from message deepnavy.v1.EconomicsDailyBucket
+ */
+export type EconomicsDailyBucket = Message<"deepnavy.v1.EconomicsDailyBucket"> & {
+  /**
+   * day is the UTC midnight that starts the bucket, which covers the half-open
+   * interval [day, day + 24h). Days are always UTC and never the customer's
+   * local calendar, so buckets stay comparable across tenants and a client must
+   * not relabel them into a local date without saying it has.
+   *
+   * @generated from field: google.protobuf.Timestamp day = 1;
+   */
+  day?: Timestamp | undefined;
+
+  /**
+   * Spend metered inside this day, in the single currency the response uses.
+   *
+   * @generated from field: deepnavy.v1.Money direct_cost = 2;
+   */
+  directCost?: Money | undefined;
+
+  /**
+   * Engineering Credits use integer microcredits: 1,000,000 equals one credit.
+   *
+   * @generated from field: int64 credits_used_micros = 3;
+   */
+  creditsUsedMicros: bigint;
+};
+
+/**
+ * Describes the message deepnavy.v1.EconomicsDailyBucket.
+ * Use `create(EconomicsDailyBucketSchema)` to create a new message.
+ */
+export const EconomicsDailyBucketSchema: GenMessage<EconomicsDailyBucket> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_economics, 10);
+
+/**
+ * @generated from message deepnavy.v1.ListEconomicsDailyRequest
+ */
+export type ListEconomicsDailyRequest = Message<"deepnavy.v1.ListEconomicsDailyRequest"> & {
+  /**
+   * scope must be an ORGANIZATION or TEAM accessible to the actor.
+   *
+   * @generated from field: deepnavy.v1.EconomicsScope scope = 1;
+   */
+  scope?: EconomicsScope | undefined;
+
+  /**
+   * Empty selects the organization's current subscription period. The response
+   * always returns the exact applied period. The server bounds how long a
+   * requested period may be, so the day series is never unbounded and this
+   * procedure deliberately carries no cursor.
+   *
+   * @generated from field: deepnavy.v1.ReportingPeriod reporting_period = 2;
+   */
+  reportingPeriod?: ReportingPeriod | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.ListEconomicsDailyRequest.
+ * Use `create(ListEconomicsDailyRequestSchema)` to create a new message.
+ */
+export const ListEconomicsDailyRequestSchema: GenMessage<ListEconomicsDailyRequest> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_economics, 11);
+
+/**
+ * @generated from message deepnavy.v1.ListEconomicsDailyResponse
+ */
+export type ListEconomicsDailyResponse = Message<"deepnavy.v1.ListEconomicsDailyResponse"> & {
+  /**
+   * days covers the applied reporting period contiguously, in ascending order,
+   * and includes days with no usage as explicit zero buckets. A client plots
+   * the series as given and must never infer a gap as zero or a zero as a gap.
+   *
+   * @generated from field: repeated deepnavy.v1.EconomicsDailyBucket days = 1;
+   */
+  days: EconomicsDailyBucket[];
+
+  /**
+   * @generated from field: deepnavy.v1.ReportingPeriod reporting_period = 2;
+   */
+  reportingPeriod?: ReportingPeriod | undefined;
+
+  /**
+   * measured_at is the time through which source ledgers were reconciled. The
+   * bucket containing it is still filling and must not be read as final.
+   *
+   * @generated from field: google.protobuf.Timestamp measured_at = 3;
+   */
+  measuredAt?: Timestamp | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.ListEconomicsDailyResponse.
+ * Use `create(ListEconomicsDailyResponseSchema)` to create a new message.
+ */
+export const ListEconomicsDailyResponseSchema: GenMessage<ListEconomicsDailyResponse> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_economics, 12);
 
 /**
  * @generated from enum deepnavy.v1.EconomicsScopeType
@@ -445,6 +840,32 @@ export const EconomicsService: GenService<{
     methodKind: "unary";
     input: typeof ListEconomicsBreakdownsRequestSchema;
     output: typeof ListEconomicsBreakdownsResponseSchema;
+  },
+  /**
+   * ListEconomicsUsageEvents pages the individual metered calls behind the
+   * summaries, scoped and authorized exactly like ListEconomicsBreakdowns. It
+   * is the drill-down that answers "what was this charge for". It is not an
+   * aggregation transport: a client that wants a total reads GetEconomics,
+   * ListEconomicsBreakdowns, or ListEconomicsDaily rather than paging every
+   * event and adding them up.
+   *
+   * @generated from rpc deepnavy.v1.EconomicsService.ListEconomicsUsageEvents
+   */
+  listEconomicsUsageEvents: {
+    methodKind: "unary";
+    input: typeof ListEconomicsUsageEventsRequestSchema;
+    output: typeof ListEconomicsUsageEventsResponseSchema;
+  },
+  /**
+   * ListEconomicsDaily returns the per-day rollup of those same events for one
+   * scope and period, so a console can render a spend trend in a single call.
+   *
+   * @generated from rpc deepnavy.v1.EconomicsService.ListEconomicsDaily
+   */
+  listEconomicsDaily: {
+    methodKind: "unary";
+    input: typeof ListEconomicsDailyRequestSchema;
+    output: typeof ListEconomicsDailyResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_deepnavy_v1_economics, 0);

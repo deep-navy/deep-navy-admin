@@ -16,7 +16,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file deepnavy/v1/objectives.proto.
  */
 export const file_deepnavy_v1_objectives: GenFile = /*@__PURE__*/
-  fileDesc("ChxkZWVwbmF2eS92MS9vYmplY3RpdmVzLnByb3RvEgtkZWVwbmF2eS52MSKSAgoRQnVzaW5lc3NPYmplY3RpdmUSCgoCaWQYASABKAkSDwoHdGVhbV9pZBgCIAEoCRINCgV0aXRsZRgDIAEoCRITCgtkZXNjcmlwdGlvbhgEIAEoCRIqCgVzdGF0ZRgFIAEoDjIbLmRlZXBuYXZ5LnYxLkxpZmVjeWNsZVN0YXRlEigKBGtwaXMYBiADKAsyGi5kZWVwbmF2eS52MS5LcGlEZWZpbml0aW9uEi4KCmNyZWF0ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjYKCGRpc3BhdGNoGAggASgLMiQuZGVlcG5hdnkudjEuT2JqZWN0aXZlRGlzcGF0Y2hTdGF0dXMifwoNS3BpRGVmaW5pdGlvbhIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEgwKBHVuaXQYAyABKAkSEQoJZGlyZWN0aW9uGAQgASgJEhAKCGJhc2VsaW5lGAUgASgBEg4KBnRhcmdldBgGIAEoARIRCglndWFyZHJhaWwYByABKAgibgoeQ3JlYXRlQnVzaW5lc3NPYmplY3RpdmVSZXF1ZXN0Eg8KB3RlYW1faWQYASABKAkSDQoFdGl0bGUYAiABKAkSEwoLZGVzY3JpcHRpb24YAyABKAkSFwoPaWRlbXBvdGVuY3lfa2V5GAQgASgJIlQKH0NyZWF0ZUJ1c2luZXNzT2JqZWN0aXZlUmVzcG9uc2USMQoJb2JqZWN0aXZlGAEgASgLMh4uZGVlcG5hdnkudjEuQnVzaW5lc3NPYmplY3RpdmUiWAodTGlzdEJ1c2luZXNzT2JqZWN0aXZlc1JlcXVlc3QSDwoHdGVhbV9pZBgBIAEoCRImCgRwYWdlGAIgASgLMhguZGVlcG5hdnkudjEuUGFnZVJlcXVlc3QifQoeTGlzdEJ1c2luZXNzT2JqZWN0aXZlc1Jlc3BvbnNlEjIKCm9iamVjdGl2ZXMYASADKAsyHi5kZWVwbmF2eS52MS5CdXNpbmVzc09iamVjdGl2ZRInCgRwYWdlGAIgASgLMhkuZGVlcG5hdnkudjEuUGFnZVJlc3BvbnNlMvsBChBPYmplY3RpdmVTZXJ2aWNlEnQKF0NyZWF0ZUJ1c2luZXNzT2JqZWN0aXZlEisuZGVlcG5hdnkudjEuQ3JlYXRlQnVzaW5lc3NPYmplY3RpdmVSZXF1ZXN0GiwuZGVlcG5hdnkudjEuQ3JlYXRlQnVzaW5lc3NPYmplY3RpdmVSZXNwb25zZRJxChZMaXN0QnVzaW5lc3NPYmplY3RpdmVzEiouZGVlcG5hdnkudjEuTGlzdEJ1c2luZXNzT2JqZWN0aXZlc1JlcXVlc3QaKy5kZWVwbmF2eS52MS5MaXN0QnVzaW5lc3NPYmplY3RpdmVzUmVzcG9uc2VCRFpCZ2l0aHViLmNvbS9kZWVwLW5hdnkvcGxhdGZvcm0tcHJvdG9zL2dlbi9nby9kZWVwbmF2eS92MTtkZWVwbmF2eXYxYgZwcm90bzM", [file_deepnavy_v1_common, file_deepnavy_v1_work, file_google_protobuf_timestamp]);
+  fileDesc("ChxkZWVwbmF2eS92MS9vYmplY3RpdmVzLnByb3RvEgtkZWVwbmF2eS52MSL6AgoRQnVzaW5lc3NPYmplY3RpdmUSCgoCaWQYASABKAkSDwoHdGVhbV9pZBgCIAEoCRINCgV0aXRsZRgDIAEoCRITCgtkZXNjcmlwdGlvbhgEIAEoCRIqCgVzdGF0ZRgFIAEoDjIbLmRlZXBuYXZ5LnYxLkxpZmVjeWNsZVN0YXRlEigKBGtwaXMYBiADKAsyGi5kZWVwbmF2eS52MS5LcGlEZWZpbml0aW9uEi4KCmNyZWF0ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjYKCGRpc3BhdGNoGAggASgLMiQuZGVlcG5hdnkudjEuT2JqZWN0aXZlRGlzcGF0Y2hTdGF0dXMSMAoMc2F0aXNmaWVkX2F0GAkgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBI0CgphY2NlcHRhbmNlGAogASgLMiAuZGVlcG5hdnkudjEuT2JqZWN0aXZlQWNjZXB0YW5jZSKbAQoNS3BpRGVmaW5pdGlvbhIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEgwKBHVuaXQYAyABKAkSEQoJZGlyZWN0aW9uGAQgASgJEhAKCGJhc2VsaW5lGAUgASgBEg4KBnRhcmdldBgGIAEoARIRCglndWFyZHJhaWwYByABKAgSGgoSbWVhc3VyZW1lbnRfc291cmNlGAggASgJIrIBChNPYmplY3RpdmVBY2NlcHRhbmNlEhYKDmNoZWNrX3J1bl9uYW1lGAEgASgJEhAKCGhlYWRfc2hhGAIgASgJEhIKCmNvbmNsdXNpb24YAyABKAkSFQoNY2hlY2tfcnVuX3VybBgEIAEoCRIvCgtvYnNlcnZlZF9hdBgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASFQoNcmVwb3NpdG9yeV9pZBgGIAEoAyJuCh5DcmVhdGVCdXNpbmVzc09iamVjdGl2ZVJlcXVlc3QSDwoHdGVhbV9pZBgBIAEoCRINCgV0aXRsZRgCIAEoCRITCgtkZXNjcmlwdGlvbhgDIAEoCRIXCg9pZGVtcG90ZW5jeV9rZXkYBCABKAkiVAofQ3JlYXRlQnVzaW5lc3NPYmplY3RpdmVSZXNwb25zZRIxCglvYmplY3RpdmUYASABKAsyHi5kZWVwbmF2eS52MS5CdXNpbmVzc09iamVjdGl2ZSJYCh1MaXN0QnVzaW5lc3NPYmplY3RpdmVzUmVxdWVzdBIPCgd0ZWFtX2lkGAEgASgJEiYKBHBhZ2UYAiABKAsyGC5kZWVwbmF2eS52MS5QYWdlUmVxdWVzdCJ9Ch5MaXN0QnVzaW5lc3NPYmplY3RpdmVzUmVzcG9uc2USMgoKb2JqZWN0aXZlcxgBIAMoCzIeLmRlZXBuYXZ5LnYxLkJ1c2luZXNzT2JqZWN0aXZlEicKBHBhZ2UYAiABKAsyGS5kZWVwbmF2eS52MS5QYWdlUmVzcG9uc2Uy+wEKEE9iamVjdGl2ZVNlcnZpY2USdAoXQ3JlYXRlQnVzaW5lc3NPYmplY3RpdmUSKy5kZWVwbmF2eS52MS5DcmVhdGVCdXNpbmVzc09iamVjdGl2ZVJlcXVlc3QaLC5kZWVwbmF2eS52MS5DcmVhdGVCdXNpbmVzc09iamVjdGl2ZVJlc3BvbnNlEnEKFkxpc3RCdXNpbmVzc09iamVjdGl2ZXMSKi5kZWVwbmF2eS52MS5MaXN0QnVzaW5lc3NPYmplY3RpdmVzUmVxdWVzdBorLmRlZXBuYXZ5LnYxLkxpc3RCdXNpbmVzc09iamVjdGl2ZXNSZXNwb25zZUJEWkJnaXRodWIuY29tL2RlZXAtbmF2eS9wbGF0Zm9ybS1wcm90b3MvZ2VuL2dvL2RlZXBuYXZ5L3YxO2RlZXBuYXZ5djFiBnByb3RvMw", [file_deepnavy_v1_common, file_deepnavy_v1_work, file_google_protobuf_timestamp]);
 
 /**
  * @generated from message deepnavy.v1.BusinessObjective
@@ -61,6 +61,26 @@ export type BusinessObjective = Message<"deepnavy.v1.BusinessObjective"> & {
    * @generated from field: deepnavy.v1.ObjectiveDispatchStatus dispatch = 8;
    */
   dispatch?: ObjectiveDispatchStatus | undefined;
+
+  /**
+   * satisfied_at is evidence, not a lifecycle state: it is set while the
+   * objective's latest acceptance check run passes and cleared when a later
+   * run fails. Because satisfaction is revocable, LifecycleState deliberately
+   * does not grow a value for it.
+   *
+   * @generated from field: google.protobuf.Timestamp satisfied_at = 9;
+   */
+  satisfiedAt?: Timestamp | undefined;
+
+  /**
+   * acceptance is the latest acceptance check observation, whether passing or
+   * failing. A failing acceptance with satisfied_at absent means the objective
+   * was proven and has regressed; consoles must render that distinctly from
+   * never-run, where acceptance is absent entirely.
+   *
+   * @generated from field: deepnavy.v1.ObjectiveAcceptance acceptance = 10;
+   */
+  acceptance?: ObjectiveAcceptance | undefined;
 };
 
 /**
@@ -108,6 +128,20 @@ export type KpiDefinition = Message<"deepnavy.v1.KpiDefinition"> & {
    * @generated from field: bool guardrail = 7;
    */
   guardrail: boolean;
+
+  /**
+   * measurement_source names where this KPI's number is actually read from —
+   * the dashboard, query, or instrument an agent must consult to tell whether
+   * the baseline has moved toward the target. It is a human-readable pointer
+   * written when the objective is defined, never a connection string: it must
+   * not carry a credential, an internal hostname, or anything the server would
+   * dereference on a customer's behalf, and nothing may fetch it automatically.
+   * Empty means the KPI has no stated source, so its numbers are asserted
+   * rather than measured — consoles should say so rather than imply a reading.
+   *
+   * @generated from field: string measurement_source = 8;
+   */
+  measurementSource: string;
 };
 
 /**
@@ -116,6 +150,54 @@ export type KpiDefinition = Message<"deepnavy.v1.KpiDefinition"> & {
  */
 export const KpiDefinitionSchema: GenMessage<KpiDefinition> = /*@__PURE__*/
   messageDesc(file_deepnavy_v1_objectives, 1);
+
+/**
+ * ObjectiveAcceptance is the most recent acceptance check run recorded for an
+ * objective, passing or failing alike. check_run_name is the deterministic
+ * GitHub check run name, head_sha the 40-hex commit the run evaluated, and
+ * conclusion GitHub's check run conclusion carried verbatim - the server never
+ * remaps it into a platform enum.
+ *
+ * @generated from message deepnavy.v1.ObjectiveAcceptance
+ */
+export type ObjectiveAcceptance = Message<"deepnavy.v1.ObjectiveAcceptance"> & {
+  /**
+   * @generated from field: string check_run_name = 1;
+   */
+  checkRunName: string;
+
+  /**
+   * @generated from field: string head_sha = 2;
+   */
+  headSha: string;
+
+  /**
+   * @generated from field: string conclusion = 3;
+   */
+  conclusion: string;
+
+  /**
+   * @generated from field: string check_run_url = 4;
+   */
+  checkRunUrl: string;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp observed_at = 5;
+   */
+  observedAt?: Timestamp | undefined;
+
+  /**
+   * @generated from field: int64 repository_id = 6;
+   */
+  repositoryId: bigint;
+};
+
+/**
+ * Describes the message deepnavy.v1.ObjectiveAcceptance.
+ * Use `create(ObjectiveAcceptanceSchema)` to create a new message.
+ */
+export const ObjectiveAcceptanceSchema: GenMessage<ObjectiveAcceptance> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_objectives, 2);
 
 /**
  * @generated from message deepnavy.v1.CreateBusinessObjectiveRequest
@@ -147,7 +229,7 @@ export type CreateBusinessObjectiveRequest = Message<"deepnavy.v1.CreateBusiness
  * Use `create(CreateBusinessObjectiveRequestSchema)` to create a new message.
  */
 export const CreateBusinessObjectiveRequestSchema: GenMessage<CreateBusinessObjectiveRequest> = /*@__PURE__*/
-  messageDesc(file_deepnavy_v1_objectives, 2);
+  messageDesc(file_deepnavy_v1_objectives, 3);
 
 /**
  * @generated from message deepnavy.v1.CreateBusinessObjectiveResponse
@@ -164,7 +246,7 @@ export type CreateBusinessObjectiveResponse = Message<"deepnavy.v1.CreateBusines
  * Use `create(CreateBusinessObjectiveResponseSchema)` to create a new message.
  */
 export const CreateBusinessObjectiveResponseSchema: GenMessage<CreateBusinessObjectiveResponse> = /*@__PURE__*/
-  messageDesc(file_deepnavy_v1_objectives, 3);
+  messageDesc(file_deepnavy_v1_objectives, 4);
 
 /**
  * @generated from message deepnavy.v1.ListBusinessObjectivesRequest
@@ -186,7 +268,7 @@ export type ListBusinessObjectivesRequest = Message<"deepnavy.v1.ListBusinessObj
  * Use `create(ListBusinessObjectivesRequestSchema)` to create a new message.
  */
 export const ListBusinessObjectivesRequestSchema: GenMessage<ListBusinessObjectivesRequest> = /*@__PURE__*/
-  messageDesc(file_deepnavy_v1_objectives, 4);
+  messageDesc(file_deepnavy_v1_objectives, 5);
 
 /**
  * @generated from message deepnavy.v1.ListBusinessObjectivesResponse
@@ -208,7 +290,7 @@ export type ListBusinessObjectivesResponse = Message<"deepnavy.v1.ListBusinessOb
  * Use `create(ListBusinessObjectivesResponseSchema)` to create a new message.
  */
 export const ListBusinessObjectivesResponseSchema: GenMessage<ListBusinessObjectivesResponse> = /*@__PURE__*/
-  messageDesc(file_deepnavy_v1_objectives, 5);
+  messageDesc(file_deepnavy_v1_objectives, 6);
 
 /**
  * @generated from service deepnavy.v1.ObjectiveService

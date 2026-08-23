@@ -4,10 +4,10 @@
 
 import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
 import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
-import type { OnboardingState, Organization, OrganizationMembership } from "./organizations_pb.js";
-import { file_deepnavy_v1_organizations } from "./organizations_pb.js";
 import type { GitHubInstallation } from "./github_pb.js";
 import { file_deepnavy_v1_github } from "./github_pb.js";
+import type { OnboardingState, Organization, OrganizationMembership } from "./organizations_pb.js";
+import { file_deepnavy_v1_organizations } from "./organizations_pb.js";
 import type { Timestamp } from "@bufbuild/protobuf/wkt";
 import { file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
 import type { Message } from "@bufbuild/protobuf";
@@ -16,7 +16,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file deepnavy/v1/auth.proto.
  */
 export const file_deepnavy_v1_auth: GenFile = /*@__PURE__*/
-  fileDesc("ChZkZWVwbmF2eS92MS9hdXRoLnByb3RvEgtkZWVwbmF2eS52MSKvAQoLQ3VycmVudFVzZXISCgoCaWQYASABKAkSFAoMZ2l0aHViX2xvZ2luGAIgASgJEhQKDGRpc3BsYXlfbmFtZRgDIAEoCRIWCg5wbGF0Zm9ybV9yb2xlcxgEIAMoCRIQCgh1c2VybmFtZRgFIAEoCRINCgVlbWFpbBgGIAEoCRIXCg9jb2duaXRvX3N1YmplY3QYByABKAkSFgoOZ2l0aHViX3VzZXJfaWQYCCABKAkiFwoVR2V0Q3VycmVudFVzZXJSZXF1ZXN0IusBChZHZXRDdXJyZW50VXNlclJlc3BvbnNlEiYKBHVzZXIYASABKAsyGC5kZWVwbmF2eS52MS5DdXJyZW50VXNlchI4CgttZW1iZXJzaGlwcxgCIAMoCzIjLmRlZXBuYXZ5LnYxLk9yZ2FuaXphdGlvbk1lbWJlcnNoaXASNwoUY3VycmVudF9vcmdhbml6YXRpb24YAyABKAsyGS5kZWVwbmF2eS52MS5Pcmdhbml6YXRpb24SNgoQb25ib2FyZGluZ19zdGF0ZRgEIAEoDjIcLmRlZXBuYXZ5LnYxLk9uYm9hcmRpbmdTdGF0ZSItChhTdGFydEdpdEh1YlNpZ25JblJlcXVlc3QSEQoJcmV0dXJuX3RvGAEgASgJIlAKGVN0YXJ0R2l0SHViU2lnbkluUmVzcG9uc2USGQoRYXV0aG9yaXphdGlvbl91cmwYASABKAkSGAoQaW5zdGFsbGF0aW9uX3VybBgCIAEoCSJ6ChtDb21wbGV0ZUdpdEh1YlNpZ25JblJlcXVlc3QSGgoSYXV0aG9yaXphdGlvbl9jb2RlGAEgASgJEhMKC3N0YXRlX3Rva2VuGAIgASgJEhcKD2luc3RhbGxhdGlvbl9pZBgDIAEoAxIRCglyZXR1cm5fdG8YBCABKAkihgIKHENvbXBsZXRlR2l0SHViU2lnbkluUmVzcG9uc2USFQoNc2Vzc2lvbl90b2tlbhgBIAEoCRIuCgpleHBpcmVzX2F0GAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBImCgR1c2VyGAMgASgLMhguZGVlcG5hdnkudjEuQ3VycmVudFVzZXISOAoLbWVtYmVyc2hpcHMYBCADKAsyIy5kZWVwbmF2eS52MS5Pcmdhbml6YXRpb25NZW1iZXJzaGlwEj0KFHBlbmRpbmdfaW5zdGFsbGF0aW9uGAUgASgLMh8uZGVlcG5hdnkudjEuR2l0SHViSW5zdGFsbGF0aW9uIhAKDlNpZ25PdXRSZXF1ZXN0IhEKD1NpZ25PdXRSZXNwb25zZTL/AgoLQXV0aFNlcnZpY2USWQoOR2V0Q3VycmVudFVzZXISIi5kZWVwbmF2eS52MS5HZXRDdXJyZW50VXNlclJlcXVlc3QaIy5kZWVwbmF2eS52MS5HZXRDdXJyZW50VXNlclJlc3BvbnNlEmIKEVN0YXJ0R2l0SHViU2lnbkluEiUuZGVlcG5hdnkudjEuU3RhcnRHaXRIdWJTaWduSW5SZXF1ZXN0GiYuZGVlcG5hdnkudjEuU3RhcnRHaXRIdWJTaWduSW5SZXNwb25zZRJrChRDb21wbGV0ZUdpdEh1YlNpZ25JbhIoLmRlZXBuYXZ5LnYxLkNvbXBsZXRlR2l0SHViU2lnbkluUmVxdWVzdBopLmRlZXBuYXZ5LnYxLkNvbXBsZXRlR2l0SHViU2lnbkluUmVzcG9uc2USRAoHU2lnbk91dBIbLmRlZXBuYXZ5LnYxLlNpZ25PdXRSZXF1ZXN0GhwuZGVlcG5hdnkudjEuU2lnbk91dFJlc3BvbnNlQkRaQmdpdGh1Yi5jb20vZGVlcC1uYXZ5L3BsYXRmb3JtLXByb3Rvcy9nZW4vZ28vZGVlcG5hdnkvdjE7ZGVlcG5hdnl2MWIGcHJvdG8z", [file_deepnavy_v1_organizations, file_deepnavy_v1_github, file_google_protobuf_timestamp]);
+  fileDesc("ChZkZWVwbmF2eS92MS9hdXRoLnByb3RvEgtkZWVwbmF2eS52MSKvAQoLQ3VycmVudFVzZXISCgoCaWQYASABKAkSFAoMZ2l0aHViX2xvZ2luGAIgASgJEhQKDGRpc3BsYXlfbmFtZRgDIAEoCRIWCg5wbGF0Zm9ybV9yb2xlcxgEIAMoCRIQCgh1c2VybmFtZRgFIAEoCRINCgVlbWFpbBgGIAEoCRIXCg9jb2duaXRvX3N1YmplY3QYByABKAkSFgoOZ2l0aHViX3VzZXJfaWQYCCABKAkiFwoVR2V0Q3VycmVudFVzZXJSZXF1ZXN0IusBChZHZXRDdXJyZW50VXNlclJlc3BvbnNlEiYKBHVzZXIYASABKAsyGC5kZWVwbmF2eS52MS5DdXJyZW50VXNlchI4CgttZW1iZXJzaGlwcxgCIAMoCzIjLmRlZXBuYXZ5LnYxLk9yZ2FuaXphdGlvbk1lbWJlcnNoaXASNwoUY3VycmVudF9vcmdhbml6YXRpb24YAyABKAsyGS5kZWVwbmF2eS52MS5Pcmdhbml6YXRpb24SNgoQb25ib2FyZGluZ19zdGF0ZRgEIAEoDjIcLmRlZXBuYXZ5LnYxLk9uYm9hcmRpbmdTdGF0ZSItChhTdGFydEdpdEh1YlNpZ25JblJlcXVlc3QSEQoJcmV0dXJuX3RvGAEgASgJIlAKGVN0YXJ0R2l0SHViU2lnbkluUmVzcG9uc2USGQoRYXV0aG9yaXphdGlvbl91cmwYASABKAkSGAoQaW5zdGFsbGF0aW9uX3VybBgCIAEoCSJ6ChtDb21wbGV0ZUdpdEh1YlNpZ25JblJlcXVlc3QSGgoSYXV0aG9yaXphdGlvbl9jb2RlGAEgASgJEhMKC3N0YXRlX3Rva2VuGAIgASgJEhcKD2luc3RhbGxhdGlvbl9pZBgDIAEoAxIRCglyZXR1cm5fdG8YBCABKAkihgIKHENvbXBsZXRlR2l0SHViU2lnbkluUmVzcG9uc2USFQoNc2Vzc2lvbl90b2tlbhgBIAEoCRIuCgpleHBpcmVzX2F0GAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBImCgR1c2VyGAMgASgLMhguZGVlcG5hdnkudjEuQ3VycmVudFVzZXISOAoLbWVtYmVyc2hpcHMYBCADKAsyIy5kZWVwbmF2eS52MS5Pcmdhbml6YXRpb25NZW1iZXJzaGlwEj0KFHBlbmRpbmdfaW5zdGFsbGF0aW9uGAUgASgLMh8uZGVlcG5hdnkudjEuR2l0SHViSW5zdGFsbGF0aW9uIhcKFVJlZnJlc2hTZXNzaW9uUmVxdWVzdCLBAQoWUmVmcmVzaFNlc3Npb25SZXNwb25zZRIVCg1zZXNzaW9uX3Rva2VuGAEgASgJEi4KCmV4cGlyZXNfYXQYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEiYKBHVzZXIYAyABKAsyGC5kZWVwbmF2eS52MS5DdXJyZW50VXNlchI4CgttZW1iZXJzaGlwcxgEIAMoCzIjLmRlZXBuYXZ5LnYxLk9yZ2FuaXphdGlvbk1lbWJlcnNoaXAiEAoOU2lnbk91dFJlcXVlc3QiEQoPU2lnbk91dFJlc3BvbnNlMtoDCgtBdXRoU2VydmljZRJZCg5HZXRDdXJyZW50VXNlchIiLmRlZXBuYXZ5LnYxLkdldEN1cnJlbnRVc2VyUmVxdWVzdBojLmRlZXBuYXZ5LnYxLkdldEN1cnJlbnRVc2VyUmVzcG9uc2USYgoRU3RhcnRHaXRIdWJTaWduSW4SJS5kZWVwbmF2eS52MS5TdGFydEdpdEh1YlNpZ25JblJlcXVlc3QaJi5kZWVwbmF2eS52MS5TdGFydEdpdEh1YlNpZ25JblJlc3BvbnNlEmsKFENvbXBsZXRlR2l0SHViU2lnbkluEiguZGVlcG5hdnkudjEuQ29tcGxldGVHaXRIdWJTaWduSW5SZXF1ZXN0GikuZGVlcG5hdnkudjEuQ29tcGxldGVHaXRIdWJTaWduSW5SZXNwb25zZRJZCg5SZWZyZXNoU2Vzc2lvbhIiLmRlZXBuYXZ5LnYxLlJlZnJlc2hTZXNzaW9uUmVxdWVzdBojLmRlZXBuYXZ5LnYxLlJlZnJlc2hTZXNzaW9uUmVzcG9uc2USRAoHU2lnbk91dBIbLmRlZXBuYXZ5LnYxLlNpZ25PdXRSZXF1ZXN0GhwuZGVlcG5hdnkudjEuU2lnbk91dFJlc3BvbnNlQkRaQmdpdGh1Yi5jb20vZGVlcC1uYXZ5L3BsYXRmb3JtLXByb3Rvcy9nZW4vZ28vZGVlcG5hdnkvdjE7ZGVlcG5hdnl2MWIGcHJvdG8z", [file_deepnavy_v1_github, file_deepnavy_v1_organizations, file_google_protobuf_timestamp]);
 
 /**
  * @generated from message deepnavy.v1.CurrentUser
@@ -263,6 +263,58 @@ export const CompleteGitHubSignInResponseSchema: GenMessage<CompleteGitHubSignIn
   messageDesc(file_deepnavy_v1_auth, 6);
 
 /**
+ * RefreshSession carries no fields. The credential that authorizes it is a
+ * browser cookie the server set and only the server can read, so there is
+ * nothing for the caller to supply and nothing it could forge by supplying it.
+ *
+ * @generated from message deepnavy.v1.RefreshSessionRequest
+ */
+export type RefreshSessionRequest = Message<"deepnavy.v1.RefreshSessionRequest"> & {
+};
+
+/**
+ * Describes the message deepnavy.v1.RefreshSessionRequest.
+ * Use `create(RefreshSessionRequestSchema)` to create a new message.
+ */
+export const RefreshSessionRequestSchema: GenMessage<RefreshSessionRequest> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_auth, 7);
+
+/**
+ * @generated from message deepnavy.v1.RefreshSessionResponse
+ */
+export type RefreshSessionResponse = Message<"deepnavy.v1.RefreshSessionResponse"> & {
+  /**
+   * Same contract as CompleteGitHubSignInResponse.session_token: a credential
+   * that lives in browser memory and nowhere else.
+   *
+   * @generated from field: string session_token = 1;
+   */
+  sessionToken: string;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp expires_at = 2;
+   */
+  expiresAt?: Timestamp | undefined;
+
+  /**
+   * @generated from field: deepnavy.v1.CurrentUser user = 3;
+   */
+  user?: CurrentUser | undefined;
+
+  /**
+   * @generated from field: repeated deepnavy.v1.OrganizationMembership memberships = 4;
+   */
+  memberships: OrganizationMembership[];
+};
+
+/**
+ * Describes the message deepnavy.v1.RefreshSessionResponse.
+ * Use `create(RefreshSessionResponseSchema)` to create a new message.
+ */
+export const RefreshSessionResponseSchema: GenMessage<RefreshSessionResponse> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_auth, 8);
+
+/**
  * @generated from message deepnavy.v1.SignOutRequest
  */
 export type SignOutRequest = Message<"deepnavy.v1.SignOutRequest"> & {
@@ -273,7 +325,7 @@ export type SignOutRequest = Message<"deepnavy.v1.SignOutRequest"> & {
  * Use `create(SignOutRequestSchema)` to create a new message.
  */
 export const SignOutRequestSchema: GenMessage<SignOutRequest> = /*@__PURE__*/
-  messageDesc(file_deepnavy_v1_auth, 7);
+  messageDesc(file_deepnavy_v1_auth, 9);
 
 /**
  * @generated from message deepnavy.v1.SignOutResponse
@@ -286,7 +338,7 @@ export type SignOutResponse = Message<"deepnavy.v1.SignOutResponse"> & {
  * Use `create(SignOutResponseSchema)` to create a new message.
  */
 export const SignOutResponseSchema: GenMessage<SignOutResponse> = /*@__PURE__*/
-  messageDesc(file_deepnavy_v1_auth, 8);
+  messageDesc(file_deepnavy_v1_auth, 10);
 
 /**
  * @generated from service deepnavy.v1.AuthService
@@ -323,6 +375,27 @@ export const AuthService: GenService<{
     methodKind: "unary";
     input: typeof CompleteGitHubSignInRequestSchema;
     output: typeof CompleteGitHubSignInResponseSchema;
+  },
+  /**
+   * RefreshSession mints a new bearer token from the httpOnly refresh cookie
+   * CompleteGitHubSignIn set, so a reload does not cost the customer a round
+   * trip through GitHub.
+   *
+   * The session token deliberately lives in browser memory and is gone the
+   * moment the page unloads. That protects it from theft by injected script,
+   * but on its own it also threw away the whole eight-hour session on every
+   * reload and made customers sign in again and again. The refresh cookie
+   * restores continuity without weakening that: it is httpOnly, so script
+   * cannot read it either, and it is the only credential this call accepts.
+   *
+   * It is public (no bearer required) - the cookie IS the authorization.
+   *
+   * @generated from rpc deepnavy.v1.AuthService.RefreshSession
+   */
+  refreshSession: {
+    methodKind: "unary";
+    input: typeof RefreshSessionRequestSchema;
+    output: typeof RefreshSessionResponseSchema;
   },
   /**
    * @generated from rpc deepnavy.v1.AuthService.SignOut

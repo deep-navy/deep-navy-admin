@@ -143,7 +143,7 @@
   }
 
   function createAdminApi() {
-    if (!apiBaseUrl || generated?.PLATFORM_PROTOS_REVISION !== "39ae22707fe8ac5185d1383dc088426af63cc5a1" || typeof generated.createAdminApi !== "function") return null;
+    if (!apiBaseUrl || generated?.PLATFORM_PROTOS_REVISION !== "350acd91b0a15da08fd6a13282f75f36849ce4bf" || typeof generated.createAdminApi !== "function") return null;
     try {
       return generated.createAdminApi({ baseUrl: apiBaseUrl, defaultTimeoutMs: 12_000 });
     } catch {

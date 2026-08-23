@@ -14,7 +14,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file deepnavy/v1/approvals.proto.
  */
 export const file_deepnavy_v1_approvals: GenFile = /*@__PURE__*/
-  fileDesc("ChtkZWVwbmF2eS92MS9hcHByb3ZhbHMucHJvdG8SC2RlZXBuYXZ5LnYxIrkCCghBcHByb3ZhbBIKCgJpZBgBIAEoCRIPCgd0ZWFtX2lkGAIgASgJEhMKC2FjdGlvbl90eXBlGAMgASgJEhQKDHNhZmVfc3VtbWFyeRgEIAEoCRISCgZzdGF0dXMYBSABKAlCAhgBEh0KFXJlcXVlc3RlZF9ieV9hZ2VudF9pZBgGIAEoCRIaChJkZWNpZGVkX2J5X3VzZXJfaWQYByABKAkSMAoMcmVxdWVzdGVkX2F0GAggASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgpkZWNpZGVkX2F0GAkgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBI0Cg9hcHByb3ZhbF9zdGF0dXMYCiABKA4yGy5kZWVwbmF2eS52MS5BcHByb3ZhbFN0YXR1cyKFAQoUTGlzdEFwcHJvdmFsc1JlcXVlc3QSDwoHdGVhbV9pZBgBIAEoCRI0Cg9hcHByb3ZhbF9zdGF0dXMYAiABKA4yGy5kZWVwbmF2eS52MS5BcHByb3ZhbFN0YXR1cxImCgRwYWdlGAMgASgLMhguZGVlcG5hdnkudjEuUGFnZVJlcXVlc3QiagoVTGlzdEFwcHJvdmFsc1Jlc3BvbnNlEigKCWFwcHJvdmFscxgBIAMoCzIVLmRlZXBuYXZ5LnYxLkFwcHJvdmFsEicKBHBhZ2UYAiABKAsyGS5kZWVwbmF2eS52MS5QYWdlUmVzcG9uc2UiRQoVRGVjaWRlQXBwcm92YWxSZXF1ZXN0EgoKAmlkGAEgASgJEhAKCGFwcHJvdmVkGAIgASgIEg4KBnJlYXNvbhgDIAEoCSJBChZEZWNpZGVBcHByb3ZhbFJlc3BvbnNlEicKCGFwcHJvdmFsGAEgASgLMhUuZGVlcG5hdnkudjEuQXBwcm92YWwq3wEKDkFwcHJvdmFsU3RhdHVzEh8KG0FQUFJPVkFMX1NUQVRVU19VTlNQRUNJRklFRBAAEhsKF0FQUFJPVkFMX1NUQVRVU19QRU5ESU5HEAESHAoYQVBQUk9WQUxfU1RBVFVTX0FQUFJPVkVEEAISGgoWQVBQUk9WQUxfU1RBVFVTX0RFTklFRBADEhsKF0FQUFJPVkFMX1NUQVRVU19FWFBJUkVEEAQSHAoYQVBQUk9WQUxfU1RBVFVTX0VYRUNVVEVEEAUSGgoWQVBQUk9WQUxfU1RBVFVTX0ZBSUxFRBAGMsQBCg9BcHByb3ZhbFNlcnZpY2USVgoNTGlzdEFwcHJvdmFscxIhLmRlZXBuYXZ5LnYxLkxpc3RBcHByb3ZhbHNSZXF1ZXN0GiIuZGVlcG5hdnkudjEuTGlzdEFwcHJvdmFsc1Jlc3BvbnNlElkKDkRlY2lkZUFwcHJvdmFsEiIuZGVlcG5hdnkudjEuRGVjaWRlQXBwcm92YWxSZXF1ZXN0GiMuZGVlcG5hdnkudjEuRGVjaWRlQXBwcm92YWxSZXNwb25zZUJEWkJnaXRodWIuY29tL2RlZXAtbmF2eS9wbGF0Zm9ybS1wcm90b3MvZ2VuL2dvL2RlZXBuYXZ5L3YxO2RlZXBuYXZ5djFiBnByb3RvMw", [file_deepnavy_v1_common, file_google_protobuf_timestamp]);
+  fileDesc("ChtkZWVwbmF2eS92MS9hcHByb3ZhbHMucHJvdG8SC2RlZXBuYXZ5LnYxIoIDCghBcHByb3ZhbBIKCgJpZBgBIAEoCRIPCgd0ZWFtX2lkGAIgASgJEhMKC2FjdGlvbl90eXBlGAMgASgJEhQKDHNhZmVfc3VtbWFyeRgEIAEoCRISCgZzdGF0dXMYBSABKAlCAhgBEh0KFXJlcXVlc3RlZF9ieV9hZ2VudF9pZBgGIAEoCRIaChJkZWNpZGVkX2J5X3VzZXJfaWQYByABKAkSMAoMcmVxdWVzdGVkX2F0GAggASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgpkZWNpZGVkX2F0GAkgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBI0Cg9hcHByb3ZhbF9zdGF0dXMYCiABKA4yGy5kZWVwbmF2eS52MS5BcHByb3ZhbFN0YXR1cxIVCg1yZWZlcmVuY2VfdXJsGAsgASgJEhkKEXJlZmVyZW5jZV9ub2RlX2lkGAwgASgJEhUKDXZvaWRlZF9yZWFzb24YDSABKAkihQEKFExpc3RBcHByb3ZhbHNSZXF1ZXN0Eg8KB3RlYW1faWQYASABKAkSNAoPYXBwcm92YWxfc3RhdHVzGAIgASgOMhsuZGVlcG5hdnkudjEuQXBwcm92YWxTdGF0dXMSJgoEcGFnZRgDIAEoCzIYLmRlZXBuYXZ5LnYxLlBhZ2VSZXF1ZXN0ImoKFUxpc3RBcHByb3ZhbHNSZXNwb25zZRIoCglhcHByb3ZhbHMYASADKAsyFS5kZWVwbmF2eS52MS5BcHByb3ZhbBInCgRwYWdlGAIgASgLMhkuZGVlcG5hdnkudjEuUGFnZVJlc3BvbnNlIkUKFURlY2lkZUFwcHJvdmFsUmVxdWVzdBIKCgJpZBgBIAEoCRIQCghhcHByb3ZlZBgCIAEoCBIOCgZyZWFzb24YAyABKAkiQQoWRGVjaWRlQXBwcm92YWxSZXNwb25zZRInCghhcHByb3ZhbBgBIAEoCzIVLmRlZXBuYXZ5LnYxLkFwcHJvdmFsIpgCChZSZXF1ZXN0QXBwcm92YWxSZXF1ZXN0EhIKCnJlcXVlc3RfaWQYASABKAkSDwoHdGVhbV9pZBgCIAEoCRIXCg90ZWFtX2dlbmVyYXRpb24YAyABKAMSHAoUcmVxdWVzdGluZ19hZ2VudF9rZXkYBCABKAkSEwoLYWN0aW9uX3R5cGUYBSABKAkSFAoMc2FmZV9zdW1tYXJ5GAYgASgJEhUKDXJlZmVyZW5jZV91cmwYByABKAkSGQoRcmVmZXJlbmNlX25vZGVfaWQYCCABKAkSLgoKZXhwaXJlc19hdBgJIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASFQoNcmVwb3NpdG9yeV9pZBgKIAEoAyJCChdSZXF1ZXN0QXBwcm92YWxSZXNwb25zZRInCghhcHByb3ZhbBgBIAEoCzIVLmRlZXBuYXZ5LnYxLkFwcHJvdmFsKt8BCg5BcHByb3ZhbFN0YXR1cxIfChtBUFBST1ZBTF9TVEFUVVNfVU5TUEVDSUZJRUQQABIbChdBUFBST1ZBTF9TVEFUVVNfUEVORElORxABEhwKGEFQUFJPVkFMX1NUQVRVU19BUFBST1ZFRBACEhoKFkFQUFJPVkFMX1NUQVRVU19ERU5JRUQQAxIbChdBUFBST1ZBTF9TVEFUVVNfRVhQSVJFRBAEEhwKGEFQUFJPVkFMX1NUQVRVU19FWEVDVVRFRBAFEhoKFkFQUFJPVkFMX1NUQVRVU19GQUlMRUQQBjLEAQoPQXBwcm92YWxTZXJ2aWNlElYKDUxpc3RBcHByb3ZhbHMSIS5kZWVwbmF2eS52MS5MaXN0QXBwcm92YWxzUmVxdWVzdBoiLmRlZXBuYXZ5LnYxLkxpc3RBcHByb3ZhbHNSZXNwb25zZRJZCg5EZWNpZGVBcHByb3ZhbBIiLmRlZXBuYXZ5LnYxLkRlY2lkZUFwcHJvdmFsUmVxdWVzdBojLmRlZXBuYXZ5LnYxLkRlY2lkZUFwcHJvdmFsUmVzcG9uc2UydQoVQXBwcm92YWxXb3JrZXJTZXJ2aWNlElwKD1JlcXVlc3RBcHByb3ZhbBIjLmRlZXBuYXZ5LnYxLlJlcXVlc3RBcHByb3ZhbFJlcXVlc3QaJC5kZWVwbmF2eS52MS5SZXF1ZXN0QXBwcm92YWxSZXNwb25zZUJEWkJnaXRodWIuY29tL2RlZXAtbmF2eS9wbGF0Zm9ybS1wcm90b3MvZ2VuL2dvL2RlZXBuYXZ5L3YxO2RlZXBuYXZ5djFiBnByb3RvMw", [file_deepnavy_v1_common, file_google_protobuf_timestamp]);
 
 /**
  * @generated from message deepnavy.v1.Approval
@@ -72,6 +72,31 @@ export type Approval = Message<"deepnavy.v1.Approval"> & {
    * @generated from field: deepnavy.v1.ApprovalStatus approval_status = 10;
    */
   approvalStatus: ApprovalStatus;
+
+  /**
+   * External artifact the approval certifies, when the action has one. For
+   * prd_signoff this is the PRD discussion's html URL plus its GraphQL node
+   * id; the node id is the durable handle because a discussion URL can change
+   * when a repository is renamed or transferred.
+   *
+   * @generated from field: string reference_url = 11;
+   */
+  referenceUrl: string;
+
+  /**
+   * @generated from field: string reference_node_id = 12;
+   */
+  referenceNodeId: string;
+
+  /**
+   * Human-readable explanation set when the platform voids an approval on its
+   * own. Voiding reuses APPROVAL_STATUS_FAILED plus this reason rather than
+   * adding a VOIDED enum value: the backing Postgres enum would need a
+   * nontransactional ALTER TYPE, which is deliberately avoided.
+   *
+   * @generated from field: string voided_reason = 13;
+   */
+  voidedReason: string;
 };
 
 /**
@@ -182,6 +207,112 @@ export const DecideApprovalResponseSchema: GenMessage<DecideApprovalResponse> = 
   messageDesc(file_deepnavy_v1_approvals, 4);
 
 /**
+ * RequestApprovalRequest is accepted only on platform-api's private worker
+ * listener after agent-stream has authenticated the current team-generation
+ * credential. The relay proves which team is speaking; the platform still
+ * enforces the requesting role and action type server-side.
+ *
+ * @generated from message deepnavy.v1.RequestApprovalRequest
+ */
+export type RequestApprovalRequest = Message<"deepnavy.v1.RequestApprovalRequest"> & {
+  /**
+   * Deterministic UUID derived by the caller; the idempotency key. Replaying
+   * the same request_id returns the originally created approval unchanged.
+   *
+   * @generated from field: string request_id = 1;
+   */
+  requestId: string;
+
+  /**
+   * @generated from field: string team_id = 2;
+   */
+  teamId: string;
+
+  /**
+   * Must match the team's current generation. A request from a superseded
+   * runtime generation is rejected so a stale workspace cannot raise
+   * approvals against a team that has since been re-provisioned.
+   *
+   * @generated from field: int64 team_generation = 3;
+   */
+  teamGeneration: bigint;
+
+  /**
+   * @generated from field: string requesting_agent_key = 4;
+   */
+  requestingAgentKey: string;
+
+  /**
+   * Only "prd_signoff" is accepted today. New action types require their own
+   * server-side validation and execution path before the gate widens.
+   *
+   * @generated from field: string action_type = 5;
+   */
+  actionType: string;
+
+  /**
+   * Customer-facing one-liner. Must already be safe to show verbatim in the
+   * approvals inbox; the platform does not rewrite it.
+   *
+   * @generated from field: string safe_summary = 6;
+   */
+  safeSummary: string;
+
+  /**
+   * The PRD discussion's html URL, shown to the deciding human.
+   *
+   * @generated from field: string reference_url = 7;
+   */
+  referenceUrl: string;
+
+  /**
+   * The discussion's GraphQL node id — the durable handle used to lock the
+   * PRD body after approval.
+   *
+   * @generated from field: string reference_node_id = 8;
+   */
+  referenceNodeId: string;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp expires_at = 9;
+   */
+  expiresAt?: Timestamp | undefined;
+
+  /**
+   * Repository the discussion lives in. Recorded now so the eventual lock
+   * call can mint a least-privilege installation token scoped to this one
+   * repository.
+   *
+   * @generated from field: int64 repository_id = 10;
+   */
+  repositoryId: bigint;
+};
+
+/**
+ * Describes the message deepnavy.v1.RequestApprovalRequest.
+ * Use `create(RequestApprovalRequestSchema)` to create a new message.
+ */
+export const RequestApprovalRequestSchema: GenMessage<RequestApprovalRequest> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_approvals, 5);
+
+/**
+ * @generated from message deepnavy.v1.RequestApprovalResponse
+ */
+export type RequestApprovalResponse = Message<"deepnavy.v1.RequestApprovalResponse"> & {
+  /**
+   * @generated from field: deepnavy.v1.Approval approval = 1;
+   */
+  approval?: Approval | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.RequestApprovalResponse.
+ * Use `create(RequestApprovalResponseSchema)` to create a new message.
+ */
+export const RequestApprovalResponseSchema: GenMessage<RequestApprovalResponse> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_approvals, 6);
+
+/**
  * @generated from enum deepnavy.v1.ApprovalStatus
  */
 export enum ApprovalStatus {
@@ -249,4 +380,22 @@ export const ApprovalService: GenService<{
   },
 }> = /*@__PURE__*/
   serviceDesc(file_deepnavy_v1_approvals, 0);
+
+/**
+ * ApprovalWorkerService is server-to-server only. It must never be mounted
+ * on the public customer mux or authenticated with the provisioning token.
+ *
+ * @generated from service deepnavy.v1.ApprovalWorkerService
+ */
+export const ApprovalWorkerService: GenService<{
+  /**
+   * @generated from rpc deepnavy.v1.ApprovalWorkerService.RequestApproval
+   */
+  requestApproval: {
+    methodKind: "unary";
+    input: typeof RequestApprovalRequestSchema;
+    output: typeof RequestApprovalResponseSchema;
+  },
+}> = /*@__PURE__*/
+  serviceDesc(file_deepnavy_v1_approvals, 1);
 

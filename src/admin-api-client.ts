@@ -7,7 +7,7 @@ import {
 } from "../vendor/platform-protos/deepnavy/v1/admin_pb.js";
 import { AuthService } from "../vendor/platform-protos/deepnavy/v1/auth_pb.js";
 
-export const PLATFORM_PROTOS_REVISION = "39ae22707fe8ac5185d1383dc088426af63cc5a1";
+export const PLATFORM_PROTOS_REVISION = "350acd91b0a15da08fd6a13282f75f36849ce4bf";
 export const SUPPORTED_PROCEDURES = Object.freeze([
   "current_user",
   "admin_overview",

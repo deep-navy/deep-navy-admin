@@ -77,7 +77,7 @@ expected to be calm about them.
 - The read-only overview, customer, team economics, fleet, runtime, billing,
   reconciliation, and alert projections are consumed through TypeScript
   generated from `platform-protos` revision
-  `fa01d7cc4c68c1e7ee606a44677ad70d16f4c563`.
+  `350acd91b0a15da08fd6a13282f75f36849ce4bf`.
 - Every list follows the AdminService snapshot cursor until complete, so the
   customer, team, runtime, billing-account, reconciliation, and alert tables do
   not silently stop at the first 100 records.
