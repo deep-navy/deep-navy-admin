@@ -2805,7 +2805,11 @@
   function setView(view) {
     const target = VIEWS.includes(view) ? view : "overview";
     document.querySelectorAll("[data-view]").forEach((section) => { section.hidden = section.dataset.view !== target; });
-    document.querySelectorAll("[data-view-link]").forEach((link) => {
+    // aria-current belongs to the NAVS, not to every control that happens to change
+    // view. The overview's "All alerts" button and its attention rows also carry
+    // data-view-link so they route through the same handler, but announcing one of
+    // them as the current page would be a lie to a screen reader.
+    document.querySelectorAll("[data-view-nav] [data-view-link], [data-view-tabbar] [data-view-link]").forEach((link) => {
       if (stringValue(link.dataset.viewLink) === target) link.setAttribute("aria-current", "page");
       else link.removeAttribute("aria-current");
     });

@@ -42,6 +42,12 @@ test("every view is registered in the router, the markup, and the rail", () => {
   const tabbar = shell.slice(shell.indexOf("dn-tabbar"));
   assert.equal([...tabbar.matchAll(/data-view-link=/g)].length, 5);
 
+  // aria-current is a claim about NAVIGATION. The overview's "All alerts" button and
+  // its attention rows route through the same handler and carry the same attribute,
+  // so the current-page marker is scoped to the two nav containers — announcing an
+  // alert row as the current page would mislead a screen reader.
+  assert.match(app, /querySelectorAll\("\[data-view-nav\] \[data-view-link\], \[data-view-tabbar\] \[data-view-link\]"\)[\s\S]{0,200}aria-current/);
+
   // Exactly one view is visible before the router runs.
   assert.equal([...shell.matchAll(/data-view="[a-z]+" id="[a-z-]+"[^>]*hidden/g)].length, VIEWS.length - 1);
   // And an unrecognised route falls back rather than showing nothing.
