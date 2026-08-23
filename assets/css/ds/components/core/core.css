@@ -1,0 +1,139 @@
+/* core primitives */
+.dn-btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);height:var(--control-height-md);padding:0 var(--space-4);border:var(--hairline) solid transparent;border-radius:var(--radius-sm);font:var(--type-ui);letter-spacing:var(--track-normal);white-space:nowrap;cursor:pointer;position:relative;transition:var(--transition-control);text-decoration:none;-webkit-user-select:none;user-select:none}
+.dn-btn:active{transform:scale(var(--press-scale))}
+.dn-btn .dn-icon{transition:transform var(--dur-base) var(--ease-out)}
+.dn-btn:focus-visible{outline:none;box-shadow:var(--focus-ring)}
+.dn-btn[disabled],.dn-btn[aria-disabled="true"]{cursor:not-allowed;opacity:.42;transform:none}
+.dn-btn--sm{height:var(--control-height-sm);padding:0 var(--space-3);font:var(--type-ui-sm);gap:var(--space-15);border-radius:var(--radius-xs)}
+.dn-btn--lg{height:var(--control-height-lg);padding:0 var(--space-5);font:var(--fw-medium) var(--fs-md)/1 var(--font-sans);gap:var(--space-25)}
+.dn-btn--full{width:100%}
+.dn-btn--primary{background:var(--action-primary-bg);color:var(--action-primary-fg)}
+/* the primary action carries one hairline of light across it on hover — 320ms, once */
+.dn-btn--primary{overflow:hidden}
+.dn-btn--primary::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.16) 50%,transparent 70%);transform:translateX(-120%);transition:transform var(--dur-slow) var(--ease-out)}
+.dn-btn--primary:active{background:var(--action-primary-bg-active)}
+.dn-btn--secondary{background:var(--action-secondary-bg);color:var(--action-secondary-fg);border-color:var(--action-secondary-border);box-shadow:var(--shadow-xs)}
+.dn-btn--ghost{background:transparent;color:var(--action-ghost-fg)}
+/* The accent button has ONE use: an action that starts live work — "Assemble a crew",
+   "Run the checks". Never to make an ordinary button look more important; the primary
+   action in this system is ink. If the button does not start something that will then be
+   marked live on screen, it is the wrong variant. */
+.dn-btn--accent{background:var(--action-accent-bg);color:var(--action-accent-fg)}
+.dn-btn--danger{background:var(--action-danger-bg);color:var(--action-danger-fg)}
+.dn-btn--link{height:auto;padding:0;background:none;color:var(--text-link);border-radius:var(--radius-xs)}
+.dn-btn--loading{color:transparent!important}
+.dn-btn__spin{position:absolute;inset:0;display:grid;place-items:center;color:var(--action-primary-fg)}
+.dn-btn--secondary .dn-btn__spin,.dn-btn--ghost .dn-btn__spin,.dn-btn--link .dn-btn__spin{color:var(--text-primary)}
+.dn-spin{width:1em;height:1em;border-radius:50%;border:var(--stroke-medium) solid currentColor;border-top-color:transparent;animation:dn-spin var(--dur-slower) linear infinite}
+
+.dn-iconbtn{display:inline-grid;place-items:center;width:var(--control-height-md);height:var(--control-height-md);padding:0;border:var(--hairline) solid transparent;border-radius:var(--radius-sm);background:transparent;color:var(--text-secondary);cursor:pointer;transition:var(--transition-control)}
+.dn-iconbtn:active{transform:scale(.9)}
+.dn-iconbtn .dn-icon{transition:transform var(--dur-base) var(--ease-arrive)}
+.dn-iconbtn--active .dn-icon{transform:scale(1.06)}
+.dn-iconbtn:focus-visible{outline:none;box-shadow:var(--focus-ring)}
+.dn-iconbtn[disabled]{opacity:.42;cursor:not-allowed}
+.dn-iconbtn--sm{width:var(--control-height-sm);height:var(--control-height-sm);border-radius:var(--radius-xs)}
+.dn-iconbtn--lg{width:var(--control-height-lg);height:var(--control-height-lg)}
+.dn-iconbtn--outline{border-color:var(--border-default);background:var(--surface-card);box-shadow:var(--shadow-xs)}
+.dn-iconbtn--solid{background:var(--action-primary-bg);color:var(--action-primary-fg)}
+.dn-iconbtn--active{background:var(--surface-selected);color:var(--text-accent)}
+
+.dn-icon{display:inline-block;flex:none;color:inherit;vertical-align:middle}
+/* An unresolvable glyph. Visible on purpose: an empty square reads as "nothing here",
+   which is the failure mode that let three dead Lucide names ship unnoticed. */
+.dn-icon--missing{border:1px dashed var(--status-danger-border);border-radius:var(--radius-xs);background:var(--status-danger-bg)}
+.dn-icon svg{display:block;width:100%;height:100%;stroke-width:var(--dn-icon-stroke,1.75)}
+
+.dn-badge{transition:var(--transition-control);display:inline-flex;align-items:center;gap:var(--space-15);height:20px;padding:0 var(--space-2);border-radius:var(--radius-xs);border:var(--hairline) solid var(--status-idle-border);background:var(--status-idle-bg);color:var(--status-idle-fg);font:var(--fw-medium) var(--fs-micro)/1 var(--font-mono);letter-spacing:var(--track-wide);text-transform:uppercase;white-space:nowrap}
+.dn-badge--live{border-color:var(--status-live-border);background:var(--status-live-bg);color:var(--status-live-fg)}
+.dn-badge--success{border-color:var(--status-success-border);background:var(--status-success-bg);color:var(--status-success-fg)}
+.dn-badge--attention{border-color:var(--status-attention-border);background:var(--status-attention-bg);color:var(--status-attention-fg)}
+.dn-badge--danger{border-color:var(--status-danger-border);background:var(--status-danger-bg);color:var(--status-danger-fg)}
+.dn-badge--accent{border-color:var(--status-live-border);background:var(--status-live-bg);color:var(--status-live-fg)}
+.dn-badge--lg{height:24px;padding:0 var(--space-25);font-size:var(--fs-2xs)}
+.dn-badge--solid{background:var(--action-primary-bg);border-color:transparent;color:var(--action-primary-fg)}
+
+.dn-tag{display:inline-flex;align-items:center;gap:var(--space-15);height:24px;padding:0 var(--space-25);border-radius:var(--radius-xs);border:var(--hairline) solid var(--border-default);background:var(--surface-card);color:var(--text-secondary);font:var(--fw-regular) var(--fs-2xs)/1 var(--font-mono);white-space:nowrap;transition:var(--transition-control)}
+.dn-tag--interactive{cursor:pointer}
+.dn-tag--interactive:active{transform:scale(var(--press-scale))}
+.dn-tag__x{display:grid;place-items:center;width:14px;height:14px;margin-right:-2px;border:0;background:none;border-radius:var(--radius-xs);color:var(--text-tertiary);cursor:pointer;transition:var(--transition-control)}
+
+.dn-dot{position:relative;display:inline-block;flex:none;width:8px;height:8px;border-radius:50%;background:var(--status-idle-dot)}
+.dn-dot--live{background:var(--status-live-dot)}
+.dn-dot--success{background:var(--status-success-dot)}
+.dn-dot--attention{background:var(--status-attention-dot)}
+.dn-dot--danger{background:var(--status-danger-dot)}
+.dn-dot--sm{width:6px;height:6px}
+.dn-dot--lg{width:10px;height:10px}
+.dn-dot--pulse::after{content:"";position:absolute;inset:0;border-radius:50%;background:inherit;animation:dn-sonar var(--dur-ambient) var(--ease-out) infinite}
+.dn-dot--breathe{animation:dn-breathe var(--dur-ambient) var(--ease-in-out) infinite}
+
+.dn-card{position:relative;background:var(--surface-card);border:var(--hairline) solid var(--border-subtle);border-radius:var(--radius-lg);box-shadow:var(--shadow-xs)}
+.dn-card--pad{padding:var(--space-5)}
+.dn-card--pad-sm{padding:var(--space-4)}
+.dn-card--pad-lg{padding:var(--space-6)}
+.dn-card--raised{box-shadow:var(--shadow-md);border-color:var(--border-subtle)}
+.dn-card--flat{box-shadow:none}
+.dn-card--sunken{background:var(--surface-sunken);box-shadow:none}
+.dn-card--interactive{cursor:pointer;transition:box-shadow var(--dur-base) var(--ease-standard),transform var(--dur-base) var(--ease-out)}
+/* a hairline traces the top edge in from the left as the card lifts */
+.dn-card--interactive::after{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:var(--text-primary);transform:scaleX(0);transform-origin:left;transition:transform var(--dur-slow) var(--ease-out);border-radius:var(--radius-lg) var(--radius-lg) 0 0}
+.dn-card--interactive:active{transform:translateY(0)}
+/* There is no accent variant on Card. A 2px coloured bar down the edge of a rounded card
+   is on this system's exclusion list, and the base primitive is the worst place to offer it:
+   every other card composes from here. Tint what identifies the thing — a monogram, a badge,
+   a status dot — never the container. */
+.dn-card__head{display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);padding:var(--space-4) var(--space-5);border-bottom:var(--hairline) solid var(--border-subtle)}
+.dn-card__title{font:var(--type-h4);letter-spacing:var(--track-heading)}
+.dn-card__body{padding:var(--space-5)}
+.dn-card__foot{padding:var(--space-3) var(--space-5);border-top:var(--hairline) solid var(--border-subtle);background:var(--surface-inset);border-radius:0 0 var(--radius-lg) var(--radius-lg)}
+
+.dn-avatar{position:relative;display:inline-grid;place-items:center;flex:none;width:32px;height:32px;border-radius:var(--radius-md);background:var(--surface-sunken);border:var(--hairline) solid var(--border-default);color:var(--text-secondary);font:var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono);letter-spacing:var(--track-wide);overflow:hidden}
+.dn-avatar img{width:100%;height:100%;object-fit:cover}
+.dn-avatar--xs{width:20px;height:20px;border-radius:var(--radius-xs);font-size:9px}
+.dn-avatar--sm{width:26px;height:26px;border-radius:var(--radius-sm);font-size:10px}
+.dn-avatar--lg{width:44px;height:44px;border-radius:var(--radius-md);font-size:var(--fs-xs)}
+.dn-avatar--xl{width:64px;height:64px;border-radius:var(--radius-lg);font-size:var(--fs-md)}
+.dn-avatar--circle{border-radius:var(--radius-circle)}
+
+.dn-progress{position:relative;width:100%;height:6px;border-radius:var(--radius-pill);background:var(--viz-track);overflow:hidden}
+.dn-progress--sm{height:4px}
+.dn-progress--lg{height:10px}
+.dn-progress__fill{position:relative;height:100%;border-radius:var(--radius-pill);background:var(--dn-progress-color,var(--text-primary));transition:width var(--dur-slower) var(--ease-out)}
+/* a fill that is still moving keeps a lit leading edge */
+.dn-progress--striped .dn-progress__fill::after{content:"";position:absolute;right:0;top:0;bottom:0;width:6px;border-radius:var(--radius-pill);background:var(--surface-page);opacity:.55;animation:dn-breathe var(--dur-loop-fast) var(--ease-in-out) infinite}
+.dn-progress--striped .dn-progress__fill{background-image:linear-gradient(115deg,rgba(255,255,255,.22) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.22) 50%,rgba(255,255,255,.22) 75%,transparent 75%);background-size:14px 14px;animation:dn-shimmer 1.6s linear infinite}
+.dn-progress__thresh{position:absolute;top:-2px;bottom:-2px;width:1px;background:var(--status-attention-dot);z-index:2}
+.dn-progress__ticks{position:absolute;inset:0;display:flex}
+.dn-progress__tick{flex:1;border-right:var(--hairline) solid var(--surface-card)}
+.dn-progress__tick:last-child{border-right:0}
+
+.dn-tip{position:relative;display:inline-flex}
+.dn-tip__bubble{will-change:transform,opacity;position:absolute;z-index:60;padding:var(--space-15) var(--space-25);border-radius:var(--radius-sm);background:var(--surface-inverse);color:var(--text-inverse);font:var(--fw-medium) var(--fs-2xs)/1.35 var(--font-sans);white-space:nowrap;box-shadow:var(--shadow-pop);pointer-events:none;animation:dn-pop var(--dur-base) var(--ease-arrive) both}
+.dn-tip__bubble--top{bottom:calc(100% + 8px);left:50%;transform:translateX(-50%)}
+.dn-tip__bubble--bottom{top:calc(100% + 8px);left:50%;transform:translateX(-50%)}
+.dn-tip__bubble--right{left:calc(100% + 8px);top:50%;transform:translateY(-50%)}
+.dn-tip__bubble--left{right:calc(100% + 8px);top:50%;transform:translateY(-50%)}
+.dn-tip__kbd{margin-left:var(--space-2);opacity:.6;font-family:var(--font-mono)}
+
+/* Hover is a pointer capability, not a device: gating it keeps a tap on iOS and iPad
+   from leaving hover paint stuck, while an iPad with a trackpad still gets it. */
+@media (hover:hover){
+.dn-btn:hover{text-decoration:none}
+.dn-btn:hover .dn-icon:last-child:not(:first-child):not([data-motion]){transform:translateX(3px)}
+.dn-btn:hover .dn-icon:first-child:not(:last-child){transform:translateX(-1px)}
+.dn-btn--primary:hover{background:var(--action-primary-bg-hover)}
+.dn-btn--primary:hover::after{transform:translateX(120%)}
+.dn-btn--secondary:hover{background:var(--action-secondary-bg-hover);border-color:var(--border-strong)}
+.dn-btn--ghost:hover{background:var(--surface-hover);color:var(--text-primary)}
+.dn-btn--accent:hover{background:var(--action-accent-bg-hover)}
+.dn-btn--danger:hover{background:var(--action-danger-bg-hover)}
+.dn-btn--link:hover{color:var(--text-link-hover);text-decoration:underline}
+.dn-iconbtn:hover{background:var(--surface-hover);color:var(--text-primary)}
+.dn-iconbtn--outline:hover{border-color:var(--border-strong)}
+.dn-iconbtn--solid:hover{background:var(--action-primary-bg-hover);color:var(--action-primary-fg)}
+.dn-tag--interactive:hover{border-color:var(--border-strong);color:var(--text-primary);transform:translateY(-1px)}
+.dn-tag__x:hover{background:var(--surface-active);color:var(--text-primary)}
+.dn-card--interactive:hover{border-color:var(--border-strong);box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.dn-card--interactive:hover::after{transform:scaleX(1)}
+}

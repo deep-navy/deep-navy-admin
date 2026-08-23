@@ -1,0 +1,24 @@
+/* deep.navy — type. Two families: Instrument Sans (voice) + JetBrains Mono (evidence). */
+:root{
+--font-display:"Bricolage Grotesque","Instrument Sans",system-ui,sans-serif;
+--font-sans:"Instrument Sans","Helvetica Neue",system-ui,-apple-system,sans-serif;
+--font-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+/* size ramp — dense at the bottom, editorial at the top */
+--fs-micro:11px;--fs-2xs:12px;--fs-xs:13px;--fs-sm:14px;--fs-md:16px;--fs-lg:18px;--fs-xl:20px;--fs-2xl:24px;--fs-3xl:30px;--fs-4xl:38px;--fs-5xl:48px;--fs-6xl:60px;--fs-7xl:76px;--fs-8xl:96px;
+--fw-regular:400;--fw-medium:500;--fw-semibold:600;--fw-bold:700;
+--lh-flush:1;--lh-tight:1.12;--lh-snug:1.26;--lh-normal:1.5;--lh-relaxed:1.62;
+--track-display:-0.028em;--track-heading:-0.016em;--track-normal:0em;--track-wide:0.02em;--track-caps:0.09em;
+/* composed roles */
+--type-display:var(--fw-semibold) var(--fs-6xl)/var(--lh-tight) var(--font-display);
+--type-h1:var(--fw-semibold) var(--fs-4xl)/var(--lh-tight) var(--font-display);
+--type-h2:var(--fw-semibold) var(--fs-3xl)/var(--lh-snug) var(--font-display);
+--type-h3:var(--fw-semibold) var(--fs-xl)/var(--lh-snug) var(--font-sans);
+--type-h4:var(--fw-semibold) var(--fs-md)/var(--lh-snug) var(--font-sans);
+--type-body:var(--fw-regular) var(--fs-md)/var(--lh-relaxed) var(--font-sans);
+--type-body-sm:var(--fw-regular) var(--fs-sm)/var(--lh-normal) var(--font-sans);
+--type-ui:var(--fw-medium) var(--fs-sm)/var(--lh-snug) var(--font-sans);
+--type-ui-sm:var(--fw-medium) var(--fs-xs)/var(--lh-snug) var(--font-sans);
+--type-mono:var(--fw-regular) var(--fs-xs)/var(--lh-normal) var(--font-mono);
+--type-mono-sm:var(--fw-regular) var(--fs-2xs)/var(--lh-normal) var(--font-mono);
+--type-eyebrow:var(--fw-medium) var(--fs-micro)/var(--lh-flush) var(--font-mono);
+}

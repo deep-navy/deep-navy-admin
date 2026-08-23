@@ -1,205 +1,595 @@
-<section class="access-stage" data-signed-out aria-labelledby="access-title">
-  <div class="access-card">
-    <span class="eyebrow">Restricted operations</span>
-    <h1 id="access-title">Founder access, verified twice.</h1>
-    <p class="access-copy">
-      Sign in through this environment’s Amazon Cognito managed login. The browser uses authorization code with PKCE, then the platform API verifies your identity and Founder or Admin role before any protected request is sent.
-    </p>
+{%- comment -%}
+  The admin console shell.
 
-    <div class="configuration-state" data-configuration-state data-tone="pending" aria-live="polite">
-      <span class="state-indicator" aria-hidden="true"></span>
-      <div>
-        <strong data-configuration-title>Checking access configuration</strong>
-        <p data-configuration-message>The portal is validating its public Cognito and API coordinates.</p>
+  THIS FILE IS SERVED UNAUTHENTICATED. GitHub Pages hands it to anyone who asks, so it
+  documents nothing about how the platform is built: no internal endpoint paths, no table
+  names, no workspace identifiers, no App-grant inventory, no cluster topology. Everything
+  this console knows about deep.navy it learns from an authorized API response at runtime
+  and renders into the empty containers below. test/admin_launch_surface_test.cjs is the
+  guard that keeps it that way.
+
+  Two structural rules, both forced by the page's own Content-Security-Policy:
+    * no inline style attributes  — style-src 'self' refuses them silently, so every
+      visual decision is a class in assets/css/admin.css or the vendored design system;
+    * no inline script            — script-src 'self' with no hash allowance, and
+      test/site_test.rb asserts the absence outright.
+
+  Icons are one inline SVG sprite. The design system draws its icons from a CDN, which
+  this CSP cannot reach; a sprite costs no request and no script.
+{%- endcomment -%}
+
+<svg class="visually-hidden" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <symbol id="i-dashboard" viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="i-gauge" viewBox="0 0 24 24"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></symbol>
+    <symbol id="i-server" viewBox="0 0 24 24"><rect width="20" height="8" x="2" y="2" rx="2"/><rect width="20" height="8" x="2" y="14" rx="2"/><path d="M6 6h.01"/><path d="M6 18h.01"/></symbol>
+    <symbol id="i-card" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></symbol>
+    <symbol id="i-activity" viewBox="0 0 24 24"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></symbol>
+    <symbol id="i-warn" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+    <symbol id="i-critical" viewBox="0 0 24 24"><path d="M15.312 2a2 2 0 0 1 1.414.586l4.688 4.688A2 2 0 0 1 22 8.688v6.624a2 2 0 0 1-.586 1.414l-4.688 4.688a2 2 0 0 1-1.414.586H8.688a2 2 0 0 1-1.414-.586l-4.688-4.688A2 2 0 0 1 2 15.312V8.688a2 2 0 0 1 .586-1.414l4.688-4.688A2 2 0 0 1 8.688 2z"/><path d="M12 8v4"/><path d="M12 16h.01"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></symbol>
+  </defs>
+</svg>
+
+{%- comment -%} ============================ 1 · ACCESS ============================ {%- endcomment -%}
+
+<section class="ad-access" data-signed-out aria-labelledby="access-title">
+  <div class="dn-card dn-card--pad-lg ad-access__card">
+    <div class="ad-access__brand">
+      <span class="dn-mark" role="img" aria-label="deep.navy"></span>
+      <span class="ad-wordmark">deep<span class="dn-dot-period"></span>navy</span>
+      <span class="dn-badge">Admin</span>
+      <span class="ad-access__theme">
+        <button class="ad-theme" type="button" data-theme-toggle data-pref="system" aria-label="Theme: match system">
+          <span class="ad-theme__g ad-theme__g--system"><svg class="dn-icon" width="16" height="16" aria-hidden="true"><use href="#i-monitor"/></svg></span>
+          <span class="ad-theme__g ad-theme__g--dark"><svg class="dn-icon" width="16" height="16" aria-hidden="true"><use href="#i-moon"/></svg></span>
+          <span class="ad-theme__g ad-theme__g--light"><svg class="dn-icon" width="16" height="16" aria-hidden="true"><use href="#i-sun"/></svg></span>
+        </button>
+      </span>
+    </div>
+
+    <div>
+      <div class="dn-eyebrow">Restricted operations</div>
+      <h1 class="ad-access__title" id="access-title">Founder access, verified twice.</h1>
+      <p class="ad-access__lede">
+        Sign in through this environment’s managed login. The browser uses authorization code with PKCE; the platform API then verifies your identity and Founder or Admin role before a single protected request is sent.
+      </p>
+    </div>
+
+    <div class="dn-callout dn-callout--live" data-configuration-state data-tone="pending" aria-live="polite">
+      <span class="dn-callout__icon"><svg class="dn-icon" width="16" height="16" aria-hidden="true"><use href="#i-shield"/></svg></span>
+      <div class="ad-rail__who">
+        <div class="dn-callout__title" data-configuration-title>Checking access configuration</div>
+        <div class="dn-callout__body" data-configuration-message>Validating the public Cognito and API coordinates for this deployment.</div>
       </div>
     </div>
 
-    <div class="auth-state" data-auth-state hidden aria-live="assertive">
-      <strong data-auth-title>Sign-in needs attention</strong>
-      <p data-auth-message></p>
-      <span class="request-reference" data-auth-request-reference hidden></span>
+    <div class="dn-callout dn-callout--danger" data-auth-state hidden aria-live="assertive">
+      <span class="dn-callout__icon"><svg class="dn-icon" width="16" height="16" aria-hidden="true"><use href="#i-warn"/></svg></span>
+      <div class="ad-rail__who">
+        <div class="dn-callout__title" data-auth-title>Sign-in needs attention</div>
+        <div class="dn-callout__body" data-auth-message></div>
+        <div class="ad-note" data-auth-request-reference hidden></div>
+      </div>
     </div>
 
-    <div class="access-actions">
-      <button class="button button--primary button--large" type="button" data-sign-in disabled>
-        Continue securely <span aria-hidden="true">→</span>
-      </button>
-      <button class="button button--secondary" type="button" data-retry-sign-in hidden>Start again</button>
-    </div>
+    <button class="dn-btn dn-btn--primary dn-btn--lg dn-btn--full" type="button" data-sign-in disabled>Continue securely</button>
+    <button class="dn-btn dn-btn--secondary dn-btn--full" type="button" data-retry-sign-in hidden>Start again</button>
 
-    <ul class="access-assurances" aria-label="Session protections">
-      <li><strong>PKCE</strong><span>No Cognito client secret is present in this site.</span></li>
-      <li><strong>Memory only</strong><span>Access and ID tokens are never written to browser storage.</span></li>
-      <li><strong>15 minutes</strong><span>The browser session expires no later than the configured admin ceiling.</span></li>
-      <li><strong>Server authorized</strong><span>The UI is not the authorization boundary.</span></li>
-    </ul>
+    <div class="ad-assure" aria-label="Session protections">
+      <div><div class="ad-assure__k">PKCE</div><div class="ad-assure__v">No client secret is present in this site.</div></div>
+      <div><div class="ad-assure__k">Memory only</div><div class="ad-assure__v">Tokens are never written to browser storage.</div></div>
+      <div><div class="ad-assure__k">15 minutes</div><div class="ad-assure__v">The session expires at the admin ceiling.</div></div>
+      <div><div class="ad-assure__k">Server authorized</div><div class="ad-assure__v">The UI is not the authorization boundary.</div></div>
+    </div>
   </div>
 </section>
 
-<div class="app-frame" data-authenticated hidden>
-  <aside class="side-rail" aria-label="Admin navigation">
-    <p class="side-label">Workspace</p>
-    <nav>
-      <a class="nav-link is-active" href="#overview" aria-current="page"><span class="nav-index" aria-hidden="true">01</span>Overview</a>
-      <a class="nav-link" href="#customers"><span class="nav-index" aria-hidden="true">02</span>Customers</a>
-      <a class="nav-link" href="#economics"><span class="nav-index" aria-hidden="true">03</span>Economics</a>
-      <a class="nav-link" href="#operations"><span class="nav-index" aria-hidden="true">04</span>Operations</a>
-      <a class="nav-link" href="#billing"><span class="nav-index" aria-hidden="true">05</span>Billing</a>
-      <a class="nav-link" href="#metrics"><span class="nav-index" aria-hidden="true">06</span>Metrics</a>
+{%- comment -%} ============================ 2 · SHELL ============================= {%- endcomment -%}
+
+<div class="ad-shell" data-authenticated hidden>
+
+  <aside class="ad-rail" aria-label="Admin navigation">
+    <div class="ad-rail__brand">
+      <span class="dn-mark" role="img" aria-label="deep.navy"></span>
+      <span class="ad-wordmark">deep<span class="dn-dot-period"></span>navy</span>
+      <span class="dn-badge">Admin</span>
+    </div>
+
+    <nav class="ad-rail__nav" data-view-nav>
+      <div class="dn-eyebrow ad-rail__navlabel">Control plane</div>
+      <a class="dn-nav dn-bare" href="#overview" data-view-link="overview" aria-current="page"><span class="dn-nav__icon"><svg class="dn-icon" width="16" height="16" aria-hidden="true"><use href="#i-dashboard"/></svg></span><span class="dn-nav__label">Overview</span></a>
+      <a class="dn-nav dn-bare" href="#customers" data-view-link="customers"><span class="dn-nav__icon"><svg class="dn-icon" width="16" height="16" aria-hidden="true"><use href="#i-users"/></svg></span><span class="dn-nav__label">Customers</span></a>
+      <a class="dn-nav dn-bare" href="#economics" data-view-link="economics"><span class="dn-nav__icon"><svg class="dn-icon" width="16" height="16" aria-hidden="true"><use href="#i-gauge"/></svg></span><span class="dn-nav__label">Economics</span></a>
+      <a class="dn-nav dn-bare" href="#operations" data-view-link="operations"><span class="dn-nav__icon"><svg class="dn-icon" width="16" height="16" aria-hidden="true"><use href="#i-server"/></svg></span><span class="dn-nav__label">Operations</span><span class="dn-nav__meta" data-open-alert-count hidden></span></a>
+      <a class="dn-nav dn-bare" href="#billing" data-view-link="billing"><span class="dn-nav__icon"><svg class="dn-icon" width="16" height="16" aria-hidden="true"><use href="#i-card"/></svg></span><span class="dn-nav__label">Billing</span></a>
+      <a class="dn-nav dn-bare" href="#metrics" data-view-link="metrics"><span class="dn-nav__icon"><svg class="dn-icon" width="16" height="16" aria-hidden="true"><use href="#i-activity"/></svg></span><span class="dn-nav__label">Metrics</span></a>
+      <a class="dn-nav dn-bare" href="#audit" data-view-link="audit"><span class="dn-nav__icon"><svg class="dn-icon" width="16" height="16" aria-hidden="true"><use href="#i-shield"/></svg></span><span class="dn-nav__label">Audit</span></a>
     </nav>
-    <div class="rail-session"><span class="eyebrow">Session policy</span><strong>Short-lived operator session</strong><p>Tokens live in this tab’s memory and the portal signs out at <span data-session-expiry>the session ceiling</span>.</p></div>
+
+    <div class="ad-rail__session">
+      <div class="dn-eyebrow">Session policy</div>
+      <div class="ad-rail__session-when">Signs out at <span data-session-expiry>the session ceiling</span></div>
+      <div class="ad-rail__session-note">Tokens live in this tab’s memory only.</div>
+    </div>
+
+    <div class="ad-rail__foot">
+      <span class="dn-avatar dn-avatar--sm dn-avatar--circle" data-operator-initials aria-hidden="true"></span>
+      <span class="ad-rail__who" data-operator-summary hidden>
+        <span class="ad-rail__name" data-operator-name>Authenticated operator</span>
+        <span class="ad-rail__role" data-operator-role></span>
+      </span>
+      <button class="ad-theme" type="button" data-theme-toggle data-pref="system" aria-label="Theme: match system">
+        <span class="ad-theme__g ad-theme__g--system"><svg class="dn-icon" width="16" height="16" aria-hidden="true"><use href="#i-monitor"/></svg></span>
+        <span class="ad-theme__g ad-theme__g--dark"><svg class="dn-icon" width="16" height="16" aria-hidden="true"><use href="#i-moon"/></svg></span>
+        <span class="ad-theme__g ad-theme__g--light"><svg class="dn-icon" width="16" height="16" aria-hidden="true"><use href="#i-sun"/></svg></span>
+      </button>
+    </div>
   </aside>
 
-  <div class="workspace">
-    <section class="hero" id="overview" aria-labelledby="overview-title">
-      <div><p class="eyebrow">{{ site.runtime.environment_label | default: site.runtime.environment }} control plane</p><h1 id="overview-title">One ledger for the business and the fleet.</h1><p class="hero-copy">Every value is returned by the shared admin API or left unavailable. No demo records, browser-side accounting, or provider secrets.</p></div>
-      <div class="hero-action"><button class="button button--primary" type="button" data-refresh-dashboard disabled><span class="button-indicator" aria-hidden="true"></span>Refresh verified data</button><p class="refresh-note" aria-live="polite">Browser refresh <span data-observed-at>not yet</span><br>Overview projection <span data-overview-source>not yet loaded</span></p></div>
-    </section>
+  <div class="ad-main">
+    <header class="ad-top">
+      <nav class="dn-crumbs" aria-label="Breadcrumb"><span class="dn-crumbs__current" data-view-title>Overview</span></nav>
+      <span class="ad-top__right">
+        <span class="dn-badge dn-badge--live ad-hide-md"><span class="dn-dot dn-dot--sm dn-dot--live dn-dot--pulse"></span><span data-environment-label>{{ site.runtime.environment_label | default: site.runtime.environment }}</span></span>
+        <span class="ad-top__stamp ad-hide-md">refreshed <span data-observed-at>not yet</span></span>
+        <span class="ad-theme-top">
+          <button class="ad-theme" type="button" data-theme-toggle data-pref="system" aria-label="Theme: match system">
+            <span class="ad-theme__g ad-theme__g--system"><svg class="dn-icon" width="16" height="16" aria-hidden="true"><use href="#i-monitor"/></svg></span>
+            <span class="ad-theme__g ad-theme__g--dark"><svg class="dn-icon" width="16" height="16" aria-hidden="true"><use href="#i-moon"/></svg></span>
+            <span class="ad-theme__g ad-theme__g--light"><svg class="dn-icon" width="16" height="16" aria-hidden="true"><use href="#i-sun"/></svg></span>
+          </button>
+        </span>
+        <button class="dn-btn dn-btn--secondary dn-btn--sm" type="button" data-refresh-dashboard disabled>Refresh verified data</button>
+        <button class="dn-btn dn-btn--ghost dn-btn--sm" type="button" data-sign-out hidden>Sign out</button>
+      </span>
+    </header>
 
-    <section class="data-state" data-admin-data-state data-tone="pending" aria-live="polite" aria-atomic="true"><span class="state-indicator" aria-hidden="true"></span><div><strong data-admin-data-title>Loading authorized operations data</strong><p data-admin-data-message>The portal is requesting generated AdminService resources.</p><span class="request-reference" data-admin-request-reference hidden></span></div></section>
+    <div class="ad-scrollport" data-scrollport>
 
-    <section class="metric-grid" aria-label="Admin overview metrics">
-      <article class="metric-card"><span class="metric-kicker">MRR</span><strong class="metric-value" data-metric="mrr">—</strong><p>Monthly recurring revenue.</p></article>
-      <article class="metric-card"><span class="metric-kicker">ARR</span><strong class="metric-value" data-metric="arr">—</strong><p>Annual recurring revenue.</p></article>
-      <article class="metric-card"><span class="metric-kicker">Active customers</span><strong class="metric-value" data-metric="active-customers">—</strong><p>Current paying or trialing accounts.</p></article>
-      <article class="metric-card"><span class="metric-kicker">Active teams</span><strong class="metric-value" data-metric="active-teams">—</strong><p>Entitled engineering teams.</p></article>
-      <article class="metric-card"><span class="metric-kicker">Gross margin</span><strong class="metric-value" data-metric="gross-margin">—</strong><p>Recognized revenue less fully-loaded direct cost.</p></article>
-      <article class="metric-card"><span class="metric-kicker">NRR</span><strong class="metric-value" data-metric="nrr">—</strong><p>Net revenue retention when measurable.</p></article>
-      <article class="metric-card"><span class="metric-kicker">Customer churn</span><strong class="metric-value" data-metric="churn">—</strong><p>Measured customer churn for the period.</p></article>
-      <article class="metric-card"><span class="metric-kicker">New customers</span><strong class="metric-value" data-metric="new-customers">—</strong><p>Accounts activated during the period.</p></article>
-      <article class="metric-card"><span class="metric-kicker">Active agents</span><strong class="metric-value" data-metric="active-agents">—</strong><p>Agents currently executing work.</p></article>
-      <article class="metric-card"><span class="metric-kicker">Open alerts</span><strong class="metric-value" data-metric="open-alerts">—</strong><p>Operational and commercial alerts.</p></article>
-      <article class="metric-card"><span class="metric-kicker">At-risk customers</span><strong class="metric-value" data-metric="at-risk-customers">—</strong><p>Accounts requiring intervention.</p></article>
-      <article class="metric-card"><span class="metric-kicker">Churned customers</span><strong class="metric-value" data-metric="churned-customers">—</strong><p>Accounts lost during the reporting period.</p></article>
-      <article class="metric-card"><span class="metric-kicker">Production incidents</span><strong class="metric-value" data-metric="incidents">—</strong><p>Verified customer-impacting incidents this period.</p></article>
-      <article class="metric-card"><span class="metric-kicker">PRs merged</span><strong class="metric-value" data-metric="prs-merged">—</strong><p>Verified delivery output this period.</p></article>
-    </section>
+      {%- comment -%} ---------------------- OVERVIEW ---------------------- {%- endcomment -%}
+      <section class="ad-page ad-page--narrow" data-view="overview" id="overview" aria-labelledby="overview-title">
+        <div class="ad-head">
+          <div>
+            <div class="dn-eyebrow"><span data-environment-label>{{ site.runtime.environment_label | default: site.runtime.environment }}</span> control plane</div>
+            <h1 class="ad-head__title" id="overview-title">One ledger for the business and the fleet</h1>
+            <p class="ad-lede">Every value here is returned by the admin API or left blank. There are no demo records, no browser-side accounting, and an unavailable projection is never rendered as a zero.</p>
+          </div>
+        </div>
 
-    <section class="workspace-section" id="customers" aria-labelledby="customers-title">
-      <div class="section-heading"><div><p class="eyebrow">Account operations</p><h2 id="customers-title">Customers</h2></div><span class="section-state" data-section-state="customers">Waiting</span></div>
-      <div class="table-shell"><table><caption class="visually-hidden">Authorized customer accounts</caption><thead><tr><th scope="col">Customer</th><th scope="col">Plan / billing</th><th scope="col">Teams</th><th scope="col">Users / repositories</th><th scope="col">Agent activity</th><th scope="col">Credits used</th><th scope="col">Direct cost</th><th scope="col">Revenue</th><th scope="col">Gross profit</th><th scope="col">Margin</th><th scope="col">Reliability</th><th scope="col">Health / support</th><th scope="col">Projection</th><th scope="col">Detail</th></tr></thead><tbody data-customer-rows></tbody></table><p class="data-table-empty" data-table-empty="customers">No authorized customer rows loaded.</p></div>
-      <section id="customer-detail" class="customer-detail" data-customer-detail hidden aria-labelledby="customer-detail-title" tabindex="-1">
-        <div class="customer-detail-heading"><div><p class="eyebrow">Authorized account detail</p><h3 id="customer-detail-title" data-customer-detail-title>Customer detail</h3></div><button class="button button--quiet" type="button" data-customer-detail-close>Close detail</button></div>
-        <p class="projection-note" data-customer-detail-state role="status">Choose a customer to request its current AdminService projection and daily reliability history.</p>
-        <dl class="customer-detail-grid">
-          <div><dt>Plan / billing</dt><dd data-customer-detail-field="plan">—</dd></div>
-          <div><dt>Health</dt><dd data-customer-detail-field="health">—</dd></div>
-          <div><dt>Support</dt><dd data-customer-detail-field="support">—</dd></div>
-          <div><dt>Churn risk</dt><dd data-customer-detail-field="churn">—</dd></div>
-          <div><dt>Teams / users / repositories</dt><dd data-customer-detail-field="account-counts">—</dd></div>
-          <div><dt>Active / idle / blocked / failed agents</dt><dd data-customer-detail-field="agents">—</dd></div>
-          <div><dt>Current sessions</dt><dd data-customer-detail-field="sessions">—</dd></div>
-          <div><dt>Active initiatives</dt><dd data-customer-detail-field="initiatives">—</dd></div>
-          <div><dt>Pending approvals</dt><dd data-customer-detail-field="approvals">—</dd></div>
-          <div><dt>Pull requests merged</dt><dd data-customer-detail-field="pull-requests">—</dd></div>
-          <div><dt>Last agent activity</dt><dd data-customer-detail-field="last-activity">—</dd></div>
-          <div><dt>Current reliability</dt><dd data-customer-detail-field="reliability">—</dd></div>
-          <div><dt>Monthly recurring revenue</dt><dd data-customer-detail-field="mrr">—</dd></div>
-          <div><dt>Credits / direct cost</dt><dd data-customer-detail-field="economics">—</dd></div>
-          <div><dt>Projection</dt><dd data-customer-detail-field="projection">—</dd></div>
-        </dl>
-        <div class="customer-reliability-heading"><div><h4>Daily reliability history</h4><p data-customer-reliability-state>Not loaded.</p></div><button class="button button--quiet" type="button" data-customer-reliability-more hidden>Load more history</button></div>
-        <div class="table-shell"><table><caption class="visually-hidden">Selected customer daily reliability history</caption><thead><tr><th scope="col">UTC period</th><th scope="col">Gateway availability</th><th scope="col">Production incidents</th><th scope="col">Last incident</th><th scope="col">Generated</th></tr></thead><tbody data-customer-reliability-rows></tbody></table><p class="data-table-empty" data-table-empty="customer-reliability">No reliability history loaded.</p></div>
+        <div class="dn-callout" data-admin-data-state data-tone="pending" aria-live="polite" aria-atomic="true">
+          <span class="dn-callout__icon"><svg class="dn-icon" width="16" height="16" aria-hidden="true"><use href="#i-info"/></svg></span>
+          <div class="ad-rail__who">
+            <div class="dn-callout__title" data-admin-data-title>Loading authorized operations data</div>
+            <div class="dn-callout__body" data-admin-data-message>The portal is requesting the generated administrator resources.</div>
+            <div class="ad-note" data-admin-request-reference hidden></div>
+          </div>
+        </div>
+
+        <section class="ad-section">
+          <span class="dn-eyebrow">Revenue</span>
+          <div class="ad-4 dn-stagger">
+            <div class="dn-card dn-card--pad-sm dn-stat"><span class="dn-stat__label">MRR</span><span class="dn-stat__value" data-metric="mrr">—</span><span class="dn-stat__delta" data-metric-delta="mrr"></span></div>
+            <div class="dn-card dn-card--pad-sm dn-stat"><span class="dn-stat__label">ARR</span><span class="dn-stat__value" data-metric="arr">—</span><span class="dn-stat__delta">run rate</span></div>
+            <div class="dn-card dn-card--pad-sm dn-stat"><span class="dn-stat__label">Gross margin</span><span class="dn-stat__value" data-metric="gross-margin">—</span></div>
+            <div class="dn-card dn-card--pad-sm dn-stat"><span class="dn-stat__label">NRR</span><span class="dn-stat__value" data-metric="nrr">—</span><span class="dn-stat__delta" data-metric-delta="nrr"></span></div>
+          </div>
+        </section>
+
+        <section class="ad-section">
+          <span class="dn-eyebrow">Accounts</span>
+          <div class="ad-6 dn-stagger">
+            <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm"><span class="dn-stat__label">Active customers</span><span class="dn-stat__value" data-metric="active-customers">—</span></div>
+            <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm"><span class="dn-stat__label">Active teams</span><span class="dn-stat__value" data-metric="active-teams">—</span></div>
+            <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm"><span class="dn-stat__label">New this period</span><span class="dn-stat__value" data-metric="new-customers">—</span></div>
+            <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm"><span class="dn-stat__label">Churned</span><span class="dn-stat__value" data-metric="churned-customers">—</span></div>
+            <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm"><span class="dn-stat__label">Customer churn</span><span class="dn-stat__value" data-metric="churn">—</span></div>
+            <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm"><span class="dn-stat__label">At risk</span><span class="dn-stat__value" data-metric="at-risk-customers" data-tone="attention">—</span></div>
+          </div>
+        </section>
+
+        <section class="ad-section">
+          <span class="dn-eyebrow">Fleet and delivery</span>
+          <div class="ad-6 dn-stagger">
+            <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm"><span class="dn-stat__label">Agents working</span><span class="dn-stat__value" data-metric="active-agents">—</span></div>
+            <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm"><span class="dn-stat__label">PRs merged</span><span class="dn-stat__value" data-metric="prs-merged">—</span></div>
+            <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm"><span class="dn-stat__label">Open alerts</span><span class="dn-stat__value" data-metric="open-alerts" data-tone="danger">—</span></div>
+            <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm"><span class="dn-stat__label">Incidents</span><span class="dn-stat__value" data-metric="incidents">—</span></div>
+            <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm"><span class="dn-stat__label">Runtimes · one per team</span><span class="dn-stat__value" data-fleet-metric="instances">—</span></div>
+            <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm"><span class="dn-stat__label">Degraded</span><span class="dn-stat__value" data-fleet-metric="degraded" data-tone="attention">—</span></div>
+          </div>
+        </section>
+
+        <div class="ad-cols">
+          <section class="ad-section">
+            <div class="ad-section__head">
+              <span class="dn-eyebrow">Needs attention</span>
+              <button class="dn-btn dn-btn--ghost dn-btn--sm" type="button" data-view-link="operations">All alerts</button>
+            </div>
+            <div class="dn-card ad-scroll" data-attention-card>
+              <div data-attention-rows></div>
+              <p class="dn-card__body ad-note" data-table-empty="attention">No attention rows have been loaded.</p>
+            </div>
+          </section>
+
+          <section class="ad-section">
+            <span class="dn-eyebrow">Platform probes</span>
+            <div class="dn-card dn-card--pad-sm ad-stack">
+              <div class="ad-probe"><span class="ad-probe__path">/healthz</span><span class="dn-badge" data-probe-status="health"><span class="dn-dot dn-dot--sm"></span>Waiting</span></div>
+              <div class="ad-probe"><span class="ad-probe__path">/readyz</span><span class="dn-badge" data-probe-status="readiness"><span class="dn-dot dn-dot--sm"></span>Waiting</span></div>
+              <div class="ad-probe__foot">Unauthenticated probes. Everything else on this screen required a verified Founder role.</div>
+            </div>
+            <span class="dn-eyebrow">Projection freshness</span>
+            <div class="dn-card dn-card--pad-sm ad-stack" data-freshness>
+              <div class="ad-kv"><span class="ad-kv__k">overview</span><span class="ad-kv__v" data-overview-source>not yet loaded</span></div>
+              <div class="ad-kv"><span class="ad-kv__k">customers</span><span class="ad-kv__v" data-freshness-for="customers">—</span></div>
+              <div class="ad-kv"><span class="ad-kv__k">economics</span><span class="ad-kv__v" data-freshness-for="economics">—</span></div>
+              <div class="ad-kv"><span class="ad-kv__k">fleet</span><span class="ad-kv__v" data-freshness-for="fleet">—</span></div>
+              <div class="ad-kv"><span class="ad-kv__k ad-kv__k--quiet">billing · collected</span><span class="ad-kv__v" data-freshness-for="billing-collected">—</span></div>
+            </div>
+          </section>
+        </div>
       </section>
-    </section>
 
-    <section class="workspace-section" id="economics" aria-labelledby="economics-title">
-      <div class="section-heading"><div><p class="eyebrow">Unit economics</p><h2 id="economics-title">Engineering economics</h2></div><span class="section-state" data-section-state="economics">Waiting</span></div>
-      <div class="split-grid economics-summary">
-        <article class="panel"><span class="panel-kicker">Fully-loaded direct cost</span><strong class="panel-value" data-economics-metric="direct-cost">—</strong><p>Model, compute, storage, network, and attributable tooling.</p></article>
-        <article class="panel"><span class="panel-kicker">Recognized revenue</span><strong class="panel-value" data-economics-metric="revenue">—</strong><p>Revenue recognized in the same reporting period.</p></article>
-        <article class="panel"><span class="panel-kicker">Gross profit</span><strong class="panel-value" data-economics-metric="gross-profit">—</strong><p>Recognized revenue minus direct cost.</p></article>
-        <article class="panel"><span class="panel-kicker">Gross margin</span><strong class="panel-value" data-economics-metric="gross-margin">—</strong><p>Unavailable when revenue is zero or unreconciled.</p></article>
-      </div>
-      <h3 class="table-title">Per-team price and cost ledger</h3>
-      <div class="table-shell"><table><caption class="visually-hidden">Per-team engineering economics</caption><thead><tr><th scope="col">Team</th><th scope="col">Credits consumed</th><th scope="col">Credits remaining</th><th scope="col">Direct cost</th><th scope="col">Revenue</th><th scope="col">Gross profit</th><th scope="col">Margin</th><th scope="col">Model requests</th></tr></thead><tbody data-team-economics-rows></tbody></table><p class="data-table-empty" data-table-empty="team-economics">No team economics rows loaded.</p></div>
-    </section>
+      {%- comment -%} --------------------- CUSTOMERS ---------------------- {%- endcomment -%}
+      <section class="ad-page ad-page--tight" data-view="customers" id="customers" aria-labelledby="customers-title" hidden>
+        <div class="ad-head">
+          <div>
+            <div class="dn-eyebrow">Account operations</div>
+            <h1 class="ad-head__title" id="customers-title">Customers</h1>
+            <p class="ad-lede">Accounts and the teams beneath them — one team per business objective, each its own subscription slot. A row opens its authorized detail projection and an independently paginated reliability history.</p>
+          </div>
+          <span class="dn-badge ad-badge-none" data-section-state="customers">Waiting</span>
+        </div>
 
-    <section class="workspace-section" id="operations" aria-labelledby="operations-title">
-      <div class="section-heading"><div><p class="eyebrow">Runtime signals</p><h2 id="operations-title">Operations</h2></div><span class="section-state" data-section-state="operations">Waiting</span></div>
-      <div class="split-grid">
-        <article class="panel"><span class="panel-kicker">Platform endpoints</span><dl class="detail-list"><div><dt>Liveness</dt><dd><span class="status status--pending" data-probe-status="health"><span aria-hidden="true"></span>Waiting</span></dd></div><div><dt>Readiness</dt><dd><span class="status status--pending" data-probe-status="readiness"><span aria-hidden="true"></span>Waiting</span></dd></div></dl></article>
-        <article class="panel"><span class="panel-kicker">Fleet</span><dl class="detail-list"><div><dt>Runtime instances</dt><dd data-fleet-metric="instances">—</dd></div><div><dt>Ready</dt><dd data-fleet-metric="ready">—</dd></div><div><dt>Degraded</dt><dd data-fleet-metric="degraded">—</dd></div><div><dt>Suspended / failed</dt><dd data-fleet-metric="stopped">—</dd></div><div><dt>Stale heartbeat</dt><dd data-fleet-metric="stale-heartbeat">—</dd></div><div><dt>Backup overdue</dt><dd data-fleet-metric="backup-overdue">—</dd></div><div><dt>Event stream unavailable</dt><dd data-fleet-metric="event-stream-unavailable">—</dd></div><div><dt>Active / blocked / failed agents</dt><dd data-fleet-metric="agent-states">—</dd></div><div><dt>Current sessions</dt><dd data-fleet-metric="sessions">—</dd></div></dl></article>
-      </div>
-      <h3 class="table-title">Team runtimes</h3>
-      <div class="table-shell"><table><caption class="visually-hidden">OpenClaw runtime instances</caption><thead><tr><th scope="col">Team / instance</th><th scope="col">State</th><th scope="col">Runtime health</th><th scope="col">Agents</th><th scope="col">Sessions</th><th scope="col">Heartbeat / tool call</th><th scope="col">Model</th><th scope="col">Workspace</th><th scope="col">Backup / events</th><th scope="col">Versions</th><th scope="col">Projection</th></tr></thead><tbody data-runtime-rows></tbody></table><p class="data-table-empty" data-table-empty="runtimes">No runtime instances loaded.</p></div>
-      <h3 class="table-title">Open alerts</h3>
-      <p class="projection-note" data-alert-coverage>No alert coverage has been loaded.</p>
-      <div class="table-shell"><table><caption class="visually-hidden">Open operations and commercial alerts</caption><thead><tr><th scope="col">Severity</th><th scope="col">Signal</th><th scope="col">Team / customer</th><th scope="col">Safe summary</th><th scope="col">Occurrences</th><th scope="col">Last detected</th><th scope="col">Projection</th></tr></thead><tbody data-alert-rows></tbody></table><p class="data-table-empty" data-table-empty="alerts">No open alerts loaded.</p></div>
-    </section>
+        <div class="ad-row">
+          <div class="dn-seg" role="group" aria-label="Filter customers" data-customer-filter>
+            <button class="dn-seg__item" type="button" data-filter="all" data-active="true">All</button>
+            <button class="dn-seg__item" type="button" data-filter="at-risk">At risk</button>
+            <button class="dn-seg__item" type="button" data-filter="trialing">Trialing</button>
+            <button class="dn-seg__item" type="button" data-filter="churned">Churned</button>
+          </div>
+          <div class="dn-input__wrap ad-badge-none"><input class="dn-input dn-input--sm" type="search" placeholder="Filter by name or organization ID" aria-label="Filter by name or organization ID" data-customer-search></div>
+        </div>
 
-    <section class="workspace-section" id="audit" aria-labelledby="audit-title">
-      <div class="section-heading"><div><p class="eyebrow">Security</p><h2 id="audit-title">Audit trail</h2></div><span class="section-state" data-section-state="audit">Waiting</span></div>
-      <div class="table-shell"><table><caption class="visually-hidden">Administrative audit events</caption><thead><tr><th scope="col">Occurred (UTC)</th><th scope="col">Actor</th><th scope="col">Action</th><th scope="col">Resource</th><th scope="col">Organization</th><th scope="col">Source IP</th><th scope="col">Request ID</th></tr></thead><tbody data-audit-rows></tbody></table><p class="data-table-empty" data-table-empty="audit">No audit events loaded.</p></div>
-    </section>
+        <div class="dn-card ad-scroll">
+          <table class="dn-table dn-table--dense">
+            <caption class="visually-hidden">Authorized customer accounts</caption>
+            <thead><tr><th scope="col">Customer</th><th scope="col">Plan</th><th scope="col">Teams</th><th scope="col">Agents</th><th scope="col">Credits used</th><th scope="col">Direct cost</th><th scope="col">Revenue</th><th scope="col">Margin</th><th scope="col">Reliability</th><th scope="col">Health</th><th scope="col"><span class="visually-hidden">Detail</span></th></tr></thead>
+            <tbody data-customer-rows></tbody>
+          </table>
+          <p class="dn-card__body ad-note" data-table-empty="customers">No authorized customer rows loaded.</p>
+        </div>
 
-    <section class="workspace-section" id="metrics" aria-labelledby="metrics-title">
-      <div class="section-heading"><div><p class="eyebrow">Fleet telemetry</p><h2 id="metrics-title">Metrics</h2></div><span class="section-state" data-section-state="metrics">Waiting</span></div>
-      <p class="section-note">Live series from the per-environment Prometheus workspaces through platform-api&rsquo;s closed PromQL proxy. The proxy takes panel names, never raw PromQL; environments render side by side, and a workspace that does not exist says so. Nothing here is ever invented browser-side.</p>
-      <p class="source-line">sources: the data-planes audit, verified 2026-08-21 · development</p>
+        <section class="dn-card" id="customer-detail" data-customer-detail hidden aria-labelledby="customer-detail-title" tabindex="-1">
+          <div class="dn-card__head">
+            <div>
+              <div class="dn-eyebrow">Authorized account detail</div>
+              <div class="dn-card__title" id="customer-detail-title" data-customer-detail-title>Customer detail</div>
+            </div>
+            <button class="dn-btn dn-btn--ghost dn-btn--sm" type="button" data-customer-detail-close>Close detail</button>
+          </div>
+          <div class="dn-card__body ad-stack--lg">
+            <p class="ad-note" data-customer-detail-state role="status">Choose a customer to request its current projection and daily reliability history.</p>
 
->
+            <div class="ad-detail__stats">
+              <div class="dn-stat dn-stat--sm ad-detail__stat"><span class="dn-stat__label">MRR</span><span class="dn-stat__value" data-customer-detail-field="mrr">—</span></div>
+              <div class="dn-stat dn-stat--sm ad-detail__stat"><span class="dn-stat__label">Gross profit</span><span class="dn-stat__value" data-customer-detail-field="gross-profit">—</span></div>
+              <div class="dn-stat dn-stat--sm ad-detail__stat"><span class="dn-stat__label">PRs merged</span><span class="dn-stat__value" data-customer-detail-field="pull-requests">—</span></div>
+              <div class="dn-stat dn-stat--sm ad-detail__stat"><span class="dn-stat__label">Pending approvals</span><span class="dn-stat__value" data-customer-detail-field="approvals">—</span></div>
+            </div>
 
-      <div class="srail" aria-label="Query surface summary">
-        <div class="srail__cell"><span class="srail__k">Query surface</span><span class="srail__v" data-metrics-rail="series">—</span><span class="srail__m">series · 5 accept service=</span></div>
-        <div class="srail__cell"><span class="srail__k">Reporting</span><span class="srail__v srail__v--reporting" data-metrics-rail="reporting">—</span><span class="srail__m">samples arriving now</span></div>
-        <div class="srail__cell"><span class="srail__k">Pending activation</span><span class="srail__v srail__v--pending" data-metrics-rail="pending">—</span><span class="srail__m">wired · no samples yet</span></div>
-        <div class="srail__cell"><span class="srail__k">Empty by design</span><span class="srail__v srail__v--absent" data-metrics-rail="absent">—</span><span class="srail__m">nothing to fix</span></div>
-      </div>
+            <div class="ad-2">
+              <dl class="dn-meta">
+                <dt class="dn-meta__k">Plan</dt><dd class="dn-meta__v" data-customer-detail-field="plan">—</dd>
+                <dt class="dn-meta__k">Health</dt><dd class="dn-meta__v" data-customer-detail-field="health">—</dd>
+                <dt class="dn-meta__k">Support</dt><dd class="dn-meta__v" data-customer-detail-field="support">—</dd>
+                <dt class="dn-meta__k">Churn risk</dt><dd class="dn-meta__v" data-customer-detail-field="churn">—</dd>
+                <dt class="dn-meta__k">Teams / users / repos</dt><dd class="dn-meta__v" data-customer-detail-field="account-counts">—</dd>
+                <dt class="dn-meta__k">Agents</dt><dd class="dn-meta__v" data-customer-detail-field="agents">—</dd>
+                <dt class="dn-meta__k">Sessions</dt><dd class="dn-meta__v" data-customer-detail-field="sessions">—</dd>
+                <dt class="dn-meta__k">Initiatives</dt><dd class="dn-meta__v" data-customer-detail-field="initiatives">—</dd>
+                <dt class="dn-meta__k">Last activity</dt><dd class="dn-meta__v" data-customer-detail-field="last-activity">—</dd>
+                <dt class="dn-meta__k">Reliability</dt><dd class="dn-meta__v" data-customer-detail-field="reliability">—</dd>
+                <dt class="dn-meta__k">Credits / cost</dt><dd class="dn-meta__v" data-customer-detail-field="economics">—</dd>
+                <dt class="dn-meta__k">Projection</dt><dd class="dn-meta__v" data-customer-detail-field="projection">—</dd>
+              </dl>
 
-      <div class="qbar" data-metrics-query-bar>
-        <div class="qbar__row"><span class="qbar__lbl" id="metrics-series-label">Series</span><div class="qbar__chips" role="group" aria-labelledby="metrics-series-label" data-metrics-series-chips></div></div>
-        <div class="qbar__row"><span class="qbar__lbl" id="metrics-service-label">service=</span><div class="qbar__chips" role="group" aria-labelledby="metrics-service-label" data-metrics-service-chips></div><span class="qbar__note" data-metrics-service-note hidden>the service filter exists on the first five series only</span></div>
-        <div class="qbar__row"><span class="qbar__lbl" id="metrics-window-label">Window</span><div class="qbar__chips qbar__chips--tight" role="group" aria-labelledby="metrics-window-label" data-metrics-window-chips></div><span class="qbar__lbl qbar__lbl--auto" id="metrics-env-label">Env</span><div class="qbar__chips qbar__chips--tight" role="group" aria-labelledby="metrics-env-label" data-metrics-env-chips></div></div>
-        <div class="qbar__q"><code data-metrics-query-echo>Sign in to build a verified metrics request.</code></div>
-        <p class="qbar__note" data-metrics-resolves hidden></p>
-      </div>
+              <div class="ad-stack">
+                <div class="ad-section__head">
+                  <span class="dn-eyebrow">Daily reliability</span>
+                  <span class="ad-section__count ad-row__end" data-customer-reliability-state>Not loaded.</span>
+                </div>
+                <div class="ad-detail__history ad-scroll">
+                  <table class="dn-table dn-table--dense">
+                    <caption class="visually-hidden">Selected customer daily reliability history</caption>
+                    <thead><tr><th scope="col">UTC period</th><th scope="col">Availability</th><th scope="col">Incidents</th><th scope="col">Generated</th></tr></thead>
+                    <tbody data-customer-reliability-rows></tbody>
+                  </table>
+                </div>
+                <p class="ad-note" data-table-empty="customer-reliability">No reliability history loaded.</p>
+                <button class="dn-btn dn-btn--secondary dn-btn--sm ad-detail__more" type="button" data-customer-reliability-more hidden>Load more history</button>
+                <div class="ad-note">A missing availability ratio is shown as unavailable, never as zero. Cursors stay opaque and organization-scoped.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </section>
 
-      <div class="subsection">
-        <div class="subsection-head"><h3>Focused series</h3><span class="subsection-count" data-metrics-focus-name>request_rate</span></div>
-        <div data-metrics-focus></div>
-      </div>
+      {%- comment -%} --------------------- ECONOMICS ---------------------- {%- endcomment -%}
+      <section class="ad-page" data-view="economics" id="economics" aria-labelledby="economics-title" hidden>
+        <div class="ad-head">
+          <div>
+            <div class="dn-eyebrow">Unit economics · <span data-economics-period>reporting period</span></div>
+            <h1 class="ad-head__title" id="economics-title">Engineering economics</h1>
+            <p class="ad-lede">Fully-loaded direct cost against recognized revenue, sliced by any dimension the ledger carries. A slice the ledger cannot produce is not offered here.</p>
+          </div>
+          <span class="dn-badge ad-badge-none" data-section-state="economics">Waiting</span>
+        </div>
 
-      <div class="subsection">
-        <div class="subsection-head"><h3>Service metrics</h3><span class="subsection-count">6 series · service= filter on 5</span></div>
-        <p class="subsection-note">Exported by platform-api, builder and gateway. Service-wide only — there is no http_route label, so nothing here can be broken down per endpoint.</p>
-        <div class="mgrid mgrid--3 metrics-grid" data-metrics-grid></div>
-      </div>
+        <div class="ad-4">
+          <div class="dn-card dn-card--pad-sm dn-stat"><span class="dn-stat__label">Direct cost</span><span class="dn-stat__value" data-economics-metric="direct-cost">—</span><span class="dn-stat__delta">model · compute · storage · tooling</span></div>
+          <div class="dn-card dn-card--pad-sm dn-stat"><span class="dn-stat__label">Recognized revenue</span><span class="dn-stat__value" data-economics-metric="revenue">—</span><span class="dn-stat__delta">same reporting period</span></div>
+          <div class="dn-card dn-card--pad-sm dn-stat"><span class="dn-stat__label">Gross profit</span><span class="dn-stat__value" data-economics-metric="gross-profit">—</span></div>
+          <div class="dn-card dn-card--pad-sm dn-stat"><span class="dn-stat__label">Gross margin</span><span class="dn-stat__value" data-economics-metric="gross-margin">—</span></div>
+        </div>
 
-      <div class="subsection">
-        <div class="subsection-head"><h3>Crew runtime</h3><span class="subsection-count">4 series</span></div>
-        <p class="subsection-note">Emitted by crew pods, not by services. Every panel below reports exactly what the workspace returned — an empty panel says which kind of empty it is.</p>
-        <div class="mgrid mgrid--2" data-metrics-grid-crew></div>
-      </div>
-      <p class="qbar__note" data-metrics-grid-basis>Panels load after operator verification.</p>
-    </section>
+        <div class="ad-cols">
+          <div class="dn-card dn-card--pad-sm ad-stack">
+            <div class="ad-section__head">
+              <span class="dn-eyebrow">Direct cost against revenue</span>
+              <span class="ad-section__count ad-row__end">one point per slice</span>
+            </div>
+            <div data-economics-scatter></div>
+            <div class="ad-note" data-economics-scatter-note>A point below the diagonal is a slice whose direct cost exceeds the revenue attributed to it. Averaged into the fleet it disappears; here it is the only point on the wrong side.</div>
+          </div>
 
+          <div class="dn-card dn-card--pad-sm ad-stack">
+            <span class="dn-eyebrow">Direct cost composition</span>
+            <div data-economics-composition></div>
+          </div>
+        </div>
 
-    <section class="workspace-section" id="billing" aria-labelledby="billing-title">
-      <div class="section-heading"><div><p class="eyebrow">Revenue operations</p><h2 id="billing-title">Billing and reconciliation</h2></div><span class="section-state" data-section-state="billing">Waiting</span></div>
-      <div class="metric-grid billing-metrics">
-        <article class="metric-card"><span class="metric-kicker">Active subscriptions</span><strong class="metric-value" data-billing-metric="active">—</strong></article>
-        <article class="metric-card"><span class="metric-kicker">Trials</span><strong class="metric-value" data-billing-metric="trialing">—</strong></article>
-        <article class="metric-card"><span class="metric-kicker">Collected revenue</span><strong class="metric-value" data-billing-metric="collected">—</strong><p>Cash collected in the reporting period.</p></article>
-        <article class="metric-card"><span class="metric-kicker">Upgrades</span><strong class="metric-value" data-billing-metric="upgrades">—</strong></article>
-        <article class="metric-card"><span class="metric-kicker">Downgrades</span><strong class="metric-value" data-billing-metric="downgrades">—</strong></article>
-        <article class="metric-card"><span class="metric-kicker">Cancellations</span><strong class="metric-value" data-billing-metric="cancellations">—</strong></article>
-        <article class="metric-card"><span class="metric-kicker">Failed payments</span><strong class="metric-value" data-billing-metric="failed-payments">—</strong></article>
-        <article class="metric-card"><span class="metric-kicker">Past-due invoices</span><strong class="metric-value" data-billing-metric="past-due">—</strong></article>
-        <article class="metric-card"><span class="metric-kicker">Over included usage</span><strong class="metric-value" data-billing-metric="over-included">—</strong></article>
-        <article class="metric-card"><span class="metric-kicker">Customer credit balance</span><strong class="metric-value" data-billing-metric="credit-balance">—</strong></article>
-        <article class="metric-card"><span class="metric-kicker">Renewals in 30 days</span><strong class="metric-value" data-billing-metric="renewals">—</strong></article>
-        <article class="metric-card"><span class="metric-kicker">Open mismatches</span><strong class="metric-value" data-billing-metric="mismatches">—</strong></article>
-        <article class="metric-card"><span class="metric-kicker">Paid, no team</span><strong class="metric-value" data-billing-metric="paid-no-team">—</strong></article>
-        <article class="metric-card"><span class="metric-kicker">Team, invalid subscription</span><strong class="metric-value" data-billing-metric="team-no-subscription">—</strong></article>
-      </div>
-      <h3 class="table-title">Customer billing accounts</h3>
-      <div class="table-shell"><table><caption class="visually-hidden">Customer subscription and credit accounts</caption><thead><tr><th scope="col">Customer</th><th scope="col">Plan / status</th><th scope="col">Payment</th><th scope="col">Reconciliation</th><th scope="col">MRR</th><th scope="col">Collected</th><th scope="col">Credits balance / used</th><th scope="col">Overage credits</th><th scope="col">Overage premium</th><th scope="col">Provisioned / entitled</th><th scope="col">Renewal</th><th scope="col">Projection</th></tr></thead><tbody data-billing-account-rows></tbody></table><p class="data-table-empty" data-table-empty="billing-accounts">No billing accounts loaded.</p></div>
-      <h3 class="table-title">Team execution capacity</h3>
-      <div class="table-shell"><table><caption class="visually-hidden">Current paid-period team credit controls</caption><thead><tr><th scope="col">Customer / team</th><th scope="col">Ledger available</th><th scope="col">Open reservations</th><th scope="col">Period consumed</th><th scope="col">Hard limit</th><th scope="col">Budget remaining</th><th scope="col">Spendable now</th><th scope="col">Execution</th><th scope="col">Paid period</th><th scope="col">Projection</th></tr></thead><tbody data-team-credit-control-rows></tbody></table><p class="data-table-empty" data-table-empty="team-credit-controls">No current team credit controls loaded.</p></div>
-      <h3 class="table-title">Reconciliation issues</h3>
-      <div class="table-shell"><table><caption class="visually-hidden">Billing reconciliation issues</caption><thead><tr><th scope="col">Kind</th><th scope="col">Customer / team</th><th scope="col">Safe summary</th><th scope="col">State</th><th scope="col">Detected</th></tr></thead><tbody data-reconciliation-rows></tbody></table><p class="data-table-empty" data-table-empty="reconciliation">No open reconciliation issues loaded.</p></div>
-      <div class="gap-panel control-gap"><div><span class="gap-index" aria-hidden="true">!</span><h3>Privileged controls stay unavailable until they are auditable</h3></div><p>Suspend, resume, delete, and reconciliation mutations need explicit confirmation, idempotency, server-side founder authorization, and immutable audit records. This portal will not route around that boundary with customer-scoped methods.</p></div>
-    </section>
+        <div class="ad-row">
+          <span class="dn-eyebrow">Slice by</span>
+          <div class="dn-seg" role="group" aria-label="Economics slice dimension" data-economics-dimension>
+            <button class="dn-seg__item" type="button" data-dimension="team" data-active="true">Team</button>
+            <button class="dn-seg__item" type="button" data-dimension="organization">Customer</button>
+            <button class="dn-seg__item" type="button" data-dimension="agent_role">Role</button>
+            <button class="dn-seg__item" type="button" data-dimension="model">Model</button>
+            <button class="dn-seg__item" type="button" data-dimension="initiative">Initiative</button>
+          </div>
+        </div>
+
+        <div class="dn-card ad-scroll">
+          <table class="dn-table dn-table--dense">
+            <caption class="visually-hidden">Engineering economics by slice</caption>
+            <thead><tr><th scope="col" data-slice-heading>Team</th><th scope="col">Credits consumed</th><th scope="col">Credits remaining</th><th scope="col">Direct cost</th><th scope="col">Revenue</th><th scope="col">Gross profit</th><th scope="col">Margin</th><th scope="col">Model requests</th></tr></thead>
+            <tbody data-team-economics-rows></tbody>
+          </table>
+          <p class="dn-card__body ad-note" data-table-empty="team-economics">No economics slices loaded.</p>
+        </div>
+
+        <div class="dn-callout dn-callout--attention" data-economics-callout hidden>
+          <span class="dn-callout__icon"><svg class="dn-icon" width="16" height="16" aria-hidden="true"><use href="#i-warn"/></svg></span>
+          <div class="ad-rail__who">
+            <div class="dn-callout__title" data-economics-callout-title></div>
+            <div class="dn-callout__body" data-economics-callout-body></div>
+          </div>
+        </div>
+      </section>
+
+      {%- comment -%} -------------------- OPERATIONS ---------------------- {%- endcomment -%}
+      <section class="ad-page" data-view="operations" id="operations" aria-labelledby="operations-title" hidden>
+        <div class="ad-head">
+          <div>
+            <div class="dn-eyebrow">Runtime signals</div>
+            <h1 class="ad-head__title" id="operations-title">Operations</h1>
+          </div>
+          <span class="dn-badge ad-badge-none" data-section-state="operations">Waiting</span>
+        </div>
+
+        <div class="ad-6">
+          <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm"><span class="dn-stat__label">Instances</span><span class="dn-stat__value" data-fleet-metric="instances">—</span></div>
+          <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm"><span class="dn-stat__label">Ready</span><span class="dn-stat__value" data-fleet-metric="ready" data-tone="success">—</span></div>
+          <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm"><span class="dn-stat__label">Degraded</span><span class="dn-stat__value" data-fleet-metric="degraded" data-tone="attention">—</span></div>
+          <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm"><span class="dn-stat__label">Failed</span><span class="dn-stat__value" data-fleet-metric="stopped" data-tone="danger">—</span></div>
+          <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm"><span class="dn-stat__label">Stale heartbeat</span><span class="dn-stat__value" data-fleet-metric="stale-heartbeat">—</span></div>
+          <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm"><span class="dn-stat__label">Backup overdue</span><span class="dn-stat__value" data-fleet-metric="backup-overdue">—</span></div>
+        </div>
+
+        <section class="ad-section">
+          <span class="dn-eyebrow">Team runtimes</span>
+          <div class="dn-card ad-scroll">
+            <table class="dn-table dn-table--dense">
+              <caption class="visually-hidden">Team runtime instances</caption>
+              <thead><tr><th scope="col">Team / instance</th><th scope="col">State</th><th scope="col">Agents</th><th scope="col">Sessions</th><th scope="col">Heartbeat</th><th scope="col">Last tool call</th><th scope="col">Model</th><th scope="col">Workspace</th><th scope="col">Backup</th><th scope="col">Version</th></tr></thead>
+              <tbody data-runtime-rows></tbody>
+            </table>
+            <p class="dn-card__body ad-note" data-table-empty="runtimes">No runtime instances loaded.</p>
+          </div>
+        </section>
+
+        <section class="ad-section">
+          <div class="ad-section__head">
+            <span class="dn-eyebrow">Open alerts</span>
+            <span class="ad-section__count" data-alert-coverage>No alert coverage has been loaded.</span>
+          </div>
+          <div class="dn-card ad-scroll">
+            <table class="dn-table dn-table--dense">
+              <caption class="visually-hidden">Open operations and commercial alerts</caption>
+              <thead><tr><th scope="col">Severity</th><th scope="col">Signal</th><th scope="col">Team / customer</th><th scope="col">Summary</th><th scope="col">Occurrences</th><th scope="col">Last detected</th></tr></thead>
+              <tbody data-alert-rows></tbody>
+            </table>
+            <p class="dn-card__body ad-note" data-table-empty="alerts">No open alerts loaded.</p>
+          </div>
+        </section>
+      </section>
+
+      {%- comment -%} ---------------------- BILLING ----------------------- {%- endcomment -%}
+      <section class="ad-page" data-view="billing" id="billing" aria-labelledby="billing-title" hidden>
+        <div class="ad-head">
+          <div>
+            <div class="dn-eyebrow">Revenue operations</div>
+            <h1 class="ad-head__title" id="billing-title">Billing and reconciliation</h1>
+          </div>
+          <span class="dn-badge ad-badge-none" data-section-state="billing">Waiting</span>
+        </div>
+
+        <div class="ad-6">
+          <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm"><span class="dn-stat__label">Active subs</span><span class="dn-stat__value" data-billing-metric="active">—</span></div>
+          <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm"><span class="dn-stat__label">Trials</span><span class="dn-stat__value" data-billing-metric="trialing">—</span></div>
+          <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm"><span class="dn-stat__label">Upgrades</span><span class="dn-stat__value" data-billing-metric="upgrades">—</span></div>
+          <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm"><span class="dn-stat__label">Downgrades</span><span class="dn-stat__value" data-billing-metric="downgrades">—</span></div>
+          <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm"><span class="dn-stat__label">Failed payments</span><span class="dn-stat__value" data-billing-metric="failed-payments" data-tone="danger">—</span></div>
+          <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm"><span class="dn-stat__label">Renewals in 30d</span><span class="dn-stat__value" data-billing-metric="renewals">—</span></div>
+        </div>
+
+        <div class="ad-cols ad-cols--narrow">
+          <section class="ad-section">
+            <span class="dn-eyebrow">Team execution capacity</span>
+            <div class="dn-card ad-scroll">
+              <table class="dn-table dn-table--dense">
+                <caption class="visually-hidden">Current paid-period team credit controls</caption>
+                <thead><tr><th scope="col">Customer / team</th><th scope="col">Ledger available</th><th scope="col">Open reservations</th><th scope="col">Period consumed</th><th scope="col">Hard limit</th><th scope="col">Spendable now</th><th scope="col">Execution</th></tr></thead>
+                <tbody data-team-credit-control-rows></tbody>
+              </table>
+              <p class="dn-card__body ad-note" data-table-empty="team-credit-controls">No current team credit controls loaded.</p>
+            </div>
+
+            <span class="dn-eyebrow">Customer billing accounts</span>
+            <div class="dn-card ad-scroll">
+              <table class="dn-table dn-table--dense">
+                <caption class="visually-hidden">Customer subscription and credit accounts</caption>
+                <thead><tr><th scope="col">Customer</th><th scope="col">Plan / status</th><th scope="col">Payment</th><th scope="col">Reconciliation</th><th scope="col">MRR</th><th scope="col">Collected</th><th scope="col">Credits balance / used</th><th scope="col">Overage credits</th><th scope="col">Overage premium</th><th scope="col">Renewal</th></tr></thead>
+                <tbody data-billing-account-rows></tbody>
+              </table>
+              <p class="dn-card__body ad-note" data-table-empty="billing-accounts">No billing accounts loaded.</p>
+            </div>
+
+            <span class="dn-eyebrow">Reconciliation issues</span>
+            <div class="dn-card ad-scroll">
+              <table class="dn-table dn-table--dense">
+                <caption class="visually-hidden">Billing reconciliation issues</caption>
+                <thead><tr><th scope="col">Kind</th><th scope="col">Customer / team</th><th scope="col">Summary</th><th scope="col">State</th><th scope="col">Detected</th></tr></thead>
+                <tbody data-reconciliation-rows></tbody>
+              </table>
+              <p class="dn-card__body ad-note" data-table-empty="reconciliation">No open reconciliation issues loaded.</p>
+            </div>
+          </section>
+
+          <section class="ad-section">
+            <div class="dn-card dn-card--pad-sm dn-stat"><span class="dn-stat__label">Customer credit balance</span><span class="dn-stat__value" data-billing-metric="credit-balance">—</span><span class="dn-stat__delta" data-billing-metric-delta="credit-balance"></span></div>
+            <div class="dn-card dn-card--pad-sm dn-stat"><span class="dn-stat__label">Collected revenue</span><span class="dn-stat__value" data-billing-metric="collected">—</span><span class="dn-stat__delta" data-billing-metric-delta="collected"></span></div>
+            <div class="dn-card dn-card--pad-sm ad-stack">
+              <span class="dn-eyebrow">Open mismatches</span>
+              <div class="ad-mismatch">
+                <span class="ad-mismatch__n" data-billing-metric="mismatches">—</span>
+                <span class="ad-mismatch__list" data-mismatch-breakdown></span>
+              </div>
+            </div>
+            <div class="ad-guard">
+              <div class="ad-guard__title">Privileged controls stay unavailable until they are auditable</div>
+              <div class="ad-guard__body">Suspend, resume, delete and reconciliation mutations need explicit confirmation, idempotency, server-side founder authorization and immutable audit records. This portal will not route around that boundary with customer-scoped methods.</div>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      {%- comment -%} ---------------------- METRICS ----------------------- {%- endcomment -%}
+      <section class="ad-page" data-view="metrics" id="metrics" aria-labelledby="metrics-title" hidden>
+        <div class="ad-head">
+          <div>
+            <div class="dn-eyebrow">Fleet telemetry</div>
+            <h1 class="ad-head__title" id="metrics-title">Metrics</h1>
+            <p class="ad-lede">Ten panel names, a window of 24 hours or less and a step of at least 30 seconds. The proxy takes panel names, not queries — a panel whose series does not exist says which of the four kinds of empty it is.</p>
+          </div>
+          <span class="dn-badge ad-badge-none" data-section-state="metrics">Waiting</span>
+        </div>
+
+        <div class="ad-row" data-metrics-query-bar>
+          <div class="dn-seg" role="group" aria-label="Environment" data-metrics-env-chips></div>
+          <div class="dn-seg" role="group" aria-label="Window" data-metrics-window-chips></div>
+          <span class="ad-section__count ad-row__end" data-metrics-step-note></span>
+        </div>
+
+        <div class="ad-row">
+          <span class="dn-eyebrow">Series</span>
+          <div class="dn-seg" role="group" aria-label="Series" data-metrics-series-chips></div>
+        </div>
+
+        <div class="ad-row">
+          <span class="dn-eyebrow">service=</span>
+          <div class="dn-seg" role="group" aria-label="Service filter" data-metrics-service-chips></div>
+          <span class="ad-section__count" data-metrics-service-note hidden>the service filter exists on the first five series only</span>
+        </div>
+
+        <div class="dn-card dn-card--pad-sm"><code class="ad-mono ad-mono--sm" data-metrics-query-echo>Sign in to build a verified metrics request.</code></div>
+
+        <div class="ad-mgrid" data-metrics-grid></div>
+        <p class="ad-note" data-metrics-grid-basis>Panels load after operator verification.</p>
+
+        <div class="dn-callout">
+          <span class="dn-callout__icon"><svg class="dn-icon" width="16" height="16" aria-hidden="true"><use href="#i-info"/></svg></span>
+          <div class="ad-rail__who">
+            <div class="dn-callout__title">Why some panels are empty</div>
+            <div class="dn-callout__body">The crew runtime series appear only after a crew re-provision — a generation bump per crew is the activation step. Target health is empty because the pipeline pushes and there is no scrape target. Neither is a failed load, and neither is fixed by retrying.</div>
+          </div>
+        </div>
+      </section>
+
+      {%- comment -%} ----------------------- AUDIT ------------------------ {%- endcomment -%}
+      <section class="ad-page ad-page--tight" data-view="audit" id="audit" aria-labelledby="audit-title" hidden>
+        <div class="ad-head">
+          <div>
+            <div class="dn-eyebrow">Security</div>
+            <h1 class="ad-head__title" id="audit-title">Audit trail</h1>
+            <p class="ad-lede">Every administrative read and decision, with the operator, the resource and the request ID that produced it. Records are immutable and are never filtered by the browser.</p>
+          </div>
+          <span class="dn-badge ad-badge-none" data-section-state="audit">Waiting</span>
+        </div>
+
+        <div class="ad-row">
+          <div class="dn-seg" role="group" aria-label="Filter audit events" data-audit-filter>
+            <button class="dn-seg__item" type="button" data-audit-action="" data-active="true">All</button>
+            <button class="dn-seg__item" type="button" data-audit-action="admin.rpc.read">Reads</button>
+            <button class="dn-seg__item" type="button" data-audit-action="admin.decision">Decisions</button>
+            <button class="dn-seg__item" type="button" data-audit-action="admin.session">Sign-ins</button>
+          </div>
+          <div class="dn-input__wrap ad-badge-none"><input class="dn-input dn-input--sm dn-input--mono" type="search" placeholder="request id" aria-label="Filter by request id" data-audit-request-id></div>
+        </div>
+
+        <div class="dn-card ad-scroll">
+          <table class="dn-table dn-table--dense">
+            <caption class="visually-hidden">Administrative audit events</caption>
+            <thead><tr><th scope="col">Occurred (UTC)</th><th scope="col">Actor</th><th scope="col">Action</th><th scope="col">Resource</th><th scope="col">Organization</th><th scope="col">Source IP</th><th scope="col">Request ID</th></tr></thead>
+            <tbody data-audit-rows></tbody>
+          </table>
+          <p class="dn-card__body ad-note" data-table-empty="audit">No audit events loaded.</p>
+        </div>
+
+        <div class="dn-callout dn-callout--attention">
+          <span class="dn-callout__icon"><svg class="dn-icon" width="16" height="16" aria-hidden="true"><use href="#i-warn"/></svg></span>
+          <div class="ad-rail__who">
+            <div class="dn-callout__title">This list is read-only until mutations are auditable</div>
+            <div class="dn-callout__body">Privileged mutations with explicit confirmation, idempotency and founder authorization are the remaining contract gap. Until they land, this portal reads and does not write.</div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <nav class="dn-tabbar" aria-label="Admin navigation" data-view-tabbar>
+      <button class="dn-tabbar__item" type="button" data-view-link="overview" aria-current="page"><span class="dn-tabbar__glyph"><svg class="dn-icon" width="17" height="17" aria-hidden="true"><use href="#i-dashboard"/></svg></span><span class="dn-tabbar__label">Overview</span></button>
+      <button class="dn-tabbar__item" type="button" data-view-link="customers"><span class="dn-tabbar__glyph"><svg class="dn-icon" width="17" height="17" aria-hidden="true"><use href="#i-users"/></svg></span><span class="dn-tabbar__label">Customers</span></button>
+      <button class="dn-tabbar__item" type="button" data-view-link="economics"><span class="dn-tabbar__glyph"><svg class="dn-icon" width="17" height="17" aria-hidden="true"><use href="#i-gauge"/></svg></span><span class="dn-tabbar__label">Economics</span></button>
+      <button class="dn-tabbar__item" type="button" data-view-link="operations"><span class="dn-tabbar__glyph"><svg class="dn-icon" width="17" height="17" aria-hidden="true"><use href="#i-server"/></svg><span class="dn-tabbar__badge" data-open-alert-count hidden></span></span><span class="dn-tabbar__label">Operations</span></button>
+      <button class="dn-tabbar__item" type="button" data-view-link="billing"><span class="dn-tabbar__glyph"><svg class="dn-icon" width="17" height="17" aria-hidden="true"><use href="#i-card"/></svg></span><span class="dn-tabbar__label">Billing</span></button>
+    </nav>
   </div>
 </div>

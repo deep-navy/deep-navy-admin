@@ -5,18 +5,63 @@ The browser uses Amazon Cognito authorization code with PKCE and calls the same
 ConnectRPC platform API as the customer application. The repository contains no
 secret and the browser is never treated as an authorization boundary.
 
-The console is built on the deep.navy design system. Its token layer lives in
-`assets/css/tokens/` (raw palette, semantic light/dark aliases, crew roles,
-motion) with `assets/css/motion.css` as the motion utility layer and
-`assets/css/admin.css` as the app layer. The chrome is achromatic in both
-themes — colour appears only where it carries meaning (lumen = live, kelp =
-success, brass = waiting on a human, coral = failed) — evidence is set in
-JetBrains Mono, headings in Bricolage Grotesque, voice in Instrument Sans (all
-three self-hosted under `font-src 'self'`; see `assets/fonts/FONTS-LICENSE.md`),
-and the layout breaks at exactly 1200/900/600. Both themes ship from one build:
-`:root` is light, `data-theme="dark"` is dark, and the OS preference decides
-when no explicit choice is present. The design contract is enforced by
-`test/admin_app_security_test.cjs`.
+The console is built on the deep.navy design system, which is **vendored** at
+`assets/css/ds/` (18 files, entry point `assets/css/ds.css`) rather than
+re-authored here. Those files are the system's own bytes and must never be
+hand-edited: `scripts/check_vendored_design_system.mjs` hashes the tree against
+`assets/css/ds.MANIFEST.sha256` and fails the build if one of them drifts. To
+take a new version, copy the tree in and regenerate the manifest with
+`REWRITE_DS_MANIFEST=1 node scripts/check_vendored_design_system.mjs`.
+
+The four stylesheets load in this order, because each depends on the
+one before it — and test/site_test.rb asserts that order in the built HTML:
+
+| Layer | What it is |
+| --- | --- |
+| `assets/css/ds.css` | the vendored system, minus the two modules this CSP cannot reach (its CDN font import and its CDN icon module) |
+| `assets/css/type.css` | the three faces, self-hosted, because `font-src 'self'` |
+| `assets/css/theme.css` | the OS-preference default the system leaves to the site, plus the dark-mode chroma boost |
+| `assets/css/admin.css` | the application layer: shell geometry, the mark, the icon sprite's stroke, state utilities |
+
+The chrome is achromatic in both themes — colour appears only where it carries
+meaning (lumen = live, kelp = success, brass = waiting on a human, coral =
+failed) — evidence is set in JetBrains Mono, headings in Bricolage Grotesque,
+voice in Instrument Sans (all three self-hosted under `font-src 'self'`; see
+`assets/fonts/FONTS-LICENSE.md`), and the app layer breaks at exactly
+1200/900/600. Both themes ship from one build: `:root` is light,
+`data-theme="dark"` is dark, and the OS preference decides when no explicit
+choice is present — that third state is why `theme.css` mirrors the system's
+dark aliases under `:root:not([data-theme="light"])`.
+
+Two CSP consequences shape every screen. `style-src 'self'` refuses inline style
+ATTRIBUTES as well as `<style>` blocks, so there is not one `style="..."` in the
+markup and every visual decision is a class. `script-src 'self'` with no hash
+allowance — and `test/site_test.rb` forbidding inline script outright — means
+the two pre-paint scripts (`callback-scrubber.js`, `theme.js`) are same-origin
+files loaded without `defer`, not the usual inline snippet.
+
+The design contract is enforced by `test/admin_app_security_test.cjs` and the
+console's structure by `test/admin_console_structure_test.cjs`.
+
+## Views
+
+Seven surfaces behind one rail, registered in `VIEWS` in `assets/js/admin.js`
+and mirrored by `[data-view]` sections in `_includes/admin-console.html`:
+overview, customers, economics, operations, billing, metrics, audit. The rail
+carries all seven; the bottom tab bar carries five. Both are mounted and the
+breakpoint picks one, so no viewport gets two navs or none.
+
+## The honesty contract
+
+The admin API marks fields it cannot vouch for by name on
+`projection_status.unavailable_fields`. Those fields still arrive as protobuf
+scalar zeros, so a named field never renders its value: it renders the literal
+word `unavailable`, in tertiary ink, through `projectionValue` →
+`setValue` → `unavailableNode`. Never a zero, which is a claim; never a dash,
+which in a numeric column reads as a measurement. Several fields are
+permanently unavailable today by construction — production incidents, most
+runtime-instance telemetry, upgrades and downgrades — and the screens are
+expected to be calm about them.
 
 ## Implemented launch surface
 

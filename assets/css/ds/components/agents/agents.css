@@ -1,0 +1,93 @@
+/* the crew: agent identity, objectives and work items */
+.dn-agent{position:relative;display:inline-flex;flex:none}
+.dn-agent__face{display:grid;place-items:center;width:36px;height:36px;border-radius:var(--radius-md);border:var(--hairline) solid var(--dn-role,var(--border-default));background:var(--dn-role-soft,var(--surface-sunken));color:var(--dn-role,var(--text-secondary));font:var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono);letter-spacing:var(--track-wide);overflow:hidden;transition:var(--transition-control)}
+.dn-agent__face img{width:100%;height:100%;object-fit:cover}
+.dn-agent--xs .dn-agent__face{width:22px;height:22px;border-radius:var(--radius-xs);font-size:9px}
+.dn-agent--sm .dn-agent__face{width:28px;height:28px;border-radius:var(--radius-sm);font-size:10px}
+.dn-agent--lg .dn-agent__face{width:48px;height:48px;border-radius:var(--radius-lg);font-size:var(--fs-sm)}
+.dn-agent--xl .dn-agent__face{width:72px;height:72px;border-radius:var(--radius-xl);font-size:var(--fs-lg)}
+.dn-agent__status{position:absolute;right:-3px;bottom:-3px;display:grid;place-items:center;padding:2px;border-radius:var(--radius-pill);background:var(--surface-card)}
+.dn-agent__ring{position:absolute;inset:-4px;border-radius:calc(var(--radius-md) + 4px);border:var(--hairline) solid var(--dn-role,var(--status-live-dot));opacity:.35;animation:dn-breathe var(--dur-ambient) var(--ease-in-out) infinite;pointer-events:none}
+.dn-agent__face{transition:transform var(--dur-base) var(--ease-arrive)}
+.dn-agent--lg .dn-agent__ring{border-radius:calc(var(--radius-lg) + 4px)}
+.dn-agent--xl .dn-agent__ring{border-radius:calc(var(--radius-xl) + 4px)}
+
+.dn-agentcard{position:relative;display:flex;flex-direction:column;gap:var(--space-3);padding:var(--space-4);background:var(--surface-card);border:var(--hairline) solid var(--border-subtle);border-radius:var(--radius-lg);box-shadow:var(--shadow-xs);transition:box-shadow var(--dur-base) var(--ease-standard),transform var(--dur-base) var(--ease-out);overflow:hidden}
+/* No coloured left edge. Role tint is carried by the monogram plate and the task glyph,
+   where it identifies the agent — a 2px garnish on a rounded container is decoration, and
+   it is on this system's own exclusion list. */
+.dn-agentcard--interactive{cursor:pointer}
+.dn-agentcard__task .dn-icon{transition:transform var(--dur-base) var(--ease-out)}
+.dn-agentcard__top{display:flex;align-items:flex-start;gap:var(--space-3)}
+.dn-agentcard__id{flex:1;min-width:0}
+.dn-agentcard__name{font:var(--type-h4);letter-spacing:var(--track-heading);color:var(--text-primary);display:flex;align-items:center;gap:var(--space-15);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* The discipline line, not the name repeated in caps. Ink rather than the role hue: the
+   monogram beside it already carries the tint, and two role-coloured elements on one card
+   spend the signal twice. */
+.dn-agentcard__role{margin-top:3px;font:var(--fw-regular) var(--fs-micro)/1.4 var(--font-mono);color:var(--text-tertiary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dn-agentcard__task{display:flex;align-items:flex-start;gap:var(--space-2);padding:var(--space-25);border-radius:var(--radius-sm);background:var(--surface-inset);border:var(--hairline) solid var(--border-subtle);font:var(--type-body-sm);color:var(--text-secondary);min-height:52px}
+.dn-agentcard__task b{color:var(--text-primary);font-weight:var(--fw-medium)}
+.dn-agentcard__foot{display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);font:var(--fw-regular) var(--fs-micro)/1 var(--font-mono);color:var(--text-tertiary)}
+
+.dn-obj{display:flex;gap:var(--space-3);padding:var(--space-4);border:var(--hairline) solid var(--border-subtle);border-radius:var(--radius-md);background:var(--surface-card);transition:var(--transition-control)}
+.dn-obj--met{border-color:var(--status-success-border);background:var(--status-success-bg)}
+.dn-obj--blocked{border-color:var(--status-danger-border)}
+.dn-obj__check{display:grid;place-items:center;flex:none;width:20px;height:20px;margin-top:1px;border-radius:var(--radius-xs);border:var(--hairline) solid var(--border-strong);color:var(--text-tertiary);background:var(--surface-card)}
+/* The tick is --surface-page so it opposes the fill in both themes: white on the darker
+   light-theme kelp, black on the lighter dark-theme kelp. A fixed white tick was 2.3:1 in dark. */
+.dn-obj--met .dn-obj__check{background:var(--status-success-dot);border-color:var(--status-success-dot);color:var(--surface-page)}
+.dn-obj--running .dn-obj__check{border-color:var(--status-live-dot);color:var(--status-live-dot)}
+.dn-obj--running .dn-obj__check .dn-icon{animation:dn-breathe var(--dur-loop) var(--ease-in-out) infinite}
+.dn-obj--met .dn-obj__check .dn-icon{animation:dn-tick var(--dur-slow) var(--ease-arrive) both}
+.dn-obj--blocked .dn-obj__check .dn-icon{animation:dn-shake var(--dur-slower) var(--ease-in-out) both}
+.dn-obj{transition:transform var(--dur-base) var(--ease-out)}
+.dn-obj--blocked .dn-obj__check{border-color:var(--status-danger-dot);color:var(--status-danger-fg)}
+.dn-obj__main{flex:1;min-width:0}
+.dn-obj__title{font:var(--type-ui);color:var(--text-primary);display:flex;align-items:center;gap:var(--space-2);flex-wrap:wrap}
+.dn-obj__measure{margin-top:var(--space-1);font:var(--fw-regular) var(--fs-2xs)/1.5 var(--font-mono);color:var(--text-secondary)}
+.dn-obj__measure b{color:var(--text-primary);font-weight:var(--fw-medium)}
+.dn-obj__bar{margin-top:var(--space-25);display:flex;align-items:center;gap:var(--space-25)}
+.dn-obj__pct{font:var(--fw-medium) var(--fs-micro)/1 var(--font-mono);color:var(--text-secondary);font-variant-numeric:tabular-nums;min-width:34px;text-align:right}
+
+.dn-work{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-25) var(--space-3);border-bottom:var(--hairline) solid var(--border-subtle);cursor:pointer;text-decoration:none}
+.dn-work:last-child{border-bottom:0}
+.dn-work__glyph{transition:transform var(--dur-base) var(--ease-arrive)}
+.dn-work__title{transition:transform var(--dur-base) var(--ease-out)}
+.dn-work__pip{transition:transform var(--dur-base) var(--ease-arrive)}
+.dn-work__pip--on{transform:scale(1.15)}
+.dn-work__glyph{flex:none;display:grid;place-items:center;width:20px;color:var(--text-tertiary)}
+.dn-work--open .dn-work__glyph{color:var(--status-success-fg)}
+.dn-work--review .dn-work__glyph{color:var(--status-attention-fg)}
+.dn-work--merged .dn-work__glyph{color:var(--role-eng)}
+.dn-work--closed .dn-work__glyph{color:var(--text-tertiary)}
+.dn-work__main{flex:1;min-width:0}
+.dn-work__title{font:var(--type-ui);color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dn-work__sub{margin-top:2px;display:flex;align-items:center;gap:var(--space-2);font:var(--fw-regular) var(--fs-micro)/1.3 var(--font-mono);color:var(--text-tertiary);flex-wrap:wrap}
+.dn-work__id{color:var(--text-tertiary);font-family:var(--font-mono);font-size:var(--fs-micro)}
+.dn-work__right{display:flex;align-items:center;gap:var(--space-2);flex:none}
+.dn-work__approvals{display:flex;align-items:center;gap:3px}
+.dn-work__pip{width:5px;height:5px;border-radius:50%;background:var(--border-strong)}
+.dn-work__pip--on{background:var(--status-success-dot)}
+
+.dn-event{display:grid;grid-template-columns:auto 1fr auto;gap:var(--space-25);align-items:start;padding:var(--space-2) var(--space-25);border-radius:var(--radius-sm)}
+.dn-event__detail{border-left-color:var(--dn-role,var(--border-subtle))}
+.dn-event .dn-agent__face{transition:transform var(--dur-base) var(--ease-arrive)}
+.dn-event__text{font:var(--type-body-sm);color:var(--text-secondary);min-width:0}
+.dn-event__actor{color:var(--dn-role,var(--text-primary));font-weight:var(--fw-medium)}
+.dn-event__target{color:var(--text-primary);font-family:var(--font-mono);font-size:var(--fs-2xs)}
+.dn-event__time{font:var(--fw-regular) var(--fs-micro)/1.6 var(--font-mono);color:var(--text-tertiary);white-space:nowrap;font-variant-numeric:tabular-nums}
+.dn-event__detail{margin-top:var(--space-15);padding:var(--space-2) var(--space-25);border-left:2px solid var(--border-subtle);font:var(--fw-regular) var(--fs-2xs)/1.55 var(--font-mono);color:var(--text-tertiary);white-space:pre-wrap}
+
+/* Hover is a pointer capability, not a device: gating it keeps a tap on iOS and iPad
+   from leaving hover paint stuck, while an iPad with a trackpad still gets it. */
+@media (hover:hover){
+.dn-agent:hover .dn-agent__face{transform:translateY(-1px) scale(1.04)}
+.dn-agentcard--interactive:hover{border-color:var(--border-strong);box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.dn-agentcard--interactive:hover .dn-agentcard__task .dn-icon{transform:translateX(2px)}
+.dn-obj:hover{transform:translateX(2px)}
+.dn-work:hover{background:var(--surface-hover);text-decoration:none}
+.dn-work:hover .dn-work__glyph{transform:scale(1.14)}
+.dn-work:hover .dn-work__title{transform:translateX(2px)}
+.dn-event:hover{background:var(--surface-hover)}
+.dn-event:hover .dn-agent__face{transform:scale(1.1)}
+}

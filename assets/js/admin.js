@@ -170,9 +170,15 @@
     ui.signIn.disabled = true;
   }
 
+  // The banner callouts are design-system callouts, so a tone is a modifier rather
+  // than a private class. One helper, because the configuration banner, the sign-in
+  // error and the projection banner all move through the same set of states.
+  const CALLOUT_FOR_TONE = { positive: " dn-callout--success", pending: " dn-callout--live", negative: " dn-callout--danger", neutral: "" };
+
   function setState(container, titleElement, messageElement, tone, title, message) {
     if (!container || !titleElement || !messageElement) return;
     container.dataset.tone = tone;
+    container.className = `dn-callout${CALLOUT_FOR_TONE[tone] || ""}`;
     titleElement.textContent = title;
     messageElement.textContent = message;
     container.hidden = false;
@@ -419,11 +425,18 @@
     ui.operatorSummary.hidden = false;
     ui.operatorName.textContent = stringValue(user.displayName) || stringValue(user.username) || "Authenticated operator";
     ui.operatorRole.textContent = role === "founder" ? "Founder" : "Admin";
+    // The monogram is derived from whatever name the API returned, never from an
+    // email local-part or an identifier the operator did not choose to display.
+    document.querySelectorAll("[data-operator-initials]").forEach((element) => {
+      const label = stringValue(ui.operatorName.textContent);
+      element.textContent = label.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0].toUpperCase()).join("");
+    });
     ui.refresh.disabled = false;
     updateSessionExpiryLabel();
   }
 
   function showSignedOut() {
+    document.querySelectorAll("[data-operator-initials]").forEach((element) => { element.textContent = ""; });
     ui.signedOut.hidden = false;
     ui.authenticated.hidden = true;
     ui.signOut.hidden = true;
@@ -482,7 +495,7 @@
   }
 
   function setMetric(name, value) {
-    metricElements(name).forEach((element) => { element.textContent = value; });
+    metricElements(name).forEach((element) => setValue(element, value));
   }
 
   function resetOverviewMetrics() {
@@ -493,9 +506,17 @@
     resetOverviewMetrics();
     ui.overviewSource.forEach((element) => { element.textContent = "not yet loaded"; });
     document.querySelectorAll("[data-alert-coverage]").forEach((element) => { element.textContent = "No alert coverage has been loaded."; });
-    document.querySelectorAll("[data-economics-metric], [data-fleet-metric], [data-billing-metric]").forEach((element) => { element.textContent = "—"; });
+    document.querySelectorAll("[data-economics-metric], [data-fleet-metric], [data-billing-metric]").forEach((element) => { element.textContent = "—"; element.classList.remove("ad-val--success", "ad-val--attention", "ad-val--danger"); });
     ["customers", "team-economics", "runtimes", "alerts", "billing-accounts", "team-credit-controls", "reconciliation", "audit"].forEach(clearTable);
-    ["customers", "economics", "operations", "billing", "metrics"].forEach((name) => setSectionState(name, "Waiting", "neutral"));
+    ["customers", "economics", "operations", "billing", "metrics", "audit"].forEach((name) => setSectionState(name, "Waiting", "neutral"));
+    // The derived overview surfaces are cleared with the projections they summarise,
+    // so a signed-out console never shows the previous operator's alert count.
+    customersState.records = [];
+    renderAttentionRows([]);
+    renderOpenAlertCount(0);
+    ["customers", "economics", "fleet", "billing-collected"].forEach((name) => setFreshness(name, "—"));
+    document.querySelectorAll("[data-economics-scatter], [data-economics-composition], [data-mismatch-breakdown]").forEach((element) => element.replaceChildren());
+    document.querySelectorAll("[data-economics-callout]").forEach((element) => { element.hidden = true; });
     resetMetricsExplorer();
     closeCustomerDetail();
   }
@@ -525,7 +546,7 @@
   }
 
   function formatOptionalMoney(value) {
-    try { return value ? formatMoney(value) : "—"; } catch { return "—"; }
+    try { return value ? formatMoney(value) : UNAVAILABLE; } catch { return UNAVAILABLE; }
   }
 
   function formatNonNegativeMoney(value) {
@@ -535,7 +556,7 @@
 
   function formatRatio(value) {
     const ratio = Number(value);
-    return Number.isFinite(ratio) ? new Intl.NumberFormat(undefined, { style: "percent", maximumFractionDigits: 1 }).format(ratio) : "—";
+    return Number.isFinite(ratio) ? new Intl.NumberFormat(undefined, { style: "percent", maximumFractionDigits: 1 }).format(ratio) : UNAVAILABLE;
   }
 
   function formatCredits(value) {
@@ -547,15 +568,15 @@
       const fraction = (absolute % 1_000_000n).toString().padStart(6, "0").replace(/0+$/, "");
       return `${negative ? "−" : ""}${new Intl.NumberFormat().format(whole)}${fraction ? `.${fraction}` : ""}`;
     } catch {
-      return "—";
+      return UNAVAILABLE;
     }
   }
 
   function formatNonNegativeCredits(value) {
     try {
-      return integerValue(value) >= 0n ? formatCredits(value) : "—";
+      return integerValue(value) >= 0n ? formatCredits(value) : UNAVAILABLE;
     } catch {
-      return "—";
+      return UNAVAILABLE;
     }
   }
 
@@ -601,15 +622,15 @@
 
   function formatTimestamp(value) {
     const milliseconds = timestampMilliseconds(value);
-    if (milliseconds === null) return "—";
+    if (milliseconds === null) return UNAVAILABLE;
     const date = new Date(milliseconds);
-    return Number.isNaN(date.getTime()) ? "—" : new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" }).format(date);
+    return Number.isNaN(date.getTime()) ? UNAVAILABLE : new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" }).format(date);
   }
 
   function formatBytes(value) {
     try {
       const bytes = Number(integerValue(value));
-      if (!Number.isSafeInteger(bytes) || bytes < 0) return "—";
+      if (!Number.isSafeInteger(bytes) || bytes < 0) return UNAVAILABLE;
       if (bytes < 1024) return `${bytes} B`;
       const units = ["KB", "MB", "GB", "TB"];
       let amount = bytes;
@@ -617,13 +638,54 @@
       do { amount /= 1024; index += 1; } while (amount >= 1024 && index < units.length - 1);
       return `${new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 }).format(amount)} ${units[index]}`;
     } catch {
-      return "—";
+      return UNAVAILABLE;
     }
   }
 
   function enumLabel(value, labels) {
     if (typeof value === "number" && Number.isInteger(value)) return labels[value] || "not reported";
     return stringValue(value).replace(/^[A-Z_]+?_/, "").replaceAll("_", " ").toLowerCase() || "not reported";
+  }
+
+  // THE HONESTY CONTRACT.
+  //
+  // The admin API marks fields it cannot vouch for by name, in snake_case, on
+  // projection_status.unavailable_fields. Those fields still arrive on the wire —
+  // as protobuf scalar zeros, which is precisely the trap: a zero MRR and an
+  // unmeasurable MRR are the same bytes and opposite facts. So a named field never
+  // renders its value. It renders this word, in tertiary ink, at the size of the
+  // number it replaces.
+  //
+  // Not a zero, which is a claim. Not a dash, which in a numeric column reads as a
+  // measured value at a glance. Not an attention colour, because nothing is wrong —
+  // several of these fields are permanently unavailable by construction today
+  // (production incidents, most runtime-instance telemetry, upgrades and
+  // downgrades), and a screen that nags about them every refresh is a screen
+  // operators learn to stop reading.
+  const UNAVAILABLE = "unavailable";
+
+  function unavailableNode() {
+    const span = document.createElement("span");
+    span.className = "ad-unavailable";
+    span.textContent = UNAVAILABLE;
+    return span;
+  }
+
+  // Writes a value into an element, honouring the sentinel and the element's own
+  // declared tone. A tone is a claim about a number, so it is applied only when
+  // there IS a number and it is not zero: colouring a zero "danger" says something
+  // is wrong when nothing is, and colouring an unavailable field says the same
+  // about a fact we simply do not have.
+  function setValue(element, value) {
+    const text = stringValue(value);
+    element.classList.remove("ad-val--success", "ad-val--attention", "ad-val--danger");
+    if (text === UNAVAILABLE) {
+      element.replaceChildren(unavailableNode());
+      return;
+    }
+    element.textContent = text || "—";
+    const tone = stringValue(element.dataset.tone);
+    if (tone && text && text !== "—" && !/^0([.,]0+)?\s*%?$/.test(text)) element.classList.add(`ad-val--${tone}`);
   }
 
   function projectionAvailability(record) {
@@ -642,15 +704,15 @@
   }
 
   function projectionValue(record, snakeCaseField, formatter, value) {
-    if (!projectionFieldAvailable(record, snakeCaseField)) return "—";
-    try { return formatter(value); } catch { return "—"; }
+    if (!projectionFieldAvailable(record, snakeCaseField)) return UNAVAILABLE;
+    try { return formatter(value); } catch { return UNAVAILABLE; }
   }
 
   function projectionSummary(record) {
     const availability = projectionAvailability(record);
     const observed = formatTimestamp(record?.projectionStatus?.sourceObservedAt);
     const label = ["complete", "partial", "stale"].includes(availability) ? availability : "unavailable";
-    return `${label}${observed !== "—" ? ` · source ${observed}` : " · source time unavailable"}`;
+    return `${label}${observed !== UNAVAILABLE ? ` · source ${observed}` : " · source time unavailable"}`;
   }
 
   function projectionCollectionState(records) {
@@ -663,8 +725,8 @@
 
   function setSectionState(name, label, tone = "neutral", detail = "") {
     document.querySelectorAll(`[data-section-state="${name}"]`).forEach((element) => {
+      element.className = `dn-badge ad-badge-none${BADGE_FOR_TONE[tone] || ""}`;
       element.textContent = label;
-      element.dataset.tone = tone;
       element.title = detail;
     });
   }
@@ -701,8 +763,16 @@
   function cell(row, value, heading = false) {
     const element = document.createElement(heading ? "th" : "td");
     if (heading) element.scope = "row";
-    element.textContent = stringValue(value) || "—";
+    setValue(element, stringValue(value) || UNAVAILABLE);
     row.append(element);
+    return element;
+  }
+
+  // A numeric column. Right-aligned tabular mono, so a column of figures lines up
+  // and an unavailable row is visibly not a number rather than a small one.
+  function numericCell(row, value) {
+    const element = cell(row, value);
+    element.className = "dn-table__num";
     return element;
   }
 
@@ -716,13 +786,27 @@
     return "neutral";
   }
 
-  function statusText(label) {
+  // The design system owns what a state looks like. These two maps are the only
+  // place this console decides which of its vocabulary words is which state; every
+  // chip and dot on every screen resolves through them, so there is exactly one
+  // definition of "danger" in the product, and colour is never the only cue —
+  // the word is always right there beside the dot.
+  const BADGE_FOR_TONE = { positive: " dn-badge--success", pending: " dn-badge--attention", negative: " dn-badge--danger", neutral: "" };
+  const DOT_FOR_TONE = { positive: "success", pending: "attention", negative: "danger", neutral: "" };
+
+  function toneBadge(label, tone) {
     const span = document.createElement("span");
-    span.className = `status status--${statusTone(label)}`;
-    const indicator = document.createElement("span");
-    indicator.setAttribute("aria-hidden", "true");
-    span.append(indicator, document.createTextNode(label || "not reported"));
+    span.className = `dn-badge${BADGE_FOR_TONE[tone] || ""}`;
+    const dotTone = DOT_FOR_TONE[tone] || "";
+    const dot = document.createElement("span");
+    dot.className = `dn-dot dn-dot--sm${dotTone ? ` dn-dot--${dotTone}` : ""}`;
+    dot.setAttribute("aria-hidden", "true");
+    span.append(dot, document.createTextNode(label || "not reported"));
     return span;
+  }
+
+  function statusText(label) {
+    return toneBadge(label, statusTone(label));
   }
 
   function renderOverview(response) {
@@ -743,7 +827,10 @@
     setMetric("at-risk-customers", projectionValue(overview, "at_risk_customers", formatCount, overview.atRiskCustomers));
     setMetric("incidents", projectionValue(overview, "production_incidents", formatCount, overview.productionIncidents));
     setMetric("prs-merged", projectionValue(overview, "pull_requests_merged", formatCount, overview.pullRequestsMerged));
-    ui.overviewSource.forEach((element) => { element.textContent = projectionSummary(overview); });
+    ui.overviewSource.forEach((element) => setValue(element, projectionSummary(overview)));
+    document.querySelectorAll('[data-metric-delta="nrr"]').forEach((element) => {
+      element.textContent = projectionFieldAvailable(overview, "net_revenue_retention_ratio") ? "measured this period" : "denominator was zero or untrustworthy";
+    });
   }
 
   async function loadOverview(signal) {
@@ -798,59 +885,135 @@
     throw new Error("admin_page_limit_exceeded");
   }
 
+  // The filter runs in the browser, and that is safe here for one specific reason:
+  // adminListRequest exhausts every page before rendering, so the browser holds the
+  // COMPLETE authorized set. Filtering a complete set cannot hide a row that exists.
+  // The audit trail deliberately does not work this way — absence of an audit row is
+  // never evidence, so its filter goes to the server.
+  const customersState = { records: [], filter: "all", search: "" };
+
+  function customerMatchesFilter(customer) {
+    if (customersState.filter === "at-risk") {
+      const health = projectionFieldAvailable(customer, "health_state") ? Number(customer?.healthState) : 0;
+      return health === 3 || health === 4;
+    }
+    if (customersState.filter === "trialing") return Number(customer?.subscription?.subscriptionStatus) === 3;
+    if (customersState.filter === "churned") return Number(customer?.subscription?.subscriptionStatus) === 6;
+    return true;
+  }
+
+  function customerMatchesSearch(customer) {
+    const needle = customersState.search.trim().toLowerCase();
+    if (!needle) return true;
+    const organization = customer?.organization || {};
+    return `${stringValue(organization.name)} ${stringValue(organization.id)} ${stringValue(organization.slug)}`.toLowerCase().includes(needle);
+  }
+
+  function renderCustomerRows() {
+    const visible = customersState.records.filter((customer) => customerMatchesFilter(customer) && customerMatchesSearch(customer));
+    renderCustomerTable(visible);
+    const empty = document.querySelector('[data-table-empty="customers"]');
+    if (empty && !visible.length && customersState.records.length) {
+      empty.textContent = "No authorized customer matches this filter. Every loaded row is still counted in the totals above.";
+      empty.hidden = false;
+    }
+  }
+
   function renderCustomers(response) {
     const customers = Array.isArray(response?.customers) ? response.customers : [];
-    const body = tableBody("customers");
-    body.replaceChildren();
+    // Identity and projection status are validated against the authoritative set,
+    // once, before any filter narrows it — so a duplicate or unusable row is caught
+    // whether or not the current filter would have shown it.
     const seenCustomerIds = new Set();
     customers.forEach((customer) => {
       if (!["complete", "partial", "stale"].includes(projectionAvailability(customer))) throw new Error("invalid_customer_projection_status");
-      const organization = customer?.organization || {};
-      const organizationId = safeResourceId(organization.id);
+      const organizationId = safeResourceId(customer?.organization?.id);
       if (!organizationId || seenCustomerIds.has(organizationId)) throw new Error("invalid_or_duplicate_customer_id");
       seenCustomerIds.add(organizationId);
+    });
+    customersState.records = customers;
+    renderCustomerRows();
+    return projectionCollectionState(customers);
+  }
+
+  function renderCustomerTable(customers) {
+    const body = tableBody("customers");
+    body.replaceChildren();
+    customers.forEach((customer) => {
+      const organization = customer?.organization || {};
+      const organizationId = safeResourceId(organization.id);
       const economics = customer?.economics || {};
-      const subscriptionLabel = projectionFieldAvailable(customer, "subscription") ? enumLabel(customer?.subscription?.subscriptionStatus, ["not reported", "incomplete", "incomplete expired", "trialing", "active", "past due", "canceled", "unpaid", "paused"]) : "—";
-      const paymentLabel = projectionFieldAvailable(customer, "payment_state") ? enumLabel(customer?.paymentState, ["not reported", "current", "failed", "past due", "no payment method"]) : "—";
-      const healthLabel = projectionFieldAvailable(customer, "health_state") ? enumLabel(customer?.healthState, ["not reported", "healthy", "needs attention", "at risk", "critical"]) : "unavailable";
-      const supportLabel = projectionFieldAvailable(customer, "support_state") ? enumLabel(customer?.supportState, ["not reported", "none", "open", "escalated"]) : "unavailable";
-      const riskLabel = projectionFieldAvailable(customer, "churn_risk_level") ? enumLabel(customer?.churnRiskLevel, ["not reported", "low", "medium", "high", "critical"]) : "unavailable";
+      const economicsAvailable = projectionFieldAvailable(customer, "economics");
+      const subscriptionLabel = projectionFieldAvailable(customer, "subscription") ? enumLabel(customer?.subscription?.subscriptionStatus, ["not reported", "incomplete", "incomplete expired", "trialing", "active", "past due", "canceled", "unpaid", "paused"]) : UNAVAILABLE;
+      const healthLabel = projectionFieldAvailable(customer, "health_state") ? enumLabel(customer?.healthState, ["not reported", "healthy", "needs attention", "at risk", "critical"]) : UNAVAILABLE;
+      const supportLabel = projectionFieldAvailable(customer, "support_state") ? enumLabel(customer?.supportState, ["not reported", "none", "open", "escalated"]) : UNAVAILABLE;
+      const riskLabel = projectionFieldAvailable(customer, "churn_risk_level") ? enumLabel(customer?.churnRiskLevel, ["not reported", "low", "medium", "high", "critical"]) : UNAVAILABLE;
       const activity = projectionFieldAvailable(customer, "activity") ? customer?.activity : null;
       const reliability = projectionFieldAvailable(customer, "reliability") ? customer?.reliability : null;
+
       const row = document.createElement("tr");
-      cell(row, stringValue(organization.name) || stringValue(organization.id), true);
-      cell(row, `${projectionFieldAvailable(customer, "plan") ? stringValue(customer?.plan?.name) || "No plan" : "—"} · ${subscriptionLabel} · ${paymentLabel}`);
-      cell(row, projectionValue(customer, "team_count", formatCount, customer?.teamCount));
-      cell(row, `${projectionValue(customer, "user_count", formatCount, customer?.userCount)} / ${projectionValue(customer, "repository_count", formatCount, customer?.repositoryCount)}`);
-      cell(row, activity
-        ? `${projectionValue(activity, "active_agents", formatCount, activity.activeAgents)} active · ${projectionValue(activity, "blocked_agents", formatCount, activity.blockedAgents)} blocked · ${projectionValue(activity, "failed_agents", formatCount, activity.failedAgents)} failed · ${projectionValue(activity, "current_sessions", formatCount, activity.currentSessions)} sessions · ${projectionValue(activity, "active_initiatives", formatCount, activity.activeInitiatives)} initiatives · ${projectionValue(activity, "pending_approvals", formatCount, activity.pendingApprovals)} approvals · last ${projectionFieldAvailable(activity, "last_agent_activity_at") ? formatTimestamp(activity.lastAgentActivityAt) : "—"}`
-        : "—");
-      const economicsAvailable = projectionFieldAvailable(customer, "economics");
-      cell(row, economicsAvailable ? formatCredits(economics.creditsUsedMicros) : "—");
-      cell(row, economicsAvailable ? formatOptionalMoney(economics.directCost) : "—");
-      cell(row, economicsAvailable ? formatOptionalMoney(economics.revenue) : "—");
-      cell(row, economicsAvailable ? formatOptionalMoney(economics.grossProfit) : "—");
-      cell(row, economicsAvailable ? formatRatio(economics.grossMarginRatio ?? economics.grossMargin) : "—");
-      cell(row, reliability
-        ? `${projectionValue(reliability, "gateway_availability_ratio", formatRatio, reliability.gatewayAvailabilityRatio)} gateway · ${projectionValue(reliability, "production_incidents", formatCount, reliability.productionIncidents)} incidents · last ${projectionFieldAvailable(reliability, "last_incident_at") ? formatTimestamp(reliability.lastIncidentAt) : "—"}`
-        : "—");
+      row.className = "dn-table__clickable";
+      row.dataset.customerRow = organizationId;
+
+      // The name and its stable identifier ride in one cell: the identifier is the
+      // thing an operator pastes into a ticket, so it is mono and always present,
+      // and the display name never has to be unique for the row to be actionable.
+      const identity = document.createElement("th");
+      identity.scope = "row";
+      const name = document.createElement("div");
+      name.className = "ad-cell-main";
+      name.textContent = stringValue(organization.name) || organizationId;
+      const id = document.createElement("div");
+      id.className = "ad-cell-sub";
+      id.textContent = organizationId;
+      identity.append(name, id);
+      row.append(identity);
+
+      cell(row, `${projectionFieldAvailable(customer, "plan") ? stringValue(customer?.plan?.name) || "No plan" : UNAVAILABLE} · ${subscriptionLabel}`);
+
+      const teams = numericCell(row, projectionValue(customer, "team_count", formatCount, customer?.teamCount));
+      teams.title = `${projectionValue(customer, "user_count", formatCount, customer?.userCount)} people · ${projectionValue(customer, "repository_count", formatCount, customer?.repositoryCount)} repositories`;
+
+      const agents = numericCell(row, activity ? projectionValue(activity, "active_agents", formatCount, activity.activeAgents) : UNAVAILABLE);
+      agents.title = activity
+        ? `${projectionValue(activity, "active_agents", formatCount, activity.activeAgents)} active · ${projectionValue(activity, "idle_agents", formatCount, activity.idleAgents)} idle · ${projectionValue(activity, "blocked_agents", formatCount, activity.blockedAgents)} blocked · ${projectionValue(activity, "failed_agents", formatCount, activity.failedAgents)} failed · ${projectionValue(activity, "current_sessions", formatCount, activity.currentSessions)} sessions · ${projectionValue(activity, "active_initiatives", formatCount, activity.activeInitiatives)} initiatives · ${projectionValue(activity, "pending_approvals", formatCount, activity.pendingApprovals)} approvals`
+        : "This account's activity projection is unavailable.";
+
+      numericCell(row, economicsAvailable ? formatCredits(economics.creditsUsedMicros) : UNAVAILABLE);
+      numericCell(row, economicsAvailable ? formatOptionalMoney(economics.directCost) : UNAVAILABLE);
+      numericCell(row, economicsAvailable ? formatOptionalMoney(economics.revenue) : UNAVAILABLE);
+
+      // A negative margin is the one number on this table that earns a hue, and it
+      // keeps its minus sign as well — colour is never the only cue.
+      const marginText = economicsAvailable ? formatRatio(economics.grossMarginRatio ?? economics.grossMargin) : UNAVAILABLE;
+      const margin = numericCell(row, marginText);
+      if (marginText !== UNAVAILABLE && marginText.trim().startsWith("-")) margin.classList.add("ad-val--danger");
+
+      const reliabilityCell = numericCell(row, reliability
+        ? projectionValue(reliability, "gateway_availability_ratio", formatRatio, reliability.gatewayAvailabilityRatio)
+        : UNAVAILABLE);
+      reliabilityCell.title = reliability
+        ? `${projectionValue(reliability, "production_incidents", formatCount, reliability.productionIncidents)} production incidents · last ${projectionFieldAvailable(reliability, "last_incident_at") ? formatTimestamp(reliability.lastIncidentAt) : UNAVAILABLE}`
+        : "This account's reliability projection is unavailable.";
+
       const health = cell(row, "");
-      health.replaceChildren(statusText(`${healthLabel} · ${riskLabel} risk · ${supportLabel} support`));
-      cell(row, projectionSummary(customer));
+      health.replaceChildren(statusText(healthLabel));
+      health.title = `${riskLabel} churn risk · ${supportLabel} support · projection ${projectionSummary(customer)}`;
+
       const action = cell(row, "");
       const detailButton = document.createElement("button");
-      detailButton.className = "button button--quiet button--small customer-detail-action";
+      detailButton.className = "dn-btn dn-btn--ghost dn-btn--sm";
       detailButton.type = "button";
       detailButton.dataset.customerDetailId = organizationId;
       detailButton.setAttribute("aria-controls", "customer-detail");
       detailButton.setAttribute("aria-expanded", String(state.selectedCustomerId === organizationId && !ui.customerDetail.hidden));
       detailButton.setAttribute("aria-label", `Review ${stringValue(organization.name) || organizationId} account detail and reliability history`);
-      detailButton.textContent = "Review";
+      detailButton.textContent = "Open";
       action.replaceChildren(detailButton);
+
       body.append(row);
     });
     showTable("customers", customers.length);
-    return projectionCollectionState(customers);
   }
 
   async function loadCustomers(signal) {
@@ -858,8 +1021,11 @@
       setSectionState("customers", "Loading", "pending");
       const collectionState = renderCustomers(await adminListRequest("admin_customers", "customers", {}, signal));
       setSectionState("customers", collectionState.label, collectionState.tone, "Each row reports its source projection freshness.");
+      setFreshness("customers", collectionState.label.toLowerCase());
       return true;
     } catch (error) {
+      customersState.records = [];
+      setFreshness("customers", UNAVAILABLE);
       clearTable("customers", "Customer projection unavailable. No substitute data source was used.");
       setSectionState("customers", "Unavailable", "negative", safeClientMessage(error, "Admin customer data is unavailable."));
       if (stringValue(error?.code) === "unauthenticated") expireSession();
@@ -868,11 +1034,11 @@
   }
 
   function setCustomerDetailField(name, value) {
-    document.querySelectorAll(`[data-customer-detail-field="${name}"]`).forEach((element) => { element.textContent = stringValue(value) || "—"; });
+    document.querySelectorAll(`[data-customer-detail-field="${name}"]`).forEach((element) => setValue(element, stringValue(value) || UNAVAILABLE));
   }
 
   function resetCustomerDetailFields() {
-    document.querySelectorAll("[data-customer-detail-field]").forEach((element) => { element.textContent = "—"; });
+    document.querySelectorAll("[data-customer-detail-field]").forEach((element) => { element.textContent = UNAVAILABLE; });
   }
 
   function resetCustomerReliability(message = "Not loaded.") {
@@ -907,7 +1073,7 @@
   }
 
   function customerDetailActivityValue(activity, field, formatter, value) {
-    return activity ? projectionValue(activity, field, formatter, value) : "—";
+    return activity ? projectionValue(activity, field, formatter, value) : UNAVAILABLE;
   }
 
   function renderCustomerDetailProjection(response, organizationId) {
@@ -919,13 +1085,13 @@
     const activity = projectionFieldAvailable(customer, "activity") ? customer.activity : null;
     const reliability = projectionFieldAvailable(customer, "reliability") ? customer.reliability : null;
     const economics = projectionFieldAvailable(customer, "economics") ? customer.economics : null;
-    const subscription = projectionFieldAvailable(customer, "subscription") ? enumLabel(customer?.subscription?.subscriptionStatus, ["not reported", "incomplete", "incomplete expired", "trialing", "active", "past due", "canceled", "unpaid", "paused"]) : "—";
+    const subscription = projectionFieldAvailable(customer, "subscription") ? enumLabel(customer?.subscription?.subscriptionStatus, ["not reported", "incomplete", "incomplete expired", "trialing", "active", "past due", "canceled", "unpaid", "paused"]) : UNAVAILABLE;
     const payment = projectionValue(customer, "payment_state", (value) => enumLabel(value, ["not reported", "current", "failed", "past due", "no payment method"]), customer.paymentState);
     const health = projectionValue(customer, "health_state", (value) => enumLabel(value, ["not reported", "healthy", "needs attention", "at risk", "critical"]), customer.healthState);
     const support = projectionValue(customer, "support_state", (value) => enumLabel(value, ["not reported", "none", "open", "escalated"]), customer.supportState);
     const churn = projectionValue(customer, "churn_risk_level", (value) => enumLabel(value, ["not reported", "low", "medium", "high", "critical"]), customer.churnRiskLevel);
     ui.customerDetailTitle.textContent = stringValue(organization.name) || organizationId;
-    setCustomerDetailField("plan", `${projectionFieldAvailable(customer, "plan") ? stringValue(customer?.plan?.name) || "No plan" : "—"} · ${subscription} · ${payment}`);
+    setCustomerDetailField("plan", `${projectionFieldAvailable(customer, "plan") ? stringValue(customer?.plan?.name) || "No plan" : UNAVAILABLE} · ${subscription} · ${payment}`);
     setCustomerDetailField("health", health);
     setCustomerDetailField("support", support);
     setCustomerDetailField("churn", churn);
@@ -938,9 +1104,9 @@
     setCustomerDetailField("last-activity", customerDetailActivityValue(activity, "last_agent_activity_at", formatTimestamp, activity?.lastAgentActivityAt));
     setCustomerDetailField("reliability", reliability
       ? `${projectionValue(reliability, "gateway_availability_ratio", formatRatio, reliability.gatewayAvailabilityRatio)} gateway · ${projectionValue(reliability, "production_incidents", formatCount, reliability.productionIncidents)} incidents · last ${projectionValue(reliability, "last_incident_at", formatTimestamp, reliability.lastIncidentAt)}`
-      : "—");
+      : UNAVAILABLE);
     setCustomerDetailField("mrr", projectionValue(customer, "monthly_recurring_revenue", formatOptionalMoney, customer.monthlyRecurringRevenue));
-    setCustomerDetailField("economics", economics ? `${formatCredits(economics.creditsUsedMicros)} credits · ${formatOptionalMoney(economics.directCost)} direct cost` : "—");
+    setCustomerDetailField("economics", economics ? `${formatCredits(economics.creditsUsedMicros)} credits · ${formatOptionalMoney(economics.directCost)} direct cost` : UNAVAILABLE);
     setCustomerDetailField("projection", projectionSummary(customer));
     ui.customerDetailState.textContent = `Current AdminService customer projection loaded · ${projectionSummary(customer)}.`;
   }
@@ -1001,11 +1167,15 @@
       if (!append) body.replaceChildren();
       normalized.forEach((entry) => {
         const row = document.createElement("tr");
-        cell(row, formatUtcReliabilityPeriod(entry.periodStart, entry.periodEnd), true);
-        cell(row, entry.ratio === null ? "Unavailable · insufficient coverage" : formatRatio(entry.ratio));
-        cell(row, formatCount(entry.incidents));
-        cell(row, entry.lastIncidentAt ? formatTimestamp(entry.lastIncidentAt) : "—");
-        cell(row, formatTimestamp(entry.generatedAt));
+        const period = cell(row, formatUtcReliabilityPeriod(entry.periodStart, entry.periodEnd), true);
+        period.className = "ad-cell-mono";
+        // A missing availability ratio is explicit source unavailability, never zero.
+        const availability = numericCell(row, entry.ratio === null ? "Unavailable · insufficient coverage" : formatRatio(entry.ratio));
+        if (entry.ratio === null) availability.className = "ad-unavailable";
+        const incidents = numericCell(row, formatCount(entry.incidents));
+        incidents.title = entry.lastIncidentAt ? `last incident ${formatTimestamp(entry.lastIncidentAt)}` : "no incident recorded in this bucket";
+        const generated = cell(row, formatTimestamp(entry.generatedAt));
+        generated.className = "ad-cell-mono";
         body.append(row);
       });
       normalized.forEach((entry) => state.reliabilityRecordIds.add(entry.id));
@@ -1092,40 +1262,263 @@
     if (!economics || !["complete", "partial", "stale"].includes(projectionAvailability(economics))) throw new Error("invalid_economics");
     const summaryAvailable = projectionFieldAvailable(economics, "summary") && summary;
     const values = {
-      "direct-cost": summaryAvailable ? formatOptionalMoney(summary.directCost) : "—",
-      revenue: summaryAvailable ? formatOptionalMoney(summary.revenue) : "—",
-      "gross-profit": summaryAvailable ? formatOptionalMoney(summary.grossProfit) : "—",
-      "gross-margin": summaryAvailable ? formatRatio(summary.grossMarginRatio ?? summary.grossMargin) : "—"
+      "direct-cost": summaryAvailable ? formatOptionalMoney(summary.directCost) : UNAVAILABLE,
+      revenue: summaryAvailable ? formatOptionalMoney(summary.revenue) : UNAVAILABLE,
+      "gross-profit": summaryAvailable ? formatOptionalMoney(summary.grossProfit) : UNAVAILABLE,
+      "gross-margin": summaryAvailable ? formatRatio(summary.grossMarginRatio ?? summary.grossMargin) : UNAVAILABLE
     };
-    Object.entries(values).forEach(([name, value]) => document.querySelectorAll(`[data-economics-metric="${name}"]`).forEach((element) => { element.textContent = value; }));
+    Object.entries(values).forEach(([name, value]) => document.querySelectorAll(`[data-economics-metric="${name}"]`).forEach((element) => setValue(element, value)));
     return projectionSummary(economics);
+  }
+
+  // The five dimensions the ledger can actually aggregate by, mirroring the frozen
+  // set in the generated bridge. The mockup's fifth control said "Objective"; the
+  // ledger carries INITIATIVE and has no objective dimension, so the button says
+  // Initiative. A slice the ledger cannot produce is not offered — that rule is the
+  // mockup's own, and honouring it means changing the label rather than shipping a
+  // control that returns INVALID_FILTER.
+  const ECONOMICS_DIMENSION_LABELS = {
+    team: "Team",
+    organization: "Customer",
+    agent_role: "Role",
+    model: "Model",
+    initiative: "Initiative"
+  };
+
+  const economicsState = { dimension: "team", slices: [] };
+
+  function moneyAmount(value) {
+    if (!value || typeof value !== "object") return null;
+    try {
+      const units = Number(integerValue(value.units));
+      const nanos = Number(value.nanos || 0);
+      const amount = units + nanos / 1_000_000_000;
+      return Number.isFinite(amount) ? amount : null;
+    } catch {
+      return null;
+    }
+  }
+
+  // Direct cost against revenue, one point per slice, with the break-even diagonal
+  // drawn behind them. This is the only shape that surfaces a slice running below
+  // cost instead of averaging it into a healthy fleet margin: on a bar chart of
+  // margins it is one short bar among many, here it is the only point on the wrong
+  // side of a line. Points whose cost or revenue the projection could not supply
+  // are omitted rather than plotted at the origin — a point at (0,0) is a claim.
+  function renderEconomicsScatter(slices) {
+    const host = document.querySelector("[data-economics-scatter]");
+    const note = document.querySelector("[data-economics-scatter-note]");
+    if (!host) return;
+    const svgNamespace = "http://www.w3.org/2000/svg";
+    const points = slices.map((slice) => ({
+      label: stringValue(slice?.displayName) || stringValue(slice?.dimensionId),
+      cost: moneyAmount(slice?.summary?.directCost),
+      revenue: moneyAmount(slice?.summary?.revenue)
+    })).filter((point) => point.cost !== null && point.revenue !== null);
+
+    if (!points.length) {
+      host.replaceChildren(metricsDataState(
+        "bydesign",
+        "No plottable slices",
+        "Every slice in this period is missing a direct cost or a revenue figure, so there is nothing to place against the diagonal. Nothing was substituted.",
+        ""
+      ));
+      if (note) note.hidden = true;
+      return;
+    }
+    if (note) note.hidden = false;
+
+    const width = 320;
+    const height = 200;
+    const pad = 6;
+    const ceiling = Math.max(...points.map((point) => Math.max(point.cost, point.revenue)), 1);
+    const svg = document.createElementNS(svgNamespace, "svg");
+    svg.setAttribute("class", "ad-spark ad-spark--tall");
+    svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+    svg.setAttribute("role", "img");
+    const below = points.filter((point) => point.cost > point.revenue);
+    svg.setAttribute("aria-label", `Direct cost against revenue for ${points.length} slices; ${below.length} below break-even.`);
+
+    const x = (value) => pad + (value / ceiling) * (width - pad * 2);
+    const y = (value) => height - pad - (value / ceiling) * (height - pad * 2);
+
+    const diagonal = document.createElementNS(svgNamespace, "line");
+    diagonal.setAttribute("x1", String(x(0)));
+    diagonal.setAttribute("y1", String(y(0)));
+    diagonal.setAttribute("x2", String(x(ceiling)));
+    diagonal.setAttribute("y2", String(y(ceiling)));
+    diagonal.setAttribute("stroke", "var(--viz-grid)");
+    diagonal.setAttribute("stroke-dasharray", "3 3");
+    svg.append(diagonal);
+
+    points.forEach((point) => {
+      const dot = document.createElementNS(svgNamespace, "circle");
+      dot.setAttribute("cx", x(point.cost).toFixed(1));
+      dot.setAttribute("cy", y(point.revenue).toFixed(1));
+      dot.setAttribute("r", "3.5");
+      dot.setAttribute("fill", point.cost > point.revenue ? "var(--status-danger-dot)" : "var(--viz-1)");
+      const title = document.createElementNS(svgNamespace, "title");
+      title.textContent = `${point.label} — cost ${point.cost.toFixed(2)} against revenue ${point.revenue.toFixed(2)}`;
+      dot.append(title);
+      svg.append(dot);
+    });
+
+    host.replaceChildren(svg);
+    if (note) {
+      note.textContent = below.length
+        ? `${below.length} of ${points.length} slices sit below the diagonal — direct cost above the revenue attributed to them. Averaged into the fleet they disappear; here they are the only points on the wrong side.`
+        : `All ${points.length} slices sit on or above the break-even diagonal for this period.`;
+    }
+  }
+
+  // The composition of the SAME direct-cost total the summary reports, split by the
+  // dimension currently selected. The mockup split it by cost category — model
+  // inference, team compute, storage, tooling — and the admin projection has no such
+  // field: AdminEconomics carries one direct_cost Money for the period and the slice
+  // list carries one per dimension member. So the panel composes what the ledger can
+  // actually attribute, and says which dimension it used, rather than inventing four
+  // categories that no response contains.
+  function renderEconomicsComposition(slices) {
+    const host = document.querySelector("[data-economics-composition]");
+    if (!host) return;
+    const parts = slices
+      .map((slice) => ({ label: stringValue(slice?.displayName) || stringValue(slice?.dimensionId), cost: moneyAmount(slice?.summary?.directCost), money: slice?.summary?.directCost }))
+      .filter((part) => part.cost !== null && part.cost > 0)
+      .sort((a, b) => b.cost - a.cost)
+      .slice(0, 6);
+    const total = parts.reduce((sum, part) => sum + part.cost, 0);
+
+    const label = document.createElement("div");
+    label.className = "ad-note";
+    label.textContent = `by ${ECONOMICS_DIMENSION_LABELS[economicsState.dimension].toLowerCase()} — the projection reports one direct-cost total per slice, not a split by cost category`;
+
+    if (!parts.length || total <= 0) {
+      host.replaceChildren(metricsDataState(
+        "bydesign",
+        "No attributable cost",
+        "No slice in this period reported a positive direct cost, so there is nothing to compose. Nothing was substituted.",
+        ""
+      ), label);
+      return;
+    }
+
+    const bar = document.createElement("div");
+    bar.className = "ad-mix";
+    parts.forEach((part, index) => {
+      const segment = document.createElement("span");
+      segment.className = `ad-mix__part ad-mix__part--${(index % 6) + 1}`;
+      segment.dataset.share = String(Math.round((part.cost / total) * 1000));
+      segment.title = `${part.label} — ${formatOptionalMoney(part.money)}`;
+      bar.append(segment);
+    });
+    sizeMixSegments(bar);
+
+    const legend = document.createElement("div");
+    legend.className = "ad-stack";
+    parts.forEach((part, index) => {
+      const row = document.createElement("div");
+      row.className = "ad-kv";
+      const key = document.createElement("span");
+      key.className = "ad-kv__k";
+      const swatch = document.createElement("span");
+      swatch.className = `ad-mix__swatch ad-mix__part--${(index % 6) + 1}`;
+      swatch.setAttribute("aria-hidden", "true");
+      key.append(swatch, document.createTextNode(part.label));
+      const value = document.createElement("span");
+      value.className = "ad-kv__v";
+      value.textContent = formatOptionalMoney(part.money);
+      row.append(key, value);
+      legend.append(row);
+    });
+
+    host.replaceChildren(bar, legend, label);
+  }
+
+  // Economics slices carry no projection status of their own, so there is no
+  // unavailable_fields list to consult: a scalar is either on the wire or it is not.
+  // That still must not become a zero. "This slice made no model requests" and "the
+  // ledger did not report model requests for this slice" are different facts, and a
+  // `|| 0` fallback silently turns the second into the first.
+  function countOrUnavailable(value) {
+    try { return formatCount(value); } catch { return UNAVAILABLE; }
   }
 
   function renderEconomicsSlices(slicesResponse) {
     const slices = Array.isArray(slicesResponse?.economicsSlices) ? slicesResponse.economicsSlices : [];
+    economicsState.slices = slices;
     const body = tableBody("team-economics");
     body.replaceChildren();
+    document.querySelectorAll("[data-slice-heading]").forEach((element) => { element.textContent = ECONOMICS_DIMENSION_LABELS[economicsState.dimension]; });
     slices.forEach((slice) => {
-      const teamSummary = slice?.summary || {};
+      const sliceSummary = slice?.summary || {};
       const row = document.createElement("tr");
       cell(row, stringValue(slice?.displayName) || stringValue(slice?.dimensionId), true);
-      cell(row, formatCredits(teamSummary.creditsUsedMicros));
-      cell(row, formatCredits(teamSummary.creditsRemainingMicros));
-      cell(row, formatOptionalMoney(teamSummary.directCost));
-      cell(row, formatOptionalMoney(teamSummary.revenue));
-      cell(row, formatOptionalMoney(teamSummary.grossProfit));
-      cell(row, formatRatio(teamSummary.grossMarginRatio ?? teamSummary.grossMargin));
-      cell(row, formatCount(slice?.modelRequestCount || 0));
+      numericCell(row, formatCredits(sliceSummary.creditsUsedMicros));
+      numericCell(row, formatCredits(sliceSummary.creditsRemainingMicros));
+      numericCell(row, formatOptionalMoney(sliceSummary.directCost));
+      numericCell(row, formatOptionalMoney(sliceSummary.revenue));
+      numericCell(row, formatOptionalMoney(sliceSummary.grossProfit));
+      numericCell(row, formatRatio(sliceSummary.grossMarginRatio ?? sliceSummary.grossMargin));
+      numericCell(row, countOrUnavailable(slice?.modelRequestCount));
       body.append(row);
     });
     showTable("team-economics", slices.length);
+    renderEconomicsScatter(slices);
+    renderEconomicsComposition(slices);
+    renderEconomicsCallout(slices);
+  }
+
+  // One callout, only when the ledger actually shows a slice below cost. A panel
+  // that always says something teaches operators to stop reading it.
+  function renderEconomicsCallout(slices) {
+    const callout = document.querySelector("[data-economics-callout]");
+    const title = document.querySelector("[data-economics-callout-title]");
+    const bodyText = document.querySelector("[data-economics-callout-body]");
+    if (!callout || !title || !bodyText) return;
+    const below = slices.filter((slice) => {
+      const cost = moneyAmount(slice?.summary?.directCost);
+      const revenue = moneyAmount(slice?.summary?.revenue);
+      return cost !== null && revenue !== null && cost > revenue;
+    });
+    callout.hidden = below.length === 0;
+    if (!below.length) return;
+    const worst = below.reduce((a, b) => (moneyAmount(a?.summary?.directCost) - moneyAmount(a?.summary?.revenue) > moneyAmount(b?.summary?.directCost) - moneyAmount(b?.summary?.revenue) ? a : b));
+    const name = stringValue(worst?.displayName) || stringValue(worst?.dimensionId);
+    title.textContent = below.length === 1 ? "One slice is running below cost" : `${below.length} slices are running below cost`;
+    bodyText.textContent = `${name} consumed ${formatOptionalMoney(worst?.summary?.directCost)} of direct cost against ${formatOptionalMoney(worst?.summary?.revenue)} of attributed revenue this period. The figures come from the economics projection; no browser-side accounting was applied to them.`;
+  }
+
+  // Widths are written through an adopted stylesheet rather than a style attribute:
+  // this page ships style-src 'self', which refuses style attributes silently, and a
+  // silently-refused width is a bar that renders at zero while looking correct in the
+  // source. A real rule is the same result without widening the policy.
+  let mixSheet = null;
+  let mixSequence = 0;
+  function sizeMixSegments(bar) {
+    if (!("adoptedStyleSheets" in document) || typeof CSSStyleSheet !== "function") return;
+    if (!mixSheet) {
+      try {
+        mixSheet = new CSSStyleSheet();
+        document.adoptedStyleSheets = [...document.adoptedStyleSheets, mixSheet];
+      } catch {
+        return;
+      }
+    }
+    for (let index = mixSheet.cssRules.length - 1; index >= 0; index -= 1) mixSheet.deleteRule(index);
+    mixSequence += 1;
+    [...bar.children].forEach((segment, index) => {
+      const id = `m${mixSequence}-${index}`;
+      segment.dataset.mix = id;
+      const share = Number(segment.dataset.share || 0) / 10;
+      mixSheet.insertRule(`[data-mix="${id}"]{flex-basis:${share.toFixed(1)}%}`, mixSheet.cssRules.length);
+    });
   }
 
   async function loadEconomics(signal) {
     setSectionState("economics", "Loading", "pending");
     const [economicsResult, slicesResult] = await Promise.allSettled([
       adminRequest("admin_economics", {}, signal),
-      adminListRequest("admin_team_economics", "economicsSlices", {}, signal)
+      adminListRequest("admin_team_economics", "economicsSlices", { dimension: economicsState.dimension }, signal)
     ]);
     const errors = [];
     let loaded = 0;
@@ -1134,14 +1527,15 @@
     if (economicsResult.status === "fulfilled") {
       try {
         economicsProjection = renderEconomicsSummary(economicsResult.value);
+        setFreshness("economics", economicsProjection);
         loaded += 1;
       } catch (error) {
         errors.push(error);
-        document.querySelectorAll("[data-economics-metric]").forEach((element) => { element.textContent = "—"; });
+        document.querySelectorAll("[data-economics-metric]").forEach((element) => setValue(element, UNAVAILABLE));
       }
     } else {
       errors.push(economicsResult.reason);
-      document.querySelectorAll("[data-economics-metric]").forEach((element) => { element.textContent = "—"; });
+      document.querySelectorAll("[data-economics-metric]").forEach((element) => setValue(element, UNAVAILABLE));
     }
 
     if (slicesResult.status === "fulfilled") {
@@ -1188,7 +1582,7 @@
       "agent-states": `${projectionValue(fleet, "active_agents", formatCount, fleet.activeAgents)} / ${projectionValue(fleet, "blocked_agents", formatCount, fleet.blockedAgents)} / ${projectionValue(fleet, "failed_agents", formatCount, fleet.failedAgents)}`,
       sessions: projectionValue(fleet, "current_sessions", formatCount, fleet.currentSessions)
     };
-    Object.entries(values).forEach(([name, value]) => document.querySelectorAll(`[data-fleet-metric="${name}"]`).forEach((element) => { element.textContent = value; }));
+    Object.entries(values).forEach(([name, value]) => document.querySelectorAll(`[data-fleet-metric="${name}"]`).forEach((element) => setValue(element, value)));
     return projectionSummary(fleet);
   }
 
@@ -1200,17 +1594,39 @@
       const healthReason = projectionValue(runtime, "runtime_health_reason", (value) => enumLabel(value, ["not reported", "none", "reconciling", "generation mismatch", "gateway not ready", "agent roster not ready", "suspended", "reconciliation failed", "heartbeat stale"]), runtime?.runtimeHealthReason);
       const instanceName = projectionFieldAvailable(runtime, "openclaw_instance_name") ? stringValue(runtime?.openclawInstanceName) : "";
       const row = document.createElement("tr");
-      cell(row, `${stringValue(runtime?.teamId) || "Unknown team"} · ${instanceName || stringValue(runtime?.id)}`, true);
-      const stateCell = cell(row, ""); stateCell.replaceChildren(statusText(runtimeState));
-      cell(row, `${healthReason} · ${projectionValue(runtime, "gateway_ready", (value) => value ? "gateway ready" : "gateway not ready", runtime?.gatewayReady)} · ${projectionValue(runtime, "ready_agent_count", formatCount, runtime?.readyAgentCount)} ready agents · generation ${projectionValue(runtime, "observed_generation", formatCount, runtime?.observedGeneration)}/${projectionValue(runtime, "desired_generation", formatCount, runtime?.desiredGeneration)} · ${projectionFieldAvailable(runtime, "kubernetes_namespace") ? stringValue(runtime?.kubernetesNamespace) || "namespace unavailable" : "namespace unavailable"}`);
-      cell(row, `${projectionValue(runtime, "active_agents", formatCount, runtime?.activeAgents)} active · ${projectionValue(runtime, "blocked_agents", formatCount, runtime?.blockedAgents)} blocked · ${projectionValue(runtime, "failed_agents", formatCount, runtime?.failedAgents)} failed`);
-      cell(row, projectionValue(runtime, "current_sessions", formatCount, runtime?.currentSessions));
-      cell(row, `${projectionValue(runtime, "last_heartbeat_at", formatTimestamp, runtime?.lastHeartbeatAt)} / ${projectionValue(runtime, "last_tool_call_at", formatTimestamp, runtime?.lastToolCallAt)}`);
-      cell(row, projectionFieldAvailable(runtime, "current_model_aliases") && Array.isArray(runtime?.currentModelAliases) && runtime.currentModelAliases.length ? runtime.currentModelAliases.join(", ") : "—");
-      cell(row, `${projectionValue(runtime, "workspace_volume_used_bytes", formatBytes, runtime?.workspaceVolumeUsedBytes)} / ${projectionValue(runtime, "workspace_volume_capacity_bytes", formatBytes, runtime?.workspaceVolumeCapacityBytes)}`);
-      cell(row, `${backupState} / ${eventState}`);
-      cell(row, `${projectionFieldAvailable(runtime, "openclaw_version") ? stringValue(runtime?.openclawVersion) || "—" : "—"} / ${projectionFieldAvailable(runtime, "operator_version") ? stringValue(runtime?.operatorVersion) || "—" : "—"} / ${projectionFieldAvailable(runtime, "organization_template_version") ? stringValue(runtime?.organizationTemplateVersion) || "—" : "—"}`);
-      cell(row, projectionSummary(runtime));
+      const identity = document.createElement("th");
+      identity.scope = "row";
+      const team = document.createElement("div");
+      team.className = "ad-cell-main";
+      team.textContent = stringValue(runtime?.teamId) || "Unknown team";
+      const instance = document.createElement("div");
+      instance.className = "ad-cell-sub";
+      instance.textContent = instanceName || stringValue(runtime?.id);
+      identity.append(team, instance);
+      row.append(identity);
+
+      // The runtime's own account of why it is in this state rides on the state chip
+      // rather than taking a column of its own: it is the thing you read AFTER the
+      // state has told you to look, and it is far too long to be a cell.
+      const stateCell = cell(row, "");
+      stateCell.replaceChildren(statusText(runtimeState));
+      stateCell.title = `${healthReason} · ${projectionValue(runtime, "gateway_ready", (value) => value ? "gateway ready" : "gateway not ready", runtime?.gatewayReady)} · ${projectionValue(runtime, "ready_agent_count", formatCount, runtime?.readyAgentCount)} ready agents · generation ${projectionValue(runtime, "observed_generation", formatCount, runtime?.observedGeneration)}/${projectionValue(runtime, "desired_generation", formatCount, runtime?.desiredGeneration)} · projection ${projectionSummary(runtime)}`;
+
+      const agents = numericCell(row, projectionValue(runtime, "active_agents", formatCount, runtime?.activeAgents));
+      agents.title = `${projectionValue(runtime, "active_agents", formatCount, runtime?.activeAgents)} active · ${projectionValue(runtime, "blocked_agents", formatCount, runtime?.blockedAgents)} blocked · ${projectionValue(runtime, "failed_agents", formatCount, runtime?.failedAgents)} failed`;
+      numericCell(row, projectionValue(runtime, "current_sessions", formatCount, runtime?.currentSessions));
+      numericCell(row, projectionValue(runtime, "last_heartbeat_at", formatTimestamp, runtime?.lastHeartbeatAt));
+      numericCell(row, projectionValue(runtime, "last_tool_call_at", formatTimestamp, runtime?.lastToolCallAt));
+      const model = cell(row, projectionFieldAvailable(runtime, "current_model_aliases") && Array.isArray(runtime?.currentModelAliases) && runtime.currentModelAliases.length ? runtime.currentModelAliases.join(", ") : UNAVAILABLE);
+      model.className = "ad-cell-mono";
+      const workspace = numericCell(row, projectionValue(runtime, "workspace_volume_used_bytes", formatBytes, runtime?.workspaceVolumeUsedBytes));
+      workspace.title = `of ${projectionValue(runtime, "workspace_volume_capacity_bytes", formatBytes, runtime?.workspaceVolumeCapacityBytes)} capacity`;
+      const backup = cell(row, backupState);
+      backup.className = "ad-cell-mono";
+      backup.title = `event stream ${eventState}`;
+      const version = cell(row, projectionFieldAvailable(runtime, "openclaw_version") ? stringValue(runtime?.openclawVersion) || UNAVAILABLE : UNAVAILABLE);
+      version.className = "ad-cell-mono";
+      version.title = `operator ${projectionFieldAvailable(runtime, "operator_version") ? stringValue(runtime?.operatorVersion) || UNAVAILABLE : UNAVAILABLE} · template ${projectionFieldAvailable(runtime, "organization_template_version") ? stringValue(runtime?.organizationTemplateVersion) || UNAVAILABLE : UNAVAILABLE}`;
       return row;
   }
 
@@ -1263,11 +1679,11 @@
     { key: "latency_p95", title: "Latency p95", unit: "ms", scale: 1000, group: "service", filterable: true, resolves: "http_server_request_duration_seconds → p95", caveat: "No http_route label — this is service-wide. Per-endpoint latency needs new instrumentation, not a different query." },
     { key: "goroutines", title: "Goroutines", unit: "", scale: 1, group: "service", filterable: true, resolves: "go_goroutine_count" },
     { key: "memory_bytes", title: "Go heap in use", unit: "MiB", scale: 1 / (1024 * 1024), group: "service", filterable: true, resolves: "go_memory_used_bytes" },
+    { key: "queue_depth", title: "Agent queue depth", unit: "", scale: 1, group: "crew", filterable: false, resolves: "crew runtime gauge" },
     { key: "target_health", title: "Target health", unit: "", scale: 1, group: "service", filterable: false, resolves: "target_info", emptyByDesign: "Resolves to target_info. Push pipeline — there is no scrape up to report. Empty by construction, not by outage." },
     { key: "llm_tokens", title: "Model tokens", unit: "tok/s", scale: 1, group: "crew", filterable: false, resolves: "crew runtime counter" },
     { key: "llm_cost_usd", title: "Model spend (1h)", unit: "USD", scale: 1, group: "crew", filterable: false, resolves: "crew runtime counter" },
     { key: "run_duration", title: "Run duration p95", unit: "s", scale: 1, group: "crew", filterable: false, resolves: "crew runtime histogram → p95" },
-    { key: "queue_depth", title: "Agent queue depth", unit: "", scale: 1, group: "crew", filterable: false, resolves: "crew runtime gauge" }
   ];
 
   const metricsState = {
@@ -1276,7 +1692,7 @@
     service: "",
     windowKey: "24h",
     environment: "development",
-    focusController: null,
+    gridController: null,
     loaded: false
   };
 
@@ -1336,11 +1752,11 @@
     return value.toFixed(value >= 100 ? 0 : 2);
   }
 
-  function metricsPip(state) {
-    const pip = document.createElement("span");
-    pip.className = `pip pip--${state}`;
-    pip.setAttribute("aria-hidden", "true");
-    return pip;
+  function metricsDot(pipState) {
+    const dot = document.createElement("span");
+    dot.className = `dn-dot dn-dot--sm${pipState && pipState !== "idle" ? ` dn-dot--${pipState}` : ""}`;
+    dot.setAttribute("aria-hidden", "true");
+    return dot;
   }
 
   function metricsPipState(outcome, panel) {
@@ -1351,20 +1767,23 @@
     return panel.emptyByDesign ? "idle" : "attention";
   }
 
-  function metricsChart(points, panel, large) {
+  function metricsChart(points, panel) {
     const svgNamespace = "http://www.w3.org/2000/svg";
-    const width = large ? 640 : 160;
-    const height = large ? 180 : 44;
+    const width = 160;
+    const height = 46;
     const svg = document.createElementNS(svgNamespace, "svg");
-    svg.setAttribute("class", `metrics-spark${panel.tone === "danger" ? " metrics-spark--danger" : ""}${large ? " metrics-spark--lg" : ""}`);
+    svg.setAttribute("class", "ad-spark");
     svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
     svg.setAttribute("preserveAspectRatio", "none");
     svg.setAttribute("aria-hidden", "true");
-    // Hairline y-grid only - no x-grid, no frame, no fill. The only colour
-    // on the plot is the data.
+    // Hairline y-grid only — no x-grid, no frame, no fill. The only colour on the
+    // plot is the data, and the plot is drawn here rather than by a charting
+    // library because this page's CSP cannot reach a CDN and will not grow an
+    // exception for a sparkline.
     for (const fraction of [0.25, 0.5, 0.75]) {
       const grid = document.createElementNS(svgNamespace, "line");
       grid.setAttribute("class", "spark-grid");
+      grid.setAttribute("stroke", "var(--viz-grid)");
       grid.setAttribute("x1", "0");
       grid.setAttribute("x2", String(width));
       grid.setAttribute("y1", (height * fraction).toFixed(1));
@@ -1380,42 +1799,30 @@
     const line = document.createElementNS(svgNamespace, "polyline");
     line.setAttribute("class", "spark-line");
     line.setAttribute("fill", "none");
-    line.setAttribute("stroke-width", large ? "2" : "1.5");
+    line.setAttribute("stroke", panel.tone === "danger" ? "var(--status-danger-dot)" : "var(--viz-1)");
+    line.setAttribute("stroke-width", "1.5");
     line.setAttribute("points", coordinates.join(" "));
     svg.append(line);
-    if (!large) return svg;
-    // The focused plot carries mono ticks: the scale's top and floor, in the
-    // panel's own unit, where the eye already is.
-    const wrap = document.createElement("div");
-    wrap.className = "metrics-plot";
-    wrap.append(svg);
-    const ticks = document.createElement("div");
-    ticks.className = "metrics-plot__ticks";
-    ticks.setAttribute("aria-hidden", "true");
-    const top = document.createElement("span");
-    top.textContent = `${formatMetricsValue(maxValue)}${panel.unit ? ` ${panel.unit}` : ""}`;
-    const floor = document.createElement("span");
-    floor.textContent = "0";
-    ticks.append(top, floor);
-    wrap.append(ticks);
-    return wrap;
+    return svg;
   }
 
-  // A ghost plot: repeating hairlines where the grid would be, so a grid of
-  // empty panels reads as instruments whose series are absent, not as a
-  // screen that failed to load.
-  function metricsGhostPlot(large) {
+  // A ghost plot: repeating hairlines where the grid would be, so a grid of empty
+  // panels reads as instruments whose series are absent, not as a screen that
+  // failed to load. The design system's .dn-dstate paints the same idea behind the
+  // explanation; this keeps the panel's own plot area the height it would have had.
+  function metricsGhostPlot() {
     const svgNamespace = "http://www.w3.org/2000/svg";
-    const width = large ? 640 : 160;
-    const height = large ? 96 : 36;
+    const width = 160;
+    const height = 36;
     const svg = document.createElementNS(svgNamespace, "svg");
-    svg.setAttribute("class", "metrics-ghost");
+    svg.setAttribute("class", "ad-spark");
     svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
     svg.setAttribute("preserveAspectRatio", "none");
     svg.setAttribute("aria-hidden", "true");
     for (const fraction of [0.2, 0.4, 0.6, 0.8]) {
       const line = document.createElementNS(svgNamespace, "line");
       line.setAttribute("class", "spark-grid");
+      line.setAttribute("stroke", "var(--viz-grid)");
       line.setAttribute("x1", "0");
       line.setAttribute("x2", String(width));
       line.setAttribute("y1", (height * fraction).toFixed(1));
@@ -1425,132 +1832,177 @@
     return svg;
   }
 
-  // Empty is four different facts, so it is four different states: pending
-  // (wired, not flowing - the only one with a hue), bydesign (empty by
-  // construction), absent (the environment does not exist), failed (the
-  // request itself failed). Never a bare "no data".
-  function metricsDataState(kind, label, why, queryLine, options = {}) {
+  // Empty is four different facts, so it is four different states: pending (wired,
+  // not flowing — the only one that takes a hue, because it will change on its own),
+  // bydesign (empty by construction), absent (the environment does not exist),
+  // failed (the request itself failed). Never a bare "no data": every one of these
+  // names its kind AND its cause, because three of the four are not fixed by
+  // retrying and an operator deserves to know which.
+  function metricsDataState(kind, label, why, queryLine) {
     const block = document.createElement("div");
-    block.className = `dstate dstate--${kind}${options.compact ? " dstate--compact" : ""}`;
+    block.className = `dn-dstate${kind === "pending" ? " dn-dstate--attention" : ""}`;
     const flag = document.createElement("span");
-    flag.className = "dstate__flag";
-    flag.append(metricsPip(kind === "pending" ? "attention" : kind === "failed" ? "danger" : "idle"), document.createTextNode(label));
+    flag.className = "dn-dstate__flag";
+    flag.append(metricsDot(kind === "pending" ? "attention" : kind === "failed" ? "danger" : "idle"), document.createTextNode(label));
     block.append(flag);
-    if (why && !options.compact) {
+    if (why) {
       const explanation = document.createElement("p");
-      explanation.className = "dstate__why";
+      explanation.className = "dn-dstate__why";
       explanation.textContent = why;
       block.append(explanation);
     }
-    if (why && options.compact) block.title = why;
-    if (queryLine && !options.compact) {
+    if (queryLine) {
       const query = document.createElement("code");
-      query.className = "dstate__query";
+      query.className = "dn-dstate__query";
       query.textContent = queryLine;
       block.append(query);
     }
-    block.append(metricsGhostPlot(Boolean(options.large)));
     return block;
   }
 
-  function metricsOutcomeState(outcome, panel, options = {}) {
+  function metricsOutcomeState(outcome, panel) {
     if (outcome.state === "unprovisioned") {
-      return metricsDataState("absent", options.compact ? "Not provisioned" : "Environment absent", METRICS_ABSENT_WHY, `${metricsUpstreamSeries(panel)} → 404`, options);
+      return metricsDataState("absent", "Not provisioned", METRICS_ABSENT_WHY, `${metricsUpstreamSeries(panel)} → 404`);
     }
     if (outcome.state === "unavailable") {
-      return metricsDataState("failed", `Unavailable${outcome.detail ? ` (${outcome.detail})` : ""}`, METRICS_FAILED_WHY, `${metricsUpstreamSeries(panel)} → no answer`, options);
+      return metricsDataState("failed", `Unavailable${outcome.detail ? ` (${outcome.detail})` : ""}`, METRICS_FAILED_WHY, `${metricsUpstreamSeries(panel)} → no answer`);
     }
     if (panel.emptyByDesign) {
-      return metricsDataState("bydesign", "Empty by design", panel.emptyByDesign, `${metricsUpstreamSeries(panel)} → 0 series`, options);
+      return metricsDataState("bydesign", "Empty by design", panel.emptyByDesign, `${metricsUpstreamSeries(panel)} → 0 series`);
     }
     const why = panel.group === "crew" ? METRICS_PENDING_WHY : "The workspace answered this request with zero series for the window. No sample was invented to fill the panel.";
-    return metricsDataState("pending", "No data yet", why, `${metricsUpstreamSeries(panel)} → 0 series`, options);
-  }
-
-  function renderMetricsCell(cell, outcome, panel) {
-    const environmentLabel = cell.querySelector(".metrics-environment");
-    cell.replaceChildren(environmentLabel);
-    if (!outcome) {
-      const loading = document.createElement("span");
-      loading.className = "metrics-absent";
-      loading.textContent = "Loading";
-      cell.append(loading);
-      return;
-    }
-    if (outcome.state === "ok") {
-      const value = document.createElement("strong");
-      value.className = "metrics-value";
-      value.textContent = formatMetricsValue(outcome.latest);
-      const unit = document.createElement("span");
-      unit.className = "metrics-unit";
-      unit.textContent = panel.unit;
-      value.append(unit);
-      cell.append(value, metricsChart(outcome.points, panel, false));
-      return;
-    }
-    cell.append(metricsOutcomeState(outcome, panel, { compact: true }));
+    return metricsDataState("pending", "No data yet", why, `${metricsUpstreamSeries(panel)} → 0 series`);
   }
 
   function metricsSeriesLabel(panel) {
     return panel.filterable && metricsState.service ? `${panel.key} · service=${metricsState.service}` : panel.key;
   }
 
-  function buildMetricsCard(panel) {
+  // One panel of the grid, in the design system's metric-panel shape. An empty
+  // panel keeps a populated panel's frame and is marked dashed at its edge rather
+  // than collapsing, so the grid holds its rhythm and absence never reads as
+  // breakage.
+  function buildMetricsPanel(panel) {
     const card = document.createElement("article");
-    card.className = "mpanel metrics-card";
-    const head = document.createElement("header");
-    head.className = "mpanel__head";
+    card.className = "dn-mpanel";
+    card.dataset.metricsPanel = panel.key;
+
+    const head = document.createElement("div");
+    head.className = "dn-mpanel__head";
+    const identity = document.createElement("div");
+    identity.className = "dn-mpanel__id";
     const series = document.createElement("span");
-    series.className = "mpanel__series";
+    series.className = "dn-mpanel__series";
     series.textContent = metricsSeriesLabel(panel);
-    const meta = document.createElement("span");
-    meta.className = "mpanel__meta";
-    meta.textContent = "…";
-    head.append(series, meta);
-    const title = document.createElement("p");
-    title.className = "mpanel__title";
+    const filter = document.createElement("span");
+    filter.className = "dn-mpanel__filter";
+    filter.textContent = `environment=${metricsState.environment}`;
+    identity.append(series, filter);
+
+    const titles = document.createElement("div");
+    titles.className = "dn-mpanel__titles";
+    const title = document.createElement("span");
+    title.className = "dn-mpanel__title";
     title.textContent = panel.title;
-    const columns = document.createElement("div");
-    columns.className = "metrics-columns";
-    for (const environment of METRICS_ENVIRONMENTS) {
-      const cell = document.createElement("div");
-      cell.className = "metrics-cell";
-      cell.dataset.environment = environment;
-      const label = document.createElement("span");
-      label.className = "metrics-environment";
-      label.textContent = environment;
-      cell.append(label);
-      columns.append(cell);
-      renderMetricsCell(cell, null, panel);
-    }
-    card.append(head, title, columns);
-    if (panel.caveat) {
-      const caveat = document.createElement("p");
-      caveat.className = "mpanel__caveat";
-      caveat.textContent = panel.caveat;
-      card.append(caveat);
-    }
+    const unit = document.createElement("span");
+    unit.className = "dn-mpanel__unit";
+    unit.textContent = panel.unit;
+    const meta = document.createElement("span");
+    meta.className = "dn-mpanel__meta";
+    meta.dataset.metricsMeta = "true";
+    meta.textContent = "…";
+    titles.append(title, unit, meta);
+
+    head.append(identity, titles);
+    const body = document.createElement("div");
+    body.className = "dn-mpanel__body";
+    body.dataset.metricsBody = "true";
+    card.append(head, body);
+    renderMetricsPanel(card, null, panel);
     return card;
   }
 
-  function updateMetricsCardMeta(card, outcome, panel) {
-    const meta = card?.querySelector(".mpanel__meta");
-    if (!meta) return;
-    if (!outcome) meta.textContent = "…";
-    else if (outcome.state === "ok") meta.textContent = `now ${formatMetricsValue(outcome.latest)}${panel.unit ? ` ${panel.unit}` : ""}`;
-    else if (outcome.state === "unprovisioned") meta.textContent = "404";
-    else if (outcome.state === "unavailable") meta.textContent = outcome.detail || "unavailable";
-    else meta.textContent = "no samples";
+  function renderMetricsPanel(card, outcome, panel) {
+    const body = card?.querySelector("[data-metrics-body]");
+    const meta = card?.querySelector("[data-metrics-meta]");
+    if (!body || !meta) return;
+    card.classList.toggle("dn-mpanel--empty", Boolean(outcome) && outcome.state !== "ok");
+    if (!outcome) {
+      meta.textContent = "…";
+      body.replaceChildren(metricsGhostPlot());
+      return;
+    }
+    if (outcome.state === "ok") {
+      meta.textContent = formatMetricsValue(outcome.latest);
+      body.replaceChildren(metricsChart(outcome.points, panel));
+      return;
+    }
+    meta.textContent = outcome.state === "unprovisioned"
+      ? "Environment absent"
+      : outcome.state === "unavailable"
+        ? outcome.detail || UNAVAILABLE
+        : "no samples";
+    body.replaceChildren(metricsGhostPlot(), metricsOutcomeState(outcome, panel));
   }
 
-  function metricsChip(label, pressed, onSelect) {
-    const chip = document.createElement("button");
-    chip.type = "button";
-    chip.className = "qbar__chip";
-    chip.setAttribute("aria-pressed", String(pressed));
-    chip.addEventListener("click", onSelect);
-    chip.append(document.createTextNode(label));
-    return chip;
+  // The controls are the design system's segmented control, not free text. That is
+  // the whole point of this screen: the proxy accepts a panel NAME, a window and a
+  // step, and refuses anything else. There is no query box to type PromQL into
+  // because there is no endpoint that would run it.
+  function metricsSegItem(label, active, onSelect, disabled = false) {
+    const item = document.createElement("button");
+    item.type = "button";
+    item.className = "dn-seg__item";
+    if (active) item.dataset.active = "true";
+    item.disabled = disabled;
+    item.addEventListener("click", onSelect);
+    item.append(document.createTextNode(label));
+    return item;
+  }
+
+  function renderMetricsQueryBar() {
+    const seriesHost = document.querySelector("[data-metrics-series-chips]");
+    const serviceHost = document.querySelector("[data-metrics-service-chips]");
+    const windowHost = document.querySelector("[data-metrics-window-chips]");
+    const environmentHost = document.querySelector("[data-metrics-env-chips]");
+    const serviceNote = document.querySelector("[data-metrics-service-note]");
+    const stepNote = document.querySelector("[data-metrics-step-note]");
+    if (!seriesHost || !serviceHost || !windowHost || !environmentHost) return;
+    const focused = metricsPanel(metricsState.focusKey);
+
+    environmentHost.replaceChildren();
+    METRICS_ENVIRONMENTS.forEach((environment) => {
+      const item = metricsSegItem(environment, metricsState.environment === environment, () => selectMetricsEnvironment(environment));
+      item.prepend(metricsDot(metricsEnvironmentPipState(environment)));
+      environmentHost.append(item);
+    });
+
+    windowHost.replaceChildren();
+    METRICS_WINDOWS.forEach((windowKey) => {
+      windowHost.append(metricsSegItem(windowKey, metricsState.windowKey === windowKey, () => selectMetricsWindow(windowKey)));
+    });
+
+    seriesHost.replaceChildren();
+    METRICS_PANELS.forEach((panel) => {
+      const item = metricsSegItem(panel.key, panel.key === metricsState.focusKey, () => selectMetricsFocus(panel.key));
+      item.title = panel.title;
+      item.prepend(metricsDot(metricsPipState(metricsState.outcomes.get(`${metricsState.environment}:${panel.key}`), panel)));
+      seriesHost.append(item);
+    });
+
+    serviceHost.replaceChildren();
+    serviceHost.append(metricsSegItem("all", !metricsState.service, () => selectMetricsService(""), !focused.filterable));
+    METRICS_SERVICES.forEach((service) => {
+      serviceHost.append(metricsSegItem(service, metricsState.service === service, () => selectMetricsService(service), !focused.filterable));
+    });
+    if (serviceNote) serviceNote.hidden = focused.filterable;
+
+    // The two limits the proxy actually enforces, stated where the controls are:
+    // a window of at most 24 hours and a step of at least 30 seconds. Neither is a
+    // preference — a request outside them is refused upstream.
+    if (stepNote) stepNote.textContent = `step ${METRICS_STEP_SECONDS}s · window ≤ 24h`;
+
+    updateMetricsQueryEcho();
   }
 
   function metricsEnvironmentPipState(environment) {
@@ -1560,234 +2012,97 @@
     return "idle";
   }
 
-  function renderMetricsQueryBar() {
-    const seriesHost = document.querySelector("[data-metrics-series-chips]");
-    const serviceHost = document.querySelector("[data-metrics-service-chips]");
-    const windowHost = document.querySelector("[data-metrics-window-chips]");
-    const environmentHost = document.querySelector("[data-metrics-env-chips]");
-    const serviceNote = document.querySelector("[data-metrics-service-note]");
-    if (!seriesHost || !serviceHost || !windowHost || !environmentHost) return;
-    const focused = metricsPanel(metricsState.focusKey);
-
-    seriesHost.replaceChildren();
-    METRICS_PANELS.forEach((panel) => {
-      const chip = metricsChip(panel.key, panel.key === metricsState.focusKey, () => selectMetricsFocus(panel.key));
-      chip.title = panel.title;
-      chip.prepend(metricsPip(metricsPipState(metricsState.outcomes.get(`development:${panel.key}`), panel)));
-      seriesHost.append(chip);
-    });
-
-    serviceHost.replaceChildren();
-    const allChip = metricsChip("all", !metricsState.service, () => selectMetricsService(""));
-    allChip.disabled = !focused.filterable;
-    serviceHost.append(allChip);
-    METRICS_SERVICES.forEach((service) => {
-      const chip = metricsChip(service, metricsState.service === service, () => selectMetricsService(service));
-      chip.disabled = !focused.filterable;
-      serviceHost.append(chip);
-    });
-    if (serviceNote) serviceNote.hidden = focused.filterable;
-
-    windowHost.replaceChildren();
-    METRICS_WINDOWS.forEach((windowKey) => {
-      windowHost.append(metricsChip(windowKey, metricsState.windowKey === windowKey, () => selectMetricsWindow(windowKey)));
-    });
-
-    environmentHost.replaceChildren();
-    METRICS_ENVIRONMENTS.forEach((environment) => {
-      const chip = metricsChip(environment, metricsState.environment === environment, () => selectMetricsEnvironment(environment));
-      chip.prepend(metricsPip(metricsEnvironmentPipState(environment)));
-      if (metricsState.loaded && metricsEnvironmentPipState(environment) === "idle" && METRICS_PANELS.every((panel) => metricsState.outcomes.get(`${environment}:${panel.key}`)?.state === "unprovisioned")) {
-        const absent = document.createElement("span");
-        absent.className = "qbar__chip-tail";
-        absent.textContent = "404";
-        chip.append(absent);
-      }
-      environmentHost.append(chip);
-    });
-
-    updateMetricsQueryEcho();
-  }
-
   function updateMetricsQueryEcho() {
     const echo = document.querySelector("[data-metrics-query-echo]");
-    const resolves = document.querySelector("[data-metrics-resolves]");
     if (!echo) return;
     const panel = metricsPanel(metricsState.focusKey);
     if (!state.authorized || !apiBaseUrl) {
       echo.textContent = "Sign in to build a verified metrics request.";
-      if (resolves) resolves.hidden = true;
       return;
     }
     const target = metricsRequestUrl(metricsState.environment, panel, metricsState.service, metricsState.windowKey);
-    echo.replaceChildren();
-    echo.append(document.createTextNode("GET "), document.createTextNode(`${target.pathname}?${target.searchParams.toString()}`));
-    if (resolves) {
-      resolves.textContent = `↳ resolves upstream to ${panel.resolves} — panel names only, the browser never sends PromQL`;
-      resolves.hidden = false;
-    }
-  }
-
-  function renderMetricsFocusOutcome(outcome, panel) {
-    const host = document.querySelector("[data-metrics-focus]");
-    if (!host) return;
-    const nameLabel = document.querySelector("[data-metrics-focus-name]");
-    if (nameLabel) nameLabel.textContent = metricsUpstreamSeries(panel);
-    const card = document.createElement("article");
-    card.className = "mpanel mpanel--lg";
-    const head = document.createElement("header");
-    head.className = "mpanel__head";
-    const series = document.createElement("span");
-    series.className = "mpanel__series";
-    series.textContent = `${metricsSeriesLabel(panel)} · ${metricsState.environment}`;
-    const meta = document.createElement("span");
-    meta.className = "mpanel__meta";
-    head.append(series, meta);
-    const title = document.createElement("p");
-    title.className = "mpanel__title";
-    title.textContent = panel.title;
-    card.append(head, title);
-    if (!outcome) {
-      meta.textContent = "…";
-      const loading = document.createElement("p");
-      loading.className = "metrics-absent";
-      loading.textContent = state.authorized ? "Loading" : "Panels load after operator verification.";
-      card.append(loading, metricsGhostPlot(true));
-    } else if (outcome.state === "ok") {
-      meta.textContent = `now ${formatMetricsValue(outcome.latest)}${panel.unit ? ` ${panel.unit}` : ""}`;
-      card.append(metricsChart(outcome.points, panel, true));
-    } else {
-      meta.textContent = outcome.state === "unprovisioned" ? "404" : outcome.state === "unavailable" ? outcome.detail || "unavailable" : "no samples";
-      card.append(metricsOutcomeState(outcome, panel, { large: true }));
-    }
-    if (panel.caveat) {
-      const caveat = document.createElement("p");
-      caveat.className = "mpanel__caveat";
-      caveat.textContent = panel.caveat;
-      card.append(caveat);
-    }
-    host.replaceChildren(card);
-  }
-
-  function renderMetricsFocusFromCache() {
-    const panel = metricsPanel(metricsState.focusKey);
-    renderMetricsFocusOutcome(metricsState.outcomes.get(`${metricsState.environment}:${panel.key}`) || null, panel);
-  }
-
-  // Any query-bar change refetches the focused panel - one real request,
-  // and the echo strip above it is built from the same URL builder.
-  async function refetchMetricsFocus() {
-    renderMetricsQueryBar();
-    if (!state.authorized || !state.accessToken || Date.now() >= state.deadline) {
-      renderMetricsFocusFromCache();
-      return;
-    }
-    const panel = metricsPanel(metricsState.focusKey);
-    if (metricsState.focusController) metricsState.focusController.abort();
-    const controller = new AbortController();
-    metricsState.focusController = controller;
-    renderMetricsFocusOutcome(null, panel);
-    let outcome;
-    try {
-      outcome = await fetchMetricsPanel(metricsState.environment, panel, controller.signal);
-    } catch (error) {
-      if (error?.name === "AbortError") return;
-      outcome = { state: "unavailable" };
-    }
-    if (controller.signal.aborted) return;
-    renderMetricsFocusOutcome(outcome, panel);
+    echo.textContent = `GET ${target.pathname}?${target.searchParams.toString()}  ↳ ${panel.resolves} — panel names only, the browser never sends PromQL`;
   }
 
   function selectMetricsFocus(key) {
     if (metricsState.focusKey === key) return;
     metricsState.focusKey = key;
-    void refetchMetricsFocus();
+    renderMetricsQueryBar();
   }
 
   function selectMetricsService(service) {
     if (metricsState.service === service) return;
     metricsState.service = service;
-    void refetchMetricsFocus();
+    void reloadMetricsGrid();
   }
 
   function selectMetricsWindow(windowKey) {
     if (metricsState.windowKey === windowKey) return;
     metricsState.windowKey = windowKey;
-    void refetchMetricsFocus();
+    void reloadMetricsGrid();
   }
 
   function selectMetricsEnvironment(environment) {
     if (metricsState.environment === environment) return;
     metricsState.environment = environment;
-    void refetchMetricsFocus();
+    void reloadMetricsGrid();
   }
 
-  function setMetricsRailValue(name, value) {
-    document.querySelectorAll(`[data-metrics-rail="${name}"]`).forEach((element) => { element.textContent = value; });
-  }
-
-  function renderMetricsSummaryRail() {
-    if (!metricsState.loaded) {
-      ["series", "reporting", "pending", "absent"].forEach((name) => setMetricsRailValue(name, "—"));
+  // A control change is a new request, so it refetches rather than re-slicing a
+  // cached answer. Every panel on screen was produced by the request the echo
+  // strip is showing at that moment.
+  async function reloadMetricsGrid() {
+    renderMetricsQueryBar();
+    if (!state.authorized || !state.accessToken || Date.now() >= state.deadline) {
+      updateMetricsGridBasis();
       return;
     }
-    let reporting = 0;
-    let pending = 0;
-    let absent = 0;
-    METRICS_PANELS.forEach((panel) => {
-      const outcome = metricsState.outcomes.get(`development:${panel.key}`);
-      if (!outcome) return;
-      if (outcome.state === "ok") reporting += 1;
-      else if (outcome.state === "empty") {
-        if (panel.emptyByDesign) absent += 1;
-        else pending += 1;
-      }
-    });
-    setMetricsRailValue("series", String(METRICS_PANELS.length));
-    setMetricsRailValue("reporting", String(reporting));
-    setMetricsRailValue("pending", String(pending));
-    setMetricsRailValue("absent", String(absent));
+    if (metricsState.gridController) metricsState.gridController.abort();
+    const controller = new AbortController();
+    metricsState.gridController = controller;
+    await loadMetrics(controller.signal);
   }
 
   function updateMetricsGridBasis() {
     const basis = document.querySelector("[data-metrics-grid-basis]");
     if (!basis) return;
     basis.textContent = metricsState.loaded
-      ? `grid basis: window=${metricsState.windowKey} · step=${METRICS_STEP_SECONDS}s · service=${metricsState.service || "all"} · environments development + production — the grid reloads with the current selection on the next verified refresh`
+      ? `grid basis: environment=${metricsState.environment} · window=${metricsState.windowKey} · step=${METRICS_STEP_SECONDS}s · service=${metricsState.service || "all"}`
       : "Panels load after operator verification.";
   }
 
   function resetMetricsExplorer() {
-    if (metricsState.focusController) metricsState.focusController.abort();
-    metricsState.focusController = null;
+    if (metricsState.gridController) metricsState.gridController.abort();
+    metricsState.gridController = null;
     metricsState.outcomes = new Map();
     metricsState.loaded = false;
-    document.querySelectorAll("[data-metrics-grid], [data-metrics-grid-crew]").forEach((element) => element.replaceChildren());
-    // The focused panel keeps a populated panel's shape - ghost plot, not a
-    // blank - so the empty explorer still reads as an instrument.
-    renderMetricsFocusFromCache();
-    renderMetricsSummaryRail();
+    const grid = document.querySelector("[data-metrics-grid]");
+    // The grid keeps its ten panels and their ghost plots rather than emptying:
+    // an explorer with no session still reads as a rack of instruments.
+    if (grid) {
+      grid.replaceChildren();
+      for (const panel of METRICS_PANELS) grid.append(buildMetricsPanel(panel));
+    }
     updateMetricsGridBasis();
     renderMetricsQueryBar();
   }
 
   async function loadMetrics(signal) {
-    const serviceGrid = document.querySelector("[data-metrics-grid]");
-    const crewGrid = document.querySelector("[data-metrics-grid-crew]");
-    if (!serviceGrid) return true;
+    const grid = document.querySelector("[data-metrics-grid]");
+    if (!grid) return true;
     setSectionState("metrics", "Loading", "pending");
-    serviceGrid.replaceChildren();
-    crewGrid?.replaceChildren();
+    grid.replaceChildren();
     metricsState.outcomes = new Map();
     metricsState.loaded = false;
     const cards = new Map();
     for (const panel of METRICS_PANELS) {
-      const card = buildMetricsCard(panel);
-      (panel.group === "crew" && crewGrid ? crewGrid : serviceGrid).append(card);
+      const card = buildMetricsPanel(panel);
+      grid.append(card);
       cards.set(panel.key, card);
     }
+    const environment = metricsState.environment;
     let anyFailure = false;
-    await Promise.all(METRICS_PANELS.flatMap((panel) => METRICS_ENVIRONMENTS.map(async (environment) => {
+    await Promise.all(METRICS_PANELS.map(async (panel) => {
       let outcome;
       try {
         outcome = await fetchMetricsPanel(environment, panel, signal);
@@ -1797,16 +2112,12 @@
       }
       if (outcome.state === "unavailable") anyFailure = true;
       metricsState.outcomes.set(`${environment}:${panel.key}`, outcome);
-      const cell = cards.get(panel.key)?.querySelector(`[data-environment="${environment}"]`);
-      if (cell) renderMetricsCell(cell, outcome, panel);
-      if (environment === "development") updateMetricsCardMeta(cards.get(panel.key), outcome, panel);
-    })));
+      renderMetricsPanel(cards.get(panel.key), outcome, panel);
+    }));
     if (signal?.aborted) return !anyFailure;
     metricsState.loaded = true;
-    renderMetricsSummaryRail();
     updateMetricsGridBasis();
     renderMetricsQueryBar();
-    renderMetricsFocusFromCache();
     setSectionState("metrics", anyFailure ? "Degraded" : "Live", anyFailure ? "negative" : "positive");
     return !anyFailure;
   }
@@ -1824,14 +2135,16 @@
     if (fleetResult.status === "fulfilled") {
       try {
         fleetProjection = renderFleet(fleetResult.value);
+        setFreshness("fleet", fleetProjection);
         loaded += 1;
       } catch (error) {
         errors.push(error);
-        document.querySelectorAll("[data-fleet-metric]").forEach((element) => { element.textContent = "—"; });
+        document.querySelectorAll("[data-fleet-metric]").forEach((element) => setValue(element, UNAVAILABLE));
       }
     } else {
       errors.push(fleetResult.reason);
-      document.querySelectorAll("[data-fleet-metric]").forEach((element) => { element.textContent = "—"; });
+      setFreshness("fleet", UNAVAILABLE);
+      document.querySelectorAll("[data-fleet-metric]").forEach((element) => setValue(element, UNAVAILABLE));
     }
 
     if (runtimesResult.status === "fulfilled") {
@@ -1871,13 +2184,78 @@
     const severity = projectionValue(alert, "severity", (value) => enumLabel(value, ["not reported", "informational", "warning", "critical"]), alert?.severity);
     const row = document.createElement("tr");
     const severityCell = cell(row, "", true); severityCell.replaceChildren(statusText(severity));
-    cell(row, projectionValue(alert, "kind", (value) => enumLabel(value, alertKinds), alert?.kind));
-    cell(row, `${stringValue(alert?.teamId) || "—"} / ${stringValue(alert?.organizationId) || "—"}`);
-    cell(row, projectionFieldAvailable(alert, "safe_summary") ? stringValue(alert?.safeSummary) : "—");
-    cell(row, projectionValue(alert, "occurrence_count", formatCount, alert?.occurrenceCount));
-    cell(row, projectionValue(alert, "last_detected_at", formatTimestamp, alert?.lastDetectedAt));
-    cell(row, projectionSummary(alert));
+    const kind = cell(row, projectionValue(alert, "kind", (value) => enumLabel(value, alertKinds), alert?.kind));
+    kind.className = "ad-cell-mono";
+    cell(row, `${stringValue(alert?.teamId) || UNAVAILABLE} / ${stringValue(alert?.organizationId) || UNAVAILABLE}`);
+    const summary = cell(row, projectionFieldAvailable(alert, "safe_summary") ? stringValue(alert?.safeSummary) : UNAVAILABLE);
+    summary.className = "ad-cell-quiet";
+    numericCell(row, projectionValue(alert, "occurrence_count", formatCount, alert?.occurrenceCount));
+    const detected = cell(row, projectionValue(alert, "last_detected_at", formatTimestamp, alert?.lastDetectedAt));
+    detected.className = "ad-cell-mono";
+    detected.title = `projection ${projectionSummary(alert)}`;
     return row;
+  }
+
+  // The overview's "Needs attention" list is not a second source of truth: it is the
+  // same alert projection the Operations table renders, sorted the way the API
+  // already sorted it (severity, then most recent) and capped at four. Clicking a
+  // row moves to the surface that owns it rather than opening a private detail
+  // view, so there is one place each fact is explained.
+  function renderAttentionRows(alerts) {
+    const host = document.querySelector("[data-attention-rows]");
+    const empty = document.querySelector('[data-table-empty="attention"]');
+    if (!host) return;
+    host.replaceChildren();
+    const rows = alerts.slice(0, 4);
+    if (empty) empty.hidden = rows.length > 0;
+    rows.forEach((alert) => {
+      const severity = projectionValue(alert, "severity", (value) => enumLabel(value, ["not reported", "informational", "warning", "critical"]), alert?.severity);
+      const tone = statusTone(severity);
+      const link = document.createElement("button");
+      link.type = "button";
+      link.className = "dn-work dn-bare";
+      link.dataset.viewLink = stringValue(alert?.organizationId) && !stringValue(alert?.teamId) ? "billing" : "operations";
+
+      const glyph = document.createElement("span");
+      glyph.className = "dn-work__glyph";
+      glyph.append(metricsDot(DOT_FOR_TONE[tone] || "idle"));
+
+      const main = document.createElement("div");
+      main.className = "dn-work__main";
+      const title = document.createElement("div");
+      title.className = "dn-work__title";
+      title.textContent = projectionFieldAvailable(alert, "safe_summary") ? stringValue(alert?.safeSummary) : UNAVAILABLE;
+      const sub = document.createElement("div");
+      sub.className = "dn-work__sub";
+      const scope = document.createElement("span");
+      scope.textContent = [stringValue(alert?.organizationId), stringValue(alert?.teamId)].filter(Boolean).join(" · ") || "platform";
+      const when = document.createElement("span");
+      when.textContent = projectionValue(alert, "last_detected_at", formatTimestamp, alert?.lastDetectedAt);
+      sub.append(scope, when);
+      main.append(title, sub);
+
+      link.append(glyph, main, toneBadge(severity, tone));
+      link.addEventListener("click", () => setView(stringValue(link.dataset.viewLink)));
+      host.append(link);
+    });
+  }
+
+  // The rail and the tab bar both carry the open-alert count, and both hide it at
+  // zero: a badge showing "0" is a permanent piece of furniture that stops meaning
+  // anything. An unavailable count hides too, because a badge cannot say "unknown".
+  function renderOpenAlertCount(count) {
+    document.querySelectorAll("[data-open-alert-count]").forEach((element) => {
+      const numeric = Number.isFinite(count) && count > 0;
+      element.hidden = !numeric;
+      element.textContent = numeric ? String(count) : "";
+    });
+  }
+
+  // Freshness is per projection, from each projection's own source_observed_at —
+  // never one page-level "last refreshed" stamp, which would claim that a stale
+  // economics projection is as current as a live fleet one.
+  function setFreshness(name, value) {
+    document.querySelectorAll(`[data-freshness-for="${name}"]`).forEach((element) => setValue(element, value));
   }
 
   function renderAlertRows(alerts) {
@@ -1899,7 +2277,10 @@
   function renderAlerts(response) {
     const alerts = Array.isArray(response?.alerts) ? response.alerts : [];
     seedAlertStream(alerts, response?.snapshotSequence);
-    renderAlertRows([...state.alertInstances.values()]);
+    const current = [...state.alertInstances.values()];
+    renderAlertRows(current);
+    renderAttentionRows(current);
+    renderOpenAlertCount(current.length);
     const unavailableKinds = Array.isArray(response?.unavailableKinds) ? response.unavailableKinds.map((kind) => enumLabel(kind, alertKinds)) : [];
     const coverage = [];
     if (unavailableKinds.length) coverage.push(`Unavailable alert producers: ${unavailableKinds.join(", ")}.`);
@@ -1960,12 +2341,23 @@
     });
   }
 
+  function renderAlertSurfaces() {
+    const current = [...state.alertInstances.values()];
+    renderAlertRows(current);
+    renderAttentionRows(current);
+    renderOpenAlertCount(current.length);
+  }
+
   function scheduleAlertRender() {
     if (state.alertRenderQueued) return;
     state.alertRenderQueued = true;
     window.requestAnimationFrame(() => {
       state.alertRenderQueued = false;
-      try { renderAlertRows([...state.alertInstances.values()]); }
+      // A streamed delta updates every surface that reads the alert map, not just
+      // the Operations table: the overview's attention list and the rail badge are
+      // views of the same projection, and letting them drift would put two
+      // different alert counts on one screen.
+      try { renderAlertSurfaces(); }
       catch { clearTable("alerts", "Alert projection unavailable. No alert state was inferred from probes."); }
     });
   }
@@ -2016,28 +2408,67 @@
     }
   }
 
+  const auditState = { action: "", actions: [] };
+
+  // The filter vocabulary is DISCOVERED, never guessed. AdminAuditEvent.action is a
+  // free-form string on the wire, not an enum, so the only actions this control can
+  // honestly offer are the ones the server has actually returned. A hardcoded list
+  // would eventually offer a filter that matches nothing and look like an empty
+  // trail instead of a wrong button.
+  function renderAuditFilter() {
+    const host = document.querySelector("[data-audit-filter]");
+    if (!host) return;
+    host.replaceChildren();
+    const all = metricsSegItem("All", !auditState.action, () => selectAuditAction(""));
+    host.append(all);
+    auditState.actions.forEach((action) => {
+      host.append(metricsSegItem(action, auditState.action === action, () => selectAuditAction(action)));
+    });
+  }
+
+  function selectAuditAction(action) {
+    if (auditState.action === action) return;
+    auditState.action = action;
+    renderAuditFilter();
+    if (!state.authorized || !state.accessToken || Date.now() >= state.deadline) return;
+    void loadAudit();
+  }
+
   function renderAudit(response) {
     const events = Array.isArray(response?.events) ? response.events : [];
     const body = tableBody("audit");
     body.replaceChildren();
     events.forEach((event) => {
       const row = document.createElement("tr");
-      cell(row, formatTimestamp(event?.occurredAt), true);
-      cell(row, stringValue(event?.actorLabel) || stringValue(event?.actorUserId) || "—");
-      cell(row, stringValue(event?.action));
-      cell(row, `${stringValue(event?.resourceType) || "—"} / ${stringValue(event?.resourceId) || "—"}`);
-      cell(row, stringValue(event?.organizationId) || "—");
-      cell(row, stringValue(event?.sourceIp) || "—");
-      cell(row, stringValue(event?.requestId) || "—");
+      const when = cell(row, formatTimestamp(event?.occurredAt), true);
+      when.className = "ad-cell-mono ad-cell-mono--wrapless";
+      cell(row, stringValue(event?.actorLabel) || stringValue(event?.actorUserId) || UNAVAILABLE);
+      const action = cell(row, stringValue(event?.action));
+      action.className = "ad-cell-mono";
+      const resource = cell(row, `${stringValue(event?.resourceType) || UNAVAILABLE} / ${stringValue(event?.resourceId) || UNAVAILABLE}`);
+      resource.className = "ad-cell-quiet";
+      const organization = cell(row, stringValue(event?.organizationId) || UNAVAILABLE);
+      organization.className = "ad-cell-mono";
+      const ip = cell(row, stringValue(event?.sourceIp) || UNAVAILABLE);
+      ip.className = "ad-cell-mono";
+      const request = cell(row, stringValue(event?.requestId) || UNAVAILABLE);
+      request.className = "ad-cell-mono";
       body.append(row);
     });
+    // Only the unfiltered pass may widen the vocabulary: a filtered response
+    // contains one action by construction, and letting it rewrite the list would
+    // collapse the control to a single button the moment it was used.
+    if (!auditState.action) {
+      auditState.actions = [...new Set(events.map((event) => stringValue(event?.action)).filter(Boolean))].sort().slice(0, 8);
+      renderAuditFilter();
+    }
     showTable("audit", events.length);
     setSectionState("audit", events.length ? "Loaded" : "Empty", events.length ? "positive" : "neutral");
   }
 
   async function loadAudit(signal) {
     try {
-      renderAudit(await adminListRequest("admin_audit_events", "events", {}, signal));
+      renderAudit(await adminListRequest("admin_audit_events", "events", { action: auditState.action }, signal));
       return true;
     } catch (error) {
       clearTable("audit", "Audit projection unavailable. Absence of a row is not evidence that no action occurred.");
@@ -2066,7 +2497,37 @@
       "paid-no-team": projectionValue(billing, "paid_customers_without_provisioned_teams", formatCount, billing.paidCustomersWithoutProvisionedTeams),
       "team-no-subscription": projectionValue(billing, "provisioned_teams_without_valid_subscriptions", formatCount, billing.provisionedTeamsWithoutValidSubscriptions)
     };
-    Object.entries(values).forEach(([name, value]) => document.querySelectorAll(`[data-billing-metric="${name}"]`).forEach((element) => { element.textContent = value; }));
+    Object.entries(values).forEach(([name, value]) => document.querySelectorAll(`[data-billing-metric="${name}"]`).forEach((element) => setValue(element, value)));
+
+    // The breakdown beside the mismatch count names the two kinds the projection
+    // counts separately. A kind whose count is unavailable is listed as unavailable
+    // rather than dropped, so the lines always add up to the headline or explain why
+    // they cannot.
+    document.querySelectorAll("[data-mismatch-breakdown]").forEach((element) => {
+      element.replaceChildren();
+      [["paid, no crew", values["paid-no-team"]], ["crew, no valid subscription", values["team-no-subscription"]]].forEach(([label, value]) => {
+        const line = document.createElement("span");
+        line.className = "ad-kv";
+        const text = document.createElement("span");
+        text.className = "ad-kv__k";
+        text.textContent = label;
+        const count = document.createElement("span");
+        setValue(count, value);
+        line.append(count, text);
+        element.append(line);
+      });
+    });
+
+    // Collected revenue is absent whenever the projection spans more than one
+    // currency or no paid invoice is recorded — a routine, permanent condition
+    // today, not an error. The freshness list says so in as many words rather than
+    // leaving a blank the reader has to interpret.
+    setFreshness("billing-collected", projectionFieldAvailable(billing, "collected_revenue") ? projectionSummary(billing) : UNAVAILABLE);
+    document.querySelectorAll('[data-billing-metric-delta="collected"]').forEach((element) => {
+      element.textContent = projectionFieldAvailable(billing, "collected_revenue")
+        ? "cash collected this period"
+        : "the projection exposes one period revenue value";
+    });
     return projectionSummary(billing);
   }
 
@@ -2087,7 +2548,7 @@
       const reconciliation = projectionValue(account, "reconciliation_state", (value) => enumLabel(value, ["not reported", "matched", "mismatched"]), account?.reconciliationState);
       const row = document.createElement("tr");
       cell(row, organizationName, true);
-      cell(row, `${projectionFieldAvailable(account, "plan") ? stringValue(account?.plan?.name) || "No plan" : "—"} · ${subscription}`);
+      cell(row, `${projectionFieldAvailable(account, "plan") ? stringValue(account?.plan?.name) || "No plan" : UNAVAILABLE} · ${subscription}`);
       const paymentCell = cell(row, ""); paymentCell.replaceChildren(statusText(payment));
       const reconciliationCell = cell(row, ""); reconciliationCell.replaceChildren(statusText(reconciliation));
       cell(row, projectionValue(account, "monthly_recurring_revenue", formatOptionalMoney, account?.monthlyRecurringRevenue));
@@ -2095,9 +2556,9 @@
       cell(row, `${projectionValue(account, "credit_balance_micros", formatCredits, account?.creditBalanceMicros)} / ${projectionValue(account, "credits_used_micros", formatCredits, account?.creditsUsedMicros)}`);
       cell(row, projectionValue(account, "usage_overage_credit_micros", formatNonNegativeCredits, account?.usageOverageCreditMicros));
       cell(row, projectionValue(account, "usage_overage_amount", (value) => value ? formatNonNegativeMoney(value) : "No overage", account?.usageOverageAmount));
-      cell(row, `${projectionValue(account, "provisioned_team_count", formatCount, account?.provisionedTeamCount)} / ${projectionValue(account, "entitled_team_count", formatCount, account?.entitledTeamCount)}`);
-      cell(row, projectionValue(account, "upcoming_renewal_at", formatTimestamp, account?.upcomingRenewalAt));
-      cell(row, projectionSummary(account));
+      const renewal = cell(row, projectionValue(account, "upcoming_renewal_at", formatTimestamp, account?.upcomingRenewalAt));
+      renewal.className = "ad-cell-mono";
+      renewal.title = `${projectionValue(account, "provisioned_team_count", formatCount, account?.provisionedTeamCount)} of ${projectionValue(account, "entitled_team_count", formatCount, account?.entitledTeamCount)} entitled crews provisioned · projection ${projectionSummary(account)}`;
       accountBody.append(row);
 
       if (!projectionFieldAvailable(account, "team_credit_controls")) {
@@ -2112,17 +2573,27 @@
         seenControls.add(controlKey);
         const reason = teamCreditPauseReason(control?.pauseReason);
         const controlRow = document.createElement("tr");
-        cell(controlRow, `${organizationName || "Unknown customer"} · ${teamId}`, true);
-        cell(controlRow, formatNonNegativeCredits(control?.ledgerAvailableMicros));
-        cell(controlRow, formatNonNegativeCredits(control?.openReservedMicros));
-        cell(controlRow, formatNonNegativeCredits(control?.periodConsumedMicros));
-        cell(controlRow, formatNonNegativeCredits(control?.hardLimitMicros));
-        cell(controlRow, formatNonNegativeCredits(control?.budgetRemainingMicros));
-        cell(controlRow, formatNonNegativeCredits(control?.effectiveAvailableMicros));
+        const identity = document.createElement("th");
+        identity.scope = "row";
+        const customer = document.createElement("div");
+        customer.className = "ad-cell-main";
+        customer.textContent = organizationName || "Unknown customer";
+        const team = document.createElement("div");
+        team.className = "ad-cell-sub";
+        team.textContent = teamId;
+        identity.append(customer, team);
+        controlRow.append(identity);
+        numericCell(controlRow, formatNonNegativeCredits(control?.ledgerAvailableMicros));
+        numericCell(controlRow, formatNonNegativeCredits(control?.openReservedMicros));
+        numericCell(controlRow, formatNonNegativeCredits(control?.periodConsumedMicros));
+        numericCell(controlRow, formatNonNegativeCredits(control?.hardLimitMicros));
+        // "Spendable now" is the effective figure — what the proxy will actually let
+        // this crew consume once every reservation, limit and pause is applied. The
+        // raw budget remaining and the paid period ride along as detail.
+        const spendable = numericCell(controlRow, formatNonNegativeCredits(control?.effectiveAvailableMicros));
+        spendable.title = `${formatNonNegativeCredits(control?.budgetRemainingMicros)} budget remaining · paid period ${formatTimestamp(control?.periodStartsAt)} → ${formatTimestamp(control?.periodEndsAt)} · projection ${projectionSummary(account)}`;
         const execution = cell(controlRow, "");
         execution.replaceChildren(statusText(control?.paused === true ? `paused · ${reason}` : "running"));
-        cell(controlRow, `${formatTimestamp(control?.periodStartsAt)} → ${formatTimestamp(control?.periodEndsAt)}`);
-        cell(controlRow, projectionSummary(account));
         controlBody.append(controlRow);
         controlCount += 1;
       });
@@ -2144,11 +2615,15 @@
     issueBody.replaceChildren();
     issues.forEach((issue) => {
       const row = document.createElement("tr");
-      cell(row, enumLabel(issue?.kind, issueKinds), true);
-      cell(row, `${stringValue(issue?.organizationId) || "—"} / ${stringValue(issue?.teamId) || "—"}`);
-      cell(row, stringValue(issue?.safeSummary));
-      cell(row, enumLabel(issue?.state, ["not reported", "open", "resolved"]));
-      cell(row, formatTimestamp(issue?.detectedAt));
+      const kind = cell(row, enumLabel(issue?.kind, issueKinds), true);
+      kind.className = "ad-cell-mono";
+      cell(row, `${stringValue(issue?.organizationId) || UNAVAILABLE} / ${stringValue(issue?.teamId) || UNAVAILABLE}`);
+      const summary = cell(row, stringValue(issue?.safeSummary));
+      summary.className = "ad-cell-quiet";
+      const stateCell = cell(row, "");
+      stateCell.replaceChildren(statusText(enumLabel(issue?.state, ["not reported", "open", "resolved"])));
+      const detected = cell(row, formatTimestamp(issue?.detectedAt));
+      detected.className = "ad-cell-mono";
       issueBody.append(row);
     });
     showTable("reconciliation", issues.length);
@@ -2162,7 +2637,7 @@
       adminListRequest("admin_reconciliation_issues", "reconciliationIssues", {}, signal)
     ]);
     const renderers = [
-      [renderBillingSummary, () => document.querySelectorAll("[data-billing-metric]").forEach((element) => { element.textContent = "—"; })],
+      [renderBillingSummary, () => document.querySelectorAll("[data-billing-metric]").forEach((element) => { element.textContent = UNAVAILABLE; })],
       [renderBillingAccounts, () => {
         clearTable("billing-accounts", "Billing account projection unavailable.");
         clearTable("team-credit-controls", "Team credit control projection unavailable.");
@@ -2208,11 +2683,8 @@
 
   function setProbe(name, tone, label, detail) {
     document.querySelectorAll(`[data-probe-status="${name}"]`).forEach((element) => {
-      element.classList.remove("status--positive", "status--pending", "status--negative", "status--neutral");
-      element.classList.add(`status--${tone}`);
-      const indicator = document.createElement("span");
-      indicator.setAttribute("aria-hidden", "true");
-      element.replaceChildren(indicator, document.createTextNode(label));
+      element.replaceChildren(...toneBadge(label, tone).childNodes);
+      element.className = `dn-badge${BADGE_FOR_TONE[tone] || ""}`;
     });
     document.querySelectorAll(`[data-probe-detail="${name}"]`).forEach((element) => { element.textContent = detail; });
   }
@@ -2259,7 +2731,7 @@
     closeCustomerDetail();
     state.refreshController = new AbortController();
     ui.refresh.disabled = true;
-    ui.refresh.classList.add("is-refreshing");
+    ui.refresh.setAttribute("aria-busy", "true");
     try {
       setDataState("pending", "Loading authorized operations data", "Requesting current business, customer, economics, fleet, billing, alert, and audit projections.");
       const results = await Promise.all([
@@ -2290,7 +2762,7 @@
       ui.observedAt.forEach((element) => { element.textContent = observed; });
     } finally {
       if (state.authorized) ui.refresh.disabled = false;
-      ui.refresh.classList.remove("is-refreshing");
+      ui.refresh.removeAttribute("aria-busy");
     }
   }
 
@@ -2306,14 +2778,58 @@
     }
   }
 
-  function activateNavigation(event) {
-    const link = event.target.closest(".nav-link");
-    if (!link) return;
-    document.querySelectorAll(".nav-link").forEach((candidate) => {
-      candidate.classList.toggle("is-active", candidate === link);
-      if (candidate === link) candidate.setAttribute("aria-current", "page");
-      else candidate.removeAttribute("aria-current");
+  // ---- view routing ---------------------------------------------------------
+  //
+  // Seven surfaces behind one rail, replacing the single long page of anchors this
+  // console used to be. Each surface is a [data-view] section in the markup and only
+  // one is ever un-hidden, so a screen full of billing tables cannot scroll past
+  // under an operations heading.
+  //
+  // The rail and the bottom tab bar are BOTH mounted and the breakpoint chooses
+  // between them, which is why they share one setView and one [data-view-link]
+  // contract: no viewport can end up with two navs or none. The hash is kept in
+  // step so a view survives a reload and can be sent to someone, but it is never
+  // the source of truth — an unrecognised hash resolves to overview rather than
+  // leaving the operator on a blank screen.
+  const VIEWS = ["overview", "customers", "economics", "operations", "billing", "metrics", "audit"];
+  const VIEW_TITLES = {
+    overview: "Overview",
+    customers: "Customers",
+    economics: "Economics",
+    operations: "Operations",
+    billing: "Billing",
+    metrics: "Metrics",
+    audit: "Audit"
+  };
+
+  function setView(view) {
+    const target = VIEWS.includes(view) ? view : "overview";
+    document.querySelectorAll("[data-view]").forEach((section) => { section.hidden = section.dataset.view !== target; });
+    document.querySelectorAll("[data-view-link]").forEach((link) => {
+      if (stringValue(link.dataset.viewLink) === target) link.setAttribute("aria-current", "page");
+      else link.removeAttribute("aria-current");
     });
+    document.querySelectorAll("[data-view-title]").forEach((element) => { element.textContent = VIEW_TITLES[target]; });
+    const scrollport = document.querySelector("[data-scrollport]");
+    if (scrollport) scrollport.scrollTop = 0;
+    if (window.location.hash !== `#${target}`) {
+      window.history.replaceState({}, "", `${window.location.pathname}#${target}`);
+    }
+  }
+
+  function viewFromLocation() {
+    const hash = stringValue(window.location.hash).replace(/^#/, "");
+    return VIEWS.includes(hash) ? hash : "overview";
+  }
+
+  function bindViewNavigation() {
+    document.querySelectorAll("[data-view-link]").forEach((link) => {
+      link.addEventListener("click", (event) => {
+        event.preventDefault();
+        setView(stringValue(link.dataset.viewLink));
+      });
+    });
+    window.addEventListener("hashchange", () => setView(viewFromLocation()));
   }
 
   ui.signIn.addEventListener("click", beginSignIn);
@@ -2323,11 +2839,57 @@
   document.querySelector("[data-customer-rows]")?.addEventListener("click", openCustomerDetail);
   ui.customerDetailClose.addEventListener("click", closeCustomerDetail);
   ui.customerReliabilityMore.addEventListener("click", loadMoreCustomerReliability);
-  document.querySelector(".side-rail nav")?.addEventListener("click", activateNavigation);
+  bindViewNavigation();
+
+  // The economics slice control. Changing the dimension is a NEW REQUEST — the
+  // server aggregates, the browser never re-buckets rows it already has, because a
+  // client-side regroup would silently drop every slice the current dimension's
+  // page window happened to exclude.
+  document.querySelector("[data-economics-dimension]")?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-dimension]");
+    if (!button) return;
+    const dimension = stringValue(button.dataset.dimension);
+    if (!dimension || dimension === economicsState.dimension) return;
+    economicsState.dimension = dimension;
+    document.querySelectorAll("[data-economics-dimension] [data-dimension]").forEach((item) => {
+      if (item === button) item.dataset.active = "true";
+      else delete item.dataset.active;
+    });
+    if (state.authorized && state.accessToken && Date.now() < state.deadline) void loadEconomics();
+  });
+
+  // The customer filter and search narrow a COMPLETE set (see customersState), so
+  // they run here rather than as another round trip.
+  document.querySelector("[data-customer-filter]")?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-filter]");
+    if (!button) return;
+    customersState.filter = stringValue(button.dataset.filter) || "all";
+    document.querySelectorAll("[data-customer-filter] [data-filter]").forEach((item) => {
+      if (item === button) item.dataset.active = "true";
+      else delete item.dataset.active;
+    });
+    renderCustomerRows();
+  });
+  document.querySelector("[data-customer-search]")?.addEventListener("input", (event) => {
+    customersState.search = stringValue(event.target.value);
+    renderCustomerRows();
+  });
+
+  // The audit request-ID box is deliberately inert. ListAdminAuditEvents filters by
+  // organization, action and actor — there is no request-ID filter in the contract —
+  // so honouring it would mean filtering immutable records in the browser, which is
+  // the one thing this screen promises it never does. It stays visible, disabled,
+  // and says why, rather than quietly doing something weaker than it looks.
+  const auditRequestId = document.querySelector("[data-audit-request-id]");
+  if (auditRequestId) {
+    auditRequestId.disabled = true;
+    auditRequestId.title = "The audit list filters by organization, action and actor. There is no request-ID filter in the API, and these records are never filtered in the browser.";
+  }
   window.addEventListener("pageshow", (event) => {
     if (event.persisted) window.location.reload();
   });
 
+  setView(viewFromLocation());
   renderMetricsQueryBar();
   renderConfiguration();
   showSignedOut();

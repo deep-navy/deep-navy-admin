@@ -1,0 +1,38 @@
+/* deep.navy — minimal reset + document defaults. Loaded last so it can use every token. */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font:var(--type-body);color:var(--text-primary);background:var(--surface-page);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-feature-settings:"cv05" 1,"ss01" 1}
+/* Headings take an explicit --text-primary, which beats any inherited colour. A surface
+   that inverts must therefore be a THEME SCOPE — put data-theme="dark" (or "light") on it
+   and every token flips — never a colour override on the section. */
+h1,h2,h3,h4,h5,h6{margin:0;font-family:var(--font-display);font-weight:var(--fw-semibold);letter-spacing:var(--track-heading);color:var(--text-primary)}
+h4,h5,h6{font-family:var(--font-sans)}
+p{margin:0;text-wrap:pretty}
+code,kbd,pre,samp{font-family:var(--font-mono);font-size:.92em;font-variant-ligatures:none}
+/* Prose links are ink with an underline — never a hue on their own.
+   A decoration set on an anchor propagates to every descendant and CANNOT be cancelled
+   from inside, so an anchor that wraps UI must opt out ON ITSELF with .dn-bare/.dn-sweep. */
+a{color:var(--text-link);text-decoration:underline;text-decoration-color:var(--border-strong);text-underline-offset:3px;text-decoration-thickness:1px;}
+a.dn-bare,a.dn-sweep,a.dn-btn,a.dn-nav,a.dn-work,a.dn-card,a.dn-logo,a.dn-tag{text-decoration:none;color:inherit}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:none;box-shadow:var(--focus-ring);border-radius:var(--radius-xs)}
+/* Set by theme.js for the single frame in which the theme swaps. */
+.dn-theming,.dn-theming *,.dn-theming *::before,.dn-theming *::after{transition:none!important;animation-duration:0s!important}
+::selection{background:var(--ink-950);color:var(--ink-0)}
+[data-theme="dark"] ::selection{background:var(--ink-75);color:var(--ink-1000)}
+button,input,select,textarea{font:inherit;color:inherit}
+a,button,label,summary,[role="button"],[tabindex]{-webkit-tap-highlight-color:transparent}
+img,svg{display:block;max-width:100%}
+hr{border:0;border-top:var(--hairline) solid var(--border-subtle);margin:0}
+::-webkit-scrollbar{width:11px;height:11px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border-default);border-radius:var(--radius-pill);border:3px solid transparent;background-clip:content-box}
+/* Evidence type: the mono micro-label that carries every ID, count and timestamp. */
+.dn-eyebrow{font:var(--type-eyebrow);letter-spacing:var(--track-caps);text-transform:uppercase;color:var(--text-tertiary)}
+.dn-mono{font-family:var(--font-mono);font-size:var(--fs-2xs);letter-spacing:var(--track-normal);color:var(--text-secondary);font-variant-numeric:tabular-nums}
+.dn-tnum{font-variant-numeric:tabular-nums}
+
+@media (hover:hover){
+a:hover{color:var(--text-link-hover);text-decoration-color:currentColor}
+a.dn-bare:hover,a.dn-sweep:hover,a.dn-btn:hover,a.dn-nav:hover,a.dn-work:hover,a.dn-card:hover,a.dn-logo:hover,a.dn-tag:hover{text-decoration:none}
+::-webkit-scrollbar-thumb:hover{background:var(--border-strong);background-clip:content-box;border:3px solid transparent}
+}

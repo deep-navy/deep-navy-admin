@@ -142,6 +142,41 @@ function pageRequest(value: unknown): { pageSize: number; pageToken: string } | 
   return { pageSize, pageToken };
 }
 
+// The economics ledger can only aggregate by a dimension it actually carries, so the
+// console offers exactly these and no more: a "slice by" control that lists a dimension
+// the server would reject is a control that lies. AdminEconomicsDimension also declares
+// AGENT, ISSUE, PULL_REQUEST, REPOSITORY and PROVIDER; they are omitted here only because
+// no screen asks for them yet, and adding one is a single line plus a button.
+const ECONOMICS_DIMENSIONS: Readonly<Record<string, AdminEconomicsDimension>> = Object.freeze({
+  team: AdminEconomicsDimension.TEAM,
+  organization: AdminEconomicsDimension.ORGANIZATION,
+  agent_role: AdminEconomicsDimension.AGENT_ROLE,
+  model: AdminEconomicsDimension.MODEL,
+  initiative: AdminEconomicsDimension.INITIATIVE
+});
+
+export const SUPPORTED_ECONOMICS_DIMENSIONS = Object.freeze(Object.keys(ECONOMICS_DIMENSIONS));
+
+function economicsDimension(value: unknown): AdminEconomicsDimension {
+  if (value === undefined || value === null || value === "") return AdminEconomicsDimension.TEAM;
+  if (typeof value !== "string" || !Object.hasOwn(ECONOMICS_DIMENSIONS, value)) {
+    throw new AdminClientError("dimension is not a supported economics dimension.", "invalid_argument", 400, "");
+  }
+  return ECONOMICS_DIMENSIONS[value] as AdminEconomicsDimension;
+}
+
+// An optional server-side filter. Empty means "not applied", which is what the API
+// documents; anything present is validated to the same shape as a required field, so a
+// filter can never smuggle control characters into a logged query.
+function optionalTextField(input: InputRecord, name: string): string {
+  const raw = input[name];
+  if (raw === undefined || raw === null || raw === "") return "";
+  if (typeof raw !== "string" || raw !== raw.trim() || raw.length > 128 || /[\u0000-\u001f\u007f]/.test(raw)) {
+    throw new AdminClientError(`${name} is invalid.`, "invalid_argument", 400, "");
+  }
+  return raw;
+}
+
 function textField(input: InputRecord, name: string): string {
   const raw = input[name];
   if (typeof raw !== "string" || raw !== raw.trim() || !raw || raw.length > 128 || /[\u0000-\u001f\u007f]/.test(raw)) {
@@ -207,7 +242,7 @@ export function createAdminApi(options: AdminApiOptions) {
           return await admin.getAdminEconomics({}, callOptions);
         case "admin_team_economics":
           return await admin.listAdminEconomicsSlices({
-            dimension: AdminEconomicsDimension.TEAM,
+            dimension: economicsDimension(payload.dimension),
             page: pageRequest(payload.page)
           }, callOptions);
         case "admin_fleet":
@@ -223,7 +258,14 @@ export function createAdminApi(options: AdminApiOptions) {
         case "admin_alerts":
           return await admin.listAdminAlerts({ page: pageRequest(payload.page) }, callOptions);
         case "admin_audit_events":
-          return await admin.listAdminAuditEvents({ page: pageRequest(payload.page) }, callOptions);
+          // The action filter is applied by the SERVER. The audit trail is the one
+          // list in this console that must never be narrowed in the browser: absence
+          // of an audit row has to mean the server did not return it, not that a
+          // client-side predicate hid it.
+          return await admin.listAdminAuditEvents({
+            page: pageRequest(payload.page),
+            action: optionalTextField(payload, "action")
+          }, callOptions);
       }
     } catch (error) {
       if (error instanceof AdminClientError) throw error;

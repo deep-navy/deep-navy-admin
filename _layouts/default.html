@@ -13,48 +13,46 @@
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000000">
     <link rel="canonical" href="{{ page.url | absolute_url }}">
     <title>{{ page.title | default: site.title }} · {{ site.title }}</title>
+
+    {%- comment -%}
+      Two scripts run before the first paint, and both are external files rather than
+      inline blocks. This site ships script-src 'self' with NO 'unsafe-inline' and no
+      sha256 allowances, and test/site_test.rb asserts that an authenticated page never
+      contains an inline script at all — so an inline pre-paint snippet, the usual shape
+      for this job, is not available here. Same-origin static files are.
+
+      callback-scrubber.js must run before anything can read location.search.
+      theme.js must run before the first paint or a stored light/dark choice arrives one
+      frame late as a flash of the OS theme. Neither is deferred, for that reason.
+      Both are tiny, dependency-free and served from this origin.
+    {%- endcomment -%}
     <script src="{{ '/assets/js/callback-scrubber.js' | relative_url }}"></script>
-    <link rel="stylesheet" href="{{ '/assets/css/tokens/palette.css' | relative_url }}">
-    <link rel="stylesheet" href="{{ '/assets/css/tokens/semantic.css' | relative_url }}">
-    <link rel="stylesheet" href="{{ '/assets/css/tokens/roles.css' | relative_url }}">
-    <link rel="stylesheet" href="{{ '/assets/css/tokens/foundation.css' | relative_url }}">
-    <link rel="stylesheet" href="{{ '/assets/css/tokens/motion.css' | relative_url }}">
-    <link rel="stylesheet" href="{{ '/assets/css/motion.css' | relative_url }}">
+    <script src="{{ '/assets/js/theme.js' | relative_url }}"></script>
+
+    {%- comment -%}
+      The design system first, as its own vendored bytes; then the three site-local
+      layers it deliberately leaves to the site — the self-hosted faces, the
+      OS-preference theme default plus the dark chroma boost, and finally this
+      application's own shell. Order matters: theme.css re-derives tokens that ds.css
+      defines, and admin.css consumes both.
+    {%- endcomment -%}
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="{{ '/assets/fonts/instrument-sans.woff2' | relative_url }}">
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="{{ '/assets/fonts/bricolage-grotesque.woff2' | relative_url }}">
+    <link rel="stylesheet" href="{{ '/assets/css/ds.css' | relative_url }}">
+    <link rel="stylesheet" href="{{ '/assets/css/type.css' | relative_url }}">
+    <link rel="stylesheet" href="{{ '/assets/css/theme.css' | relative_url }}">
     <link rel="stylesheet" href="{{ '/assets/css/admin.css' | relative_url }}">
   </head>
   <body
     data-auth-callback="{{ page.auth_callback | default: false }}"
     data-environment="{{ site.runtime.environment | escape }}"
+    data-environment-label="{{ site.runtime.environment_label | default: site.runtime.environment | escape }}"
   >
     <a class="skip-link" href="#main-content">Skip to main content</a>
-
-    <header class="site-header">
-      <a class="brand" href="{{ '/' | relative_url }}" aria-label="deep.navy admin home">
-        <span class="brand-name">deep.navy</span>
-        <span class="brand-product">Admin</span>
-      </a>
-
-      <div class="header-meta">
-        <span class="environment-chip environment-chip--{{ site.runtime.environment | escape }}">
-          <span class="environment-dot" aria-hidden="true"></span>
-          {{ site.runtime.environment_label | default: site.runtime.environment }}
-        </span>
-        <div class="operator-summary" data-operator-summary hidden>
-          <span data-operator-name>Authenticated operator</span>
-          <span data-operator-role></span>
-        </div>
-        <button class="button button--quiet button--small" type="button" data-sign-out hidden>Sign out</button>
-      </div>
-    </header>
 
     <main id="main-content" tabindex="-1">
       {{ content }}
     </main>
-
-    <footer class="site-footer">
-      <span>deep.navy internal operations</span>
-      <span>Protected data is loaded only after API-verified operator access.</span>
-    </footer>
 
     <div class="toast" role="status" aria-live="polite" aria-atomic="true" data-toast hidden></div>
     <script src="{{ '/assets/js/runtime-config.js' | relative_url }}"></script>

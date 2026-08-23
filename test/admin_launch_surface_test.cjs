@@ -35,6 +35,7 @@ test("customer detail keeps launch intervention signals visible", () => {
   for (const field of ["support", "churn", "initiatives", "approvals"]) assert.match(shell, new RegExp(`data-customer-detail-field="${field}"`));
   assert.match(app, /projectionValue\(customer, "support_state"/);
   assert.match(app, /projectionValue\(customer, "churn_risk_level"/);
+  assert.match(shell, /data-customer-detail-field="gross-profit"/);
   assert.match(app, /customerDetailActivityValue\(activity, "active_initiatives"/);
   assert.match(app, /customerDetailActivityValue\(activity, "pending_approvals"/);
   assert.match(app, /aria-expanded/);
@@ -66,6 +67,9 @@ test("metrics panels are proxied, side-by-side, and honest about absence", () =>
   assert.match(js, /No data yet/);
   assert.match(html, /data-metrics-grid/);
   assert.match(html, /href="#metrics"/);
+  // One grid of ten panels for the selected environment, rather than two columns:
+  // the environment is a control now, matching the approved mockup.
+  assert.match(js, /const environment = metricsState\.environment;/);
 });
 
 // The metrics explorer speaks the proxy's actual vocabulary: ten panel names,
@@ -74,10 +78,13 @@ test("metrics panels are proxied, side-by-side, and honest about absence", () =>
 test("the metrics explorer speaks the proxy's real vocabulary", () => {
   const js = readFileSync("assets/js/admin.js", "utf8");
   const html = readFileSync("_includes/admin-console.html", "utf8");
+  // Same ten names the proxy accepts, now in the approved mockup's display order:
+  // the six that report first, then the four that are empty by construction, so the
+  // callout that explains them sits directly under them.
   const panelOrder = [...js.matchAll(/\{ key: "([a-z0-9_]+)"/g)].map((match) => match[1]);
   assert.deepEqual(panelOrder, [
-    "request_rate", "error_rate", "latency_p95", "goroutines", "memory_bytes",
-    "target_health", "llm_tokens", "llm_cost_usd", "run_duration", "queue_depth"
+    "request_rate", "error_rate", "latency_p95", "goroutines", "memory_bytes", "queue_depth",
+    "target_health", "llm_tokens", "llm_cost_usd", "run_duration"
   ]);
   assert.equal([...js.matchAll(/filterable: true/g)].length, 5);
   assert.ok(panelOrder.slice(5).every((key) => new RegExp(`key: "${key}"[^\\n]*filterable: false`).test(js)));
@@ -88,13 +95,17 @@ test("the metrics explorer speaks the proxy's real vocabulary", () => {
   assert.match(js, /searchParams\.set\("window", windowKey\)/);
   assert.match(js, /searchParams\.set\("step", METRICS_STEP_SECONDS\)/);
   assert.match(js, /if \(panel\.filterable && service\) target\.searchParams\.set\("service", service\)/);
-  // one URL builder serves the fetch, the focused refetch, and the echo strip
+  // one URL builder serves the grid fetch and the echo strip
   assert.match(js, /function metricsRequestUrl/);
   assert.ok([...js.matchAll(/metricsRequestUrl\(/g)].length >= 3);
   assert.match(html, /data-metrics-query-echo/);
   assert.match(html, /data-metrics-series-chips/);
   assert.match(html, /data-metrics-service-chips/);
+  assert.match(html, /data-metrics-env-chips/);
+  assert.match(html, /data-metrics-window-chips/);
   assert.match(html, /the service filter exists on the first five series only/);
+  // The controls are the design system's segmented control, not a text field.
+  assert.match(js, /className = "dn-seg__item"/);
 });
 
 // Empty is four different facts. Every honest state names its kind and its
@@ -137,4 +148,26 @@ test("the public shell carries no internal architecture documentation", () => {
   for (const banned of ["metrics: false", "openclaw_tokens_total", "ws-251f4ede", "/internal/v1/"]) {
     assert.ok(!js.includes(banned), `internal detail leaked to public JS: ${banned}`);
   }
+
+  // The rebuild added three new places a leak could hide: the site-local CSS layers
+  // and the theme script, all of which Pages serves to anyone. They carry presentation
+  // and a preference key, and nothing else.
+  for (const file of ["assets/css/admin.css", "assets/css/theme.css", "assets/js/theme.js"]) {
+    const contents = readFileSync(file, "utf8");
+    for (const banned of ["ws-251f4ede", "/internal/v1/", "cluster-internal", "openclaw_", "amazonaws", "us-west-2"]) {
+      assert.ok(!contents.includes(banned), `internal detail leaked to ${file}: ${banned}`);
+    }
+  }
+
+  // The console explains the platform through authenticated DATA. Every heading and
+  // every empty state in the shell is either a label or an honest statement about
+  // absence; none of them name an infrastructure component.
+  for (const banned of ["Kubernetes", "kubernetes", "Prometheus", "prometheus", "Cognito user pool", "namespace", "PVC", "StatefulSet", "Stripe"]) {
+    assert.ok(!html.includes(banned), `the public shell names an internal component: ${banned}`);
+  }
+
+  // And the shell still ships no executable or styling surface of its own, which is
+  // what keeps its CSP meaningful.
+  assert.doesNotMatch(html, /<script/);
+  assert.doesNotMatch(html, /\sstyle="/);
 });

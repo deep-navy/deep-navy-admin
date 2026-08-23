@@ -1,0 +1,128 @@
+/* data display */
+.dn-table{width:100%;border-collapse:separate;border-spacing:0;font:var(--type-body-sm)}
+.dn-table th{position:sticky;top:0;z-index:1;text-align:left;padding:var(--space-2) var(--space-3);background:var(--surface-inset);border-bottom:var(--hairline) solid var(--border-subtle);font:var(--fw-medium) var(--fs-micro)/1 var(--font-mono);letter-spacing:var(--track-caps);text-transform:uppercase;color:var(--text-tertiary);white-space:nowrap}
+.dn-table td{padding:var(--space-25) var(--space-3);border-bottom:var(--hairline) solid var(--border-subtle);color:var(--text-primary);vertical-align:middle}
+.dn-table__clickable td:first-child{position:relative}
+.dn-table__clickable td:first-child::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--text-primary);transform:scaleY(0);transform-origin:center;transition:transform var(--dur-base) var(--ease-out)}
+.dn-table tbody tr:last-child td{border-bottom:0}
+.dn-table--dense td{padding:var(--space-15) var(--space-3)}
+.dn-table--dense th{padding:var(--space-15) var(--space-3)}
+.dn-table__num{text-align:right;font-family:var(--font-mono);font-size:var(--fs-2xs);font-variant-numeric:tabular-nums}
+.dn-table__clickable{cursor:pointer}
+.dn-table__sort{display:inline-flex;align-items:center;gap:var(--space-1);border:0;background:none;color:inherit;font:inherit;letter-spacing:inherit;text-transform:inherit;cursor:pointer}
+
+.dn-meta{display:grid;grid-template-columns:auto 1fr;gap:var(--space-2) var(--space-4);align-items:baseline}
+.dn-meta__k{font:var(--fw-medium) var(--fs-micro)/1.4 var(--font-mono);letter-spacing:var(--track-caps);text-transform:uppercase;color:var(--text-tertiary);white-space:nowrap}
+.dn-meta__v{font:var(--type-body-sm);color:var(--text-primary);min-width:0}
+.dn-meta--rows{grid-template-columns:1fr;gap:var(--space-3)}
+.dn-meta--inline{display:flex;flex-wrap:wrap;gap:var(--space-2) var(--space-5)}
+.dn-meta--inline .dn-meta__pair{display:flex;flex-direction:column;gap:2px}
+
+.dn-stat{display:flex;flex-direction:column;gap:var(--space-1)}
+.dn-stat__label{font:var(--type-eyebrow);letter-spacing:var(--track-caps);text-transform:uppercase;color:var(--text-tertiary)}
+.dn-stat__value{font:var(--fw-semibold) var(--fs-3xl)/1 var(--font-display);letter-spacing:var(--track-heading);color:var(--text-primary);font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:var(--space-15)}
+.dn-stat__unit{font:var(--fw-medium) var(--fs-sm)/1 var(--font-mono);color:var(--text-tertiary)}
+.dn-stat__delta{display:inline-flex;align-items:center;gap:3px;font:var(--fw-medium) var(--fs-2xs)/1 var(--font-mono);color:var(--text-tertiary)}
+.dn-stat__delta--up{color:var(--status-success-fg)}
+.dn-stat__delta--down{color:var(--status-danger-fg)}
+.dn-stat--sm .dn-stat__value{font-size:var(--fs-xl)}
+
+.dn-timeline{position:relative;display:flex;flex-direction:column}
+.dn-timeline__row{position:relative;display:grid;grid-template-columns:24px 1fr;gap:var(--space-3);padding-bottom:var(--space-5)}
+.dn-timeline__row:last-child{padding-bottom:0}
+.dn-timeline__rail{position:relative;display:flex;justify-content:center}
+.dn-timeline__rail::before{content:"";position:absolute;top:20px;bottom:-20px;width:var(--hairline);background:var(--border-subtle)}
+.dn-timeline__row:last-child .dn-timeline__rail::before{display:none}
+.dn-timeline__node{position:relative;z-index:1;display:grid;place-items:center;width:22px;height:22px;border-radius:var(--radius-sm);border:var(--hairline) solid var(--border-default);background:var(--surface-card);color:var(--text-tertiary)}
+.dn-timeline__node--accent{border-color:var(--dn-node,var(--text-primary));color:var(--dn-node,var(--text-primary));background:var(--surface-card)}
+.dn-timeline__node{transition:transform var(--dur-base) var(--ease-arrive)}
+.dn-timeline__rail::before{transform-origin:top;animation:dn-sweep-v var(--dur-slower) var(--ease-out) both}
+@keyframes dn-sweep-v{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.dn-timeline__body{min-width:0;padding-top:1px}
+.dn-timeline__title{font:var(--type-ui);color:var(--text-primary)}
+.dn-timeline__time{font:var(--fw-regular) var(--fs-micro)/1 var(--font-mono);color:var(--text-tertiary)}
+.dn-timeline__desc{margin-top:var(--space-1);font:var(--type-body-sm);color:var(--text-secondary)}
+.dn-timeline--tight .dn-timeline__row{padding-bottom:var(--space-3)}
+
+/* charts */
+.dn-chart{position:relative;width:100%}
+.dn-chart canvas{display:block;width:100%!important;height:100%!important}
+.dn-chart--spark{pointer-events:none}
+/* A chart that failed to build. Visible on top of whatever the canvas last held, because
+   stale paint under a correct header reads as data and is the one failure this system
+   forbids — same rule DataState exists to enforce. */
+.dn-chart__failed{position:absolute;inset:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:var(--space-15);padding:var(--space-3);background:var(--surface-card);border-radius:var(--radius-md)}
+.dn-chart__failed-flag{display:inline-flex;align-items:center;gap:var(--space-1);padding:4px 6px;border-radius:var(--radius-xs);border:var(--hairline) solid var(--status-danger-border);background:var(--status-danger-bg);color:var(--status-danger-fg);font:var(--fw-medium) var(--fs-micro)/1 var(--font-mono);letter-spacing:var(--track-caps);text-transform:uppercase}
+.dn-chart__failed code{font:var(--fw-regular) var(--fs-micro)/1.5 var(--font-mono);color:var(--text-secondary)}
+.dn-chart__frame{border:var(--hairline) solid var(--border-subtle);border-radius:var(--radius-lg);background:var(--surface-card);overflow:hidden}
+.dn-chart__head{display:flex;align-items:baseline;justify-content:space-between;gap:var(--space-3);padding:var(--space-4) var(--space-4) 0}
+.dn-chart__title{font:var(--type-h4)}
+.dn-chart__meta{font:var(--fw-regular) var(--fs-micro)/1 var(--font-mono);color:var(--text-tertiary)}
+.dn-chart__body{padding:var(--space-3) var(--space-4) var(--space-4)}
+.dn-chart__legend{display:flex;flex-wrap:wrap;gap:var(--space-2) var(--space-4);padding:0 var(--space-4) var(--space-4);font:var(--fw-regular) var(--fs-micro)/1 var(--font-mono);color:var(--text-tertiary)}
+.dn-chart__key{display:inline-flex;align-items:center;gap:var(--space-15)}
+.dn-chart__swatch{width:9px;height:9px;border-radius:2px;background:var(--dn-key,var(--viz-1))}
+
+/* --- metric panels ---------------------------------------------------------
+   A queryable series, framed. The series id is mono because it is the query token.
+   An empty panel keeps a populated panel's shape — see .dn-dstate below. */
+.dn-mpanel{display:flex;flex-direction:column;border:var(--hairline) solid var(--border-subtle);border-radius:var(--radius-lg);background:var(--surface-card);overflow:hidden;transition:box-shadow var(--dur-base) var(--ease-standard),transform var(--dur-base) var(--ease-out)}
+.dn-mpanel__head{display:flex;flex-direction:column;gap:var(--space-15);padding:var(--space-3) var(--space-4) 0}
+.dn-mpanel__id{display:flex;align-items:center;gap:var(--space-15);flex-wrap:wrap}
+.dn-mpanel__series{font:var(--fw-medium) var(--fs-2xs)/1 var(--font-mono);color:var(--text-primary);background:var(--surface-inset);border:var(--hairline) solid var(--border-subtle);border-radius:var(--radius-xs);padding:3px 5px}
+.dn-mpanel__filter{font:var(--fw-regular) var(--fs-micro)/1 var(--font-mono);color:var(--text-tertiary);border:var(--hairline) dashed var(--border-default);border-radius:var(--radius-xs);padding:3px 5px}
+.dn-mpanel__titles{display:flex;align-items:baseline;gap:var(--space-15)}
+.dn-mpanel__title{font:var(--type-h4)}
+.dn-mpanel__unit{font:var(--fw-regular) var(--fs-micro)/1 var(--font-mono);color:var(--text-tertiary)}
+.dn-mpanel__caveat{display:inline-grid;place-items:center;color:var(--status-attention-fg);cursor:help;border-radius:50%;transition:transform var(--dur-base) var(--ease-arrive)}
+.dn-mpanel__caveat:focus-visible{outline:none;box-shadow:var(--focus-ring)}
+.dn-mpanel__meta{font:var(--fw-regular) var(--fs-micro)/1 var(--font-mono);color:var(--text-tertiary);font-variant-numeric:tabular-nums}
+.dn-mpanel__body{padding:var(--space-3) var(--space-4) var(--space-4);flex:1;display:flex;flex-direction:column;justify-content:flex-end}
+/* An empty panel is marked at the top edge, not by collapsing — the grid keeps its rhythm. */
+.dn-mpanel--empty{border-style:dashed}
+
+/* --- honest empty states ---------------------------------------------------
+   The repeating hairlines are a ghost plot: the panel still reads as an instrument
+   whose series is absent, rather than as a broken card. */
+.dn-dstate{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-15);padding:var(--space-3);border-radius:var(--radius-md);background:repeating-linear-gradient(to bottom,var(--viz-grid) 0 1px,transparent 1px 25%);animation:dn-fade var(--dur-base) var(--ease-standard) both}
+.dn-dstate__flag{display:inline-flex;align-items:center;gap:var(--space-15);font:var(--fw-medium) var(--fs-micro)/1 var(--font-mono);letter-spacing:var(--track-caps);text-transform:uppercase;padding:4px 6px;border-radius:var(--radius-xs);border:var(--hairline) solid var(--status-idle-border);background:var(--surface-card);color:var(--status-idle-fg)}
+.dn-dstate--attention .dn-dstate__flag{border-color:var(--status-attention-border);background:var(--status-attention-bg);color:var(--status-attention-fg)}
+.dn-dstate--live .dn-dstate__flag{border-color:var(--status-live-border);background:var(--status-live-bg);color:var(--status-live-fg)}
+.dn-dstate--live .dn-dstate__flag .dn-icon{animation:dn-spin var(--dur-loop-fast) linear infinite}
+.dn-dstate__why{margin:0;font:var(--type-body-sm);color:var(--text-secondary);background:var(--surface-card);text-wrap:pretty}
+.dn-dstate__why code{font:var(--fw-medium) var(--fs-2xs)/1 var(--font-mono);color:var(--text-primary)}
+.dn-dstate__query{font:var(--fw-regular) var(--fs-micro)/1.4 var(--font-mono);color:var(--text-tertiary);background:var(--surface-card);word-break:break-all}
+.dn-dstate__act{margin-top:var(--space-1)}
+
+/* --- trace waterfall -------------------------------------------------------
+   Bars are ink. A hue means the observation's level says something went wrong —
+   type is carried by the glyph, never by colour. */
+.dn-trace{display:flex;flex-direction:column;font-variant-numeric:tabular-nums}
+.dn-trace__row{display:grid;grid-template-columns:minmax(180px,1.5fr) minmax(120px,2fr) 58px 64px 64px;gap:var(--space-25);align-items:center;padding:var(--space-15) var(--space-2);border-radius:var(--radius-xs);animation:dn-rise var(--dur-base) var(--ease-out) both;animation-delay:calc(var(--dn-i,0) * 24ms)}
+.dn-trace__name{display:flex;align-items:center;gap:var(--space-15);min-width:0;color:var(--text-tertiary)}
+.dn-trace__label{font:var(--fw-medium) var(--fs-2xs)/1.3 var(--font-sans);color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dn-trace__model{font:var(--fw-regular) var(--fs-micro)/1 var(--font-mono);color:var(--text-tertiary);border:var(--hairline) solid var(--border-subtle);border-radius:var(--radius-xs);padding:2px 4px;white-space:nowrap}
+.dn-trace__track{position:relative;height:16px;border-radius:var(--radius-xs);background:var(--viz-track)}
+.dn-trace__bar{position:absolute;top:3px;bottom:3px;min-width:2px;border-radius:2px;background:var(--text-primary);animation:dn-sweep var(--dur-slow) var(--ease-out) both;transform-origin:left}
+.dn-trace__row--warn .dn-trace__bar{background:var(--status-attention-dot)}
+.dn-trace__row--error .dn-trace__bar{background:var(--status-danger-dot)}
+/* time to first token — usually the most diagnostic mark on the screen */
+.dn-trace__ttft{position:absolute;top:-3px;bottom:-3px;width:1px;background:var(--status-live-dot);box-shadow:0 0 0 1px var(--surface-card)}
+.dn-trace__dur,.dn-trace__tok,.dn-trace__cost{font:var(--fw-regular) var(--fs-micro)/1 var(--font-mono);color:var(--text-secondary);text-align:right}
+.dn-trace__cost{color:var(--text-primary)}
+.dn-trace__head{display:grid;grid-template-columns:minmax(180px,1.5fr) minmax(120px,2fr) 58px 64px 64px;gap:var(--space-25);padding:0 var(--space-2) var(--space-15);border-bottom:var(--hairline) solid var(--border-subtle);font:var(--type-eyebrow);letter-spacing:var(--track-caps);text-transform:uppercase;color:var(--text-tertiary)}
+.dn-trace__head span:nth-child(n+3){text-align:right}
+@media (max-width:600px){
+  .dn-trace__row,.dn-trace__head{grid-template-columns:minmax(120px,1.6fr) 1fr 52px}
+  .dn-trace__tok,.dn-trace__cost,.dn-trace__head span:nth-child(n+4){display:none}
+}
+
+@media (hover:hover){
+.dn-table tbody tr:hover{background:var(--surface-hover)}
+.dn-table__clickable:hover td:first-child::before{transform:scaleY(1)}
+.dn-table__sort:hover{color:var(--text-primary)}
+.dn-timeline__row:hover .dn-timeline__node{transform:scale(1.12)}
+.dn-mpanel:hover{box-shadow:var(--shadow-sm)}
+.dn-mpanel__caveat:hover{transform:scale(1.15)}
+.dn-trace__row:hover{background:var(--surface-hover)}
+}

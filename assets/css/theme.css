@@ -1,0 +1,128 @@
+/* deep.navy admin — the site-local theme layer.
+
+   Two jobs the vendored design system deliberately leaves to the site, both of which
+   would otherwise mean hand-editing ds/ — which is forbidden, because ds/ is the
+   system's own bytes and gets re-vendored wholesale.
+
+   1. THE OS-PREFERENCE DEFAULT.
+      The design system expresses dark as [data-theme="dark"] and expects a theme script
+      to stamp that attribute before first paint. This site does ship one (theme.js, an
+      external same-origin file — the CSP is script-src 'self', so an inline pre-paint
+      script is impossible here), but "system" is represented by the ABSENCE of the
+      attribute, so the OS preference has to be a live media query rather than a value
+      the script resolves once. The block below mirrors ds/tokens/semantic.css and
+      ds/tokens/roles.css [data-theme="dark"] verbatim under
+      :root:not([data-theme="light"]), which keeps three things true at once:
+        - no data-theme + OS dark  -> dark, and it follows the OS live, without a reload;
+        - data-theme="light"       -> light wins over the OS;
+        - data-theme="dark"        -> dark wins over the OS.
+      If ds/tokens/semantic.css or roles.css is ever re-vendored, re-mirror this block.
+
+   2. THE DARK-MODE CHROMA BOOST.
+      Straight from the approved mockup. On the near-black grounds this console uses, the
+      system's dark status and role hues read a little muted; re-deriving each through
+      oklch(from <ramp> l calc(c * k) h) lifts chroma while holding lightness and hue
+      exactly, so the ramps keep their relationships and their contrast ratios. The four
+      role hues take 1.22; the four status hues take 1.25 on both the dot and the fg step,
+      because those two carry meaning at small sizes. It is applied in BOTH dark scopes —
+      the media query above and the explicit attribute — and always AFTER the aliases it
+      re-derives, so it wins on the cascade in either.
+
+   Hex literals stay in the palette; nothing here introduces one. */
+
+/* --- 1. OS-preference default: ds's dark aliases, mirrored --- */
+@media (prefers-color-scheme: dark){
+:root:not([data-theme="light"]){
+color-scheme:dark;
+--surface-page:var(--ink-1000);
+--surface-card:var(--ink-950);
+--surface-raised:var(--ink-850);
+--surface-sunken:var(--ink-1000);
+--surface-inset:var(--ink-900);
+--surface-hover:rgba(255,255,255,.06);
+--surface-active:rgba(255,255,255,.10);
+--surface-selected:var(--ink-850);
+--surface-inverse:var(--ink-0);
+--surface-overlay:rgba(0,0,0,.72);
+--surface-accent-soft:var(--ink-850);
+--surface-scrim:linear-gradient(to bottom,rgba(0,0,0,0) 0%,rgba(0,0,0,.92) 62%,var(--ink-1000) 100%);
+--text-primary:var(--ink-75);
+--text-secondary:var(--ink-250);
+--text-tertiary:var(--ink-300);
+--text-disabled:var(--ink-600);
+--text-inverse:var(--ink-1000);
+--text-accent:var(--lumen-300);
+--text-on-accent:var(--ink-1000);
+--text-link:var(--ink-75);
+--text-link-hover:var(--ink-0);
+--border-subtle:rgba(255,255,255,.10);
+--border-default:rgba(255,255,255,.16);
+--border-strong:rgba(255,255,255,.28);
+--border-inverse:rgba(0,0,0,.20);
+--border-accent:var(--ink-75);
+--focus-ring:0 0 0 2px var(--ink-1000),0 0 0 4px var(--ink-75);
+--action-primary-bg:var(--ink-75);
+--action-primary-bg-hover:var(--ink-0);
+--action-primary-bg-active:var(--ink-200);
+--action-primary-fg:var(--ink-1000);
+--action-secondary-bg:rgba(255,255,255,.05);
+--action-secondary-bg-hover:rgba(255,255,255,.10);
+--action-secondary-fg:var(--ink-75);
+--action-secondary-border:rgba(255,255,255,.16);
+--action-ghost-fg:var(--ink-250);
+--action-accent-bg:var(--lumen-400);
+--action-accent-bg-hover:var(--lumen-300);
+--action-accent-fg:var(--ink-1000);
+--action-danger-bg:var(--coral-500);
+--action-danger-bg-hover:var(--coral-400);
+--action-danger-fg:var(--ink-1000);
+--status-live-fg:var(--lumen-300);--status-live-bg:rgba(23,191,173,.14);--status-live-border:rgba(23,191,173,.32);--status-live-dot:var(--lumen-400);
+--status-success-fg:var(--kelp-300);--status-success-bg:rgba(31,163,93,.14);--status-success-border:rgba(31,163,93,.32);--status-success-dot:var(--kelp-400);
+--status-attention-fg:var(--brass-300);--status-attention-bg:rgba(198,138,33,.15);--status-attention-border:rgba(198,138,33,.34);--status-attention-dot:var(--brass-400);
+--status-danger-fg:var(--coral-300);--status-danger-bg:rgba(210,74,74,.15);--status-danger-border:rgba(210,74,74,.34);--status-danger-dot:var(--coral-400);
+--status-idle-fg:var(--ink-300);--status-idle-bg:rgba(255,255,255,.06);--status-idle-border:rgba(255,255,255,.14);--status-idle-dot:var(--ink-400);
+--viz-1:var(--ink-75);--viz-2:var(--current-400);--viz-3:var(--lumen-400);--viz-4:var(--rose-400);--viz-5:var(--brass-400);--viz-6:var(--ink-500);
+--viz-grid:rgba(255,255,255,.09);--viz-track:rgba(255,255,255,.11);
+--code-bg:var(--ink-1000);--code-fg:var(--ink-150);--code-border:rgba(255,255,255,.10);
+--diff-add-bg:rgba(31,163,93,.15);--diff-add-fg:var(--kelp-300);--diff-del-bg:rgba(210,74,74,.15);--diff-del-fg:var(--coral-300);
+--role-pm:var(--rose-400);--role-pm-soft:rgba(217,62,119,.16);--role-pm-border:rgba(217,62,119,.36);
+--role-em:var(--iris-400);--role-em-soft:rgba(110,86,224,.18);--role-em-border:rgba(110,86,224,.40);
+--role-design:var(--anemone-400);--role-design-soft:rgba(175,60,188,.17);--role-design-border:rgba(175,60,188,.38);
+--role-eng:var(--current-400);--role-eng-soft:rgba(42,120,224,.17);--role-eng-border:rgba(42,120,224,.38);
+--role-human:var(--ink-250);--role-human-soft:rgba(255,255,255,.06);--role-human-border:rgba(255,255,255,.16);
+/* the chroma boost, inside the same scope so it lands after the aliases */
+--role-pm:oklch(from var(--rose-400) l calc(c * 1.22) h);
+--role-em:oklch(from var(--iris-400) l calc(c * 1.22) h);
+--role-design:oklch(from var(--anemone-400) l calc(c * 1.22) h);
+--role-eng:oklch(from var(--current-400) l calc(c * 1.22) h);
+--status-live-dot:oklch(from var(--lumen-400) l calc(c * 1.25) h);
+--status-live-fg:oklch(from var(--lumen-300) l calc(c * 1.25) h);
+--status-success-dot:oklch(from var(--kelp-400) l calc(c * 1.25) h);
+--status-success-fg:oklch(from var(--kelp-300) l calc(c * 1.25) h);
+--status-attention-dot:oklch(from var(--brass-400) l calc(c * 1.25) h);
+--status-attention-fg:oklch(from var(--brass-300) l calc(c * 1.25) h);
+--status-danger-dot:oklch(from var(--coral-400) l calc(c * 1.25) h);
+--status-danger-fg:oklch(from var(--coral-300) l calc(c * 1.25) h);
+}
+}
+
+/* --- 2. Chroma boost for the explicit dark scope --- */
+[data-theme="dark"]{
+--role-pm:oklch(from var(--rose-400) l calc(c * 1.22) h);
+--role-em:oklch(from var(--iris-400) l calc(c * 1.22) h);
+--role-design:oklch(from var(--anemone-400) l calc(c * 1.22) h);
+--role-eng:oklch(from var(--current-400) l calc(c * 1.22) h);
+--status-live-dot:oklch(from var(--lumen-400) l calc(c * 1.25) h);
+--status-live-fg:oklch(from var(--lumen-300) l calc(c * 1.25) h);
+--status-success-dot:oklch(from var(--kelp-400) l calc(c * 1.25) h);
+--status-success-fg:oklch(from var(--kelp-300) l calc(c * 1.25) h);
+--status-attention-dot:oklch(from var(--brass-400) l calc(c * 1.25) h);
+--status-attention-fg:oklch(from var(--brass-300) l calc(c * 1.25) h);
+--status-danger-dot:oklch(from var(--coral-400) l calc(c * 1.25) h);
+--status-danger-fg:oklch(from var(--coral-300) l calc(c * 1.25) h);
+}
+
+/* The code/evidence surface is near-black in BOTH themes, so its accent cannot ride the
+   themed --text-accent alias (the light theme's --lumen-700 drops to 2.65:1 on --code-bg).
+   One token, both themes, always the light step of the accent. */
+:root{--code-accent:var(--lumen-300)}

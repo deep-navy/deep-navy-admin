@@ -1,0 +1,42 @@
+/* deep.navy — the breakpoint scale. Three numbers, used everywhere, no exceptions.
+     600px   phone → large phone. Below this, everything is one column.
+     900px   tablet portrait. Side rails collapse; two-column grids survive.
+    1200px   tablet landscape → laptop. Full desktop chrome appears.
+   Media queries cannot read custom properties, so these values are duplicated literally
+   in every stylesheet. If they ever change, grep for the three numbers. */
+:root{
+--bp-phone:600px;
+--bp-tablet:900px;
+--bp-laptop:1200px;
+--tabbar-height:0px;
+--page-gutter:var(--space-10);
+--page-gutter-y:var(--space-8);
+--hit-min:44px;
+}
+@media (max-width:900px){
+  :root{
+    --page-gutter:var(--space-6);
+    --page-gutter-y:var(--space-6);
+    --tabbar-height:60px;
+  }
+}
+/* Display type is stepped down rather than fluidly scaled: a clamp() would put headings at
+   sizes that appear nowhere in the specimen cards. Everything below is an existing step. */
+@media (max-width:600px){
+  :root{
+    --page-gutter:var(--space-4);
+    --page-gutter-y:var(--space-5);
+    --fs-6xl:var(--fs-4xl);
+    --fs-5xl:var(--fs-3xl);
+    --fs-4xl:var(--fs-2xl);
+    --fs-3xl:var(--fs-xl);
+    --fs-2xl:var(--fs-lg);
+  }
+}
+/* Pointer-coarse rather than a width query: a small window on a laptop still has a mouse. */
+@media (pointer:coarse){
+  .dn-iconbtn,.dn-btn--sm,.dn-tabs__item,.dn-nav{min-height:var(--hit-min)}
+  .dn-iconbtn{min-width:var(--hit-min)}
+  /* iOS Safari zooms the page when a field under 16px takes focus and does not zoom back. */
+  .dn-input,.dn-textarea,.dn-select select{font-size:16px}
+}
