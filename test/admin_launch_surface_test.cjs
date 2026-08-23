@@ -3,6 +3,7 @@
 const assert = require("node:assert/strict");
 const { readFileSync } = require("node:fs");
 const test = require("node:test");
+const { createHash } = require("node:crypto");
 
 const app = readFileSync("assets/js/admin.js", "utf8");
 const client = readFileSync("src/admin-api-client.ts", "utf8");
@@ -188,14 +189,26 @@ test("sign-in asks Cognito for the callback page terraform registers, and names 
   // interstitial would make the button's own promise false.
   assert.match(app, /identity_provider: "Google"/);
 
-  // The button says whose identity it uses, and carries the mark, because
-  // "Continue securely" told an operator nothing about what tapping it does.
-  assert.match(shell, /data-sign-in[^>]*>[\s\S]{0,220}?Sign in with Google/);
-  assert.match(shell, /<symbol id="i-google"/);
-  assert.match(shell, /href="#i-google"/);
+  // Google's own pre-approved asset, used verbatim in both themes. A custom
+  // button is permitted only within their guidelines, and the one we had
+  // breached the clearest of them: the colour "G" may not sit on a background
+  // other than light, dark or neutral, and ours sat on the brand primary.
+  assert.match(shell, /data-sign-in[^>]*aria-label="Sign in with Google"/);
+  assert.match(shell, /google-signin-light\.svg/);
+  assert.match(shell, /google-signin-dark\.svg/);
+  assert.doesNotMatch(shell, /i-google/, "a lone Google mark breaches the same guideline as a recoloured button");
 
-  // The mark is filled, not stroked: svg.dn-icon forces fill:none for outline
-  // glyphs, which would render Google's four paths as nothing at all.
+  // The asset must be framed, never painted over or stretched.
   const css = readFileSync("assets/css/admin.css", "utf8");
-  assert.match(css, /svg\.ad-gmark\s*\{[^}]*fill:\s*revert/);
+  assert.match(css, /\.ad-gbtn\s*\{[^}]*background:\s*none/);
+  assert.match(css, /\.ad-gbtn__img\s*\{[^}]*width:\s*180px[^}]*height:\s*40px/);
+
+  // Both files are Google's, byte-for-byte. A hash is the right check here:
+  // the guidelines forbid altering the artwork at all, and they equally forbid
+  // shipping an OUTDATED "G" - the mark in these files is the current gradient
+  // super G, not the four-colour one most hand-rolled buttons still carry.
+  // If a hash stops matching, re-download from Google rather than editing.
+  const sha = (f) => createHash("sha256").update(readFileSync(f)).digest("hex");
+  assert.equal(sha("assets/img/google-signin-light.svg"), "9dbc9beb1660ca4de76a724cae014be02b22ecdd8124282318f9f0362579474c");
+  assert.equal(sha("assets/img/google-signin-dark.svg"), "790f35a6cea01d512d8c0cbf51d6277219a17206a67471fc3329dfffa0ede293");
 });

@@ -73,22 +73,42 @@ svg.dn-icon {
   stroke-linejoin: round;
 }
 
-/* Google's mark is the one glyph in this console that carries colour without
-   carrying meaning: it is an identity mark, not a status. It is filled rather
-   than stroked, so it must opt out of svg.dn-icon above or it renders as four
-   invisible outlines. Its colours are fixed by Google's branding guidelines and
-   are deliberately identical in both themes. */
-svg.ad-gmark {
-  fill: revert;
-  stroke: none;
-  flex: none;
+/* Google's sign-in button is Google's asset, rendered at its own aspect ratio.
+   The element is a bare frame: no fill, no border, no radius of ours, because
+   the artwork already carries all three. Their guidelines permit scaling but
+   not stretching, so width and height move together and nothing here sets a
+   background - a background is precisely what made the old button breach them.
+   Light and dark are two files rather than one recoloured file; recolouring is
+   forbidden and would also flatten the four-colour "G". */
+.ad-gbtn {
+  display: block;
+  margin-inline: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  line-height: 0;
 }
 
-.dn-btn.ad-gbtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2, 0.5rem);
+.ad-gbtn[disabled] {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.ad-gbtn__img {
+  display: block;
+  width: 180px;
+  height: 40px;
+}
+
+.ad-gbtn__img--dark { display: none; }
+
+[data-theme="dark"] .ad-gbtn__img--light { display: none; }
+[data-theme="dark"] .ad-gbtn__img--dark { display: block; }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .ad-gbtn__img--light { display: none; }
+  :root:not([data-theme="light"]) .ad-gbtn__img--dark { display: block; }
 }
 
 /* ------------------------------------------------------------------- brand ---- */
