@@ -57,7 +57,27 @@ function withoutHoverMedia(css) {
 
 test("the portal uses fresh PKCE and never persists bearer tokens", () => {
   assert.match(source, /code_challenge_method:\s*"S256"/);
-  assert.match(source, /prompt:\s*"login"/);
+
+  // This assertion used to require prompt=login, on the reasoning that an
+  // admin portal should re-authenticate every time rather than silently reuse
+  // a session. The intent is right; prompt=login is the wrong instrument for
+  // it, and it broke the thing it was guarding. Cognito's developer guide
+  // documents the behaviour in a worked example: with prompt=login "the
+  // authorization server redirects to the login endpoint" - a 302 to managed
+  // login. Federated through identity_provider, that lands the operator on a
+  // generic Cognito page carrying a second "Sign in with Google" button AFTER
+  // they have already authenticated with Google. An operator hit exactly that.
+  //
+  // The intent is enforced by things that cannot contradict the flow, so pin
+  // those instead: the authorization code is exchanged with a fresh PKCE
+  // verifier every time, no token is ever written to storage, and the Cognito
+  // auth session is three minutes (infrastructure/modules/cognito-admin,
+  // auth_session_validity = 3) against 60-minute tokens held in memory only -
+  // so closing the tab, or refreshing it, ends the session.
+  assert.doesNotMatch(source, /prompt:\s*"login"/,
+    "prompt=login sends the operator to Cognito's managed login page on the way back from the IdP");
+  assert.match(source, /identity_provider:\s*"Google"/,
+    "the federated provider must be named, or Cognito serves its own chooser");
   assert.doesNotMatch(source, /localStorage/);
   const storageWrites = [...source.matchAll(/sessionStorage\.setItem\(([^\n]+)\)/g)].map((match) => match[1]);
   assert.equal(storageWrites.length, 1);
