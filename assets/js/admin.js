@@ -428,6 +428,18 @@
     return Math.min(idExpiry, accessExpiry, authenticatedAt + sessionMaxAgeSeconds) * 1000;
   }
 
+  // The console root, derived rather than assumed. The callback lives at
+  // <root>auth/callback/, so the root is that path with the suffix removed —
+  // which keeps this correct if the site is ever served from a subdirectory.
+  function consoleRootPath() {
+    const path = window.location.pathname;
+    const marker = "auth/callback";
+    const index = path.indexOf(marker);
+    if (index < 0) return path;
+    const root = path.slice(0, index);
+    return root || "/";
+  }
+
   async function completeCallback() {
     const query = stringValue(window.deepNavyAdminInitialQuery) || window.location.search;
     window.deepNavyAdminInitialQuery = "";
@@ -444,6 +456,17 @@
     const transaction = readOAuthTransaction();
     clearOAuthTransaction();
     if (!code || !returnedState) {
+      // Two different situations used to share one error. A callback that
+      // arrived without its code IS broken and should say so. But a plain load
+      // of this page — a refresh, a bookmark, Back — is not a failure at all;
+      // it is someone standing on the doorstep, and calling it an incomplete
+      // callback reads as "your sign-in broke" when nothing broke. The
+      // transaction is what tells them apart: a real callback always has one,
+      // because the sign-in that sent the browser away wrote it.
+      if (!transaction) {
+        showAuthNotice("info", "Nothing to complete here", "This page finishes a sign-in that is already under way. Start from the sign-in button and it will bring you back through here.");
+        return;
+      }
       showAuthNotice("error", "Incomplete sign-in callback", "The one-time authorization code and state are missing. Start a fresh sign-in.");
       return;
     }
@@ -490,6 +513,23 @@
       state.bearerToken = idToken;
       state.deadline = deadline;
       scheduleSessionExpiry();
+      // Leave the callback URL the moment the code is spent.
+      //
+      // /auth/callback/ carries auth_callback: true, so completeCallback() runs
+      // on EVERY load of it. The console used to stay on that path after a
+      // successful sign-in — setView's replaceState rewrites the URL to
+      // pathname + "#view", which strips the spent query string but keeps the
+      // path — so an operator lived on the callback page and any refresh
+      // re-entered the callback with no code to exchange. The result was
+      // "The one-time authorization code and state are missing" on a plain
+      // reload, which reads as a broken sign-in rather than what it was: the
+      // console asking itself to complete a sign-in that had already completed.
+      //
+      // replaceState, not assign: a navigation would discard the in-memory
+      // tokens we have just obtained, and this must not cost the operator the
+      // session it just established. It also drops the callback out of history,
+      // so Back cannot walk into it either.
+      window.history.replaceState({}, "", `${consoleRootPath()}#overview`);
       await authorizeOperator(idToken);
     } catch {
       clearSession();

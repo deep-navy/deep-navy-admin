@@ -400,3 +400,37 @@ test("the bearer sent to the platform is the ID token, never the access token", 
   assert.deepEqual([...new Set(bearers)], ["bearerToken"],
     "every request must send the same credential");
 });
+
+// A refresh of any admin page used to land on "The one-time authorization code
+// and state are missing", which reads as a broken sign-in. Nothing was broken:
+// /auth/callback/ carries auth_callback: true so completeCallback() runs on
+// every load of it, and the console stayed on that path after signing in —
+// setView's replaceState strips the spent query but keeps the pathname. The
+// operator therefore lived on the callback URL, and reloading asked the console
+// to complete a sign-in that had already completed.
+test("a spent callback leaves the callback URL behind", () => {
+  const complete = source.slice(source.indexOf("async function completeCallback"), source.indexOf("function authorizeOperator"));
+
+  // The console moves off /auth/callback/ as soon as the code is spent.
+  assert.match(complete, /window\.history\.replaceState\(\{\}, "", `\$\{consoleRootPath\(\)\}#overview`\)/);
+
+  // replaceState, never a navigation: assign/href would tear down the page and
+  // discard the in-memory tokens the exchange just produced.
+  assert.doesNotMatch(complete, /location\.(assign|replace|href\s*=)/,
+    "navigating away would discard the tokens this exchange just obtained");
+
+  // Derived from the callback path, so a subdirectory deployment still works.
+  assert.match(source, /function consoleRootPath\(\)/);
+  assert.match(source, /const marker = "auth\/callback";/);
+});
+
+test("standing on the callback page is not reported as a failure", () => {
+  const complete = source.slice(source.indexOf("async function completeCallback"), source.indexOf("function authorizeOperator"));
+  // A real callback always carries a transaction, because the sign-in that sent
+  // the browser away wrote one. Without it, this is a refresh or a bookmark —
+  // an absence, not an error, and the ladder's lowest rung says so.
+  assert.match(complete, /if \(!transaction\) \{[\s\S]{0,200}showAuthNotice\("info"/);
+  // The error copy survives for the case that IS broken: a callback that
+  // arrived with a transaction but no code.
+  assert.match(complete, /showAuthNotice\("error", "Incomplete sign-in callback"/);
+});
