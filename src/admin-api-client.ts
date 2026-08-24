@@ -14,7 +14,7 @@ import {
 // failure. The operator surface is AdminService, and it is the only surface this
 // client can reach, so there is no path from the admin console to a customer one.
 
-export const PLATFORM_PROTOS_REVISION = "0cd80ee818ad891e7bf6a6d046ebd49d933a7414";
+export const PLATFORM_PROTOS_REVISION = "5f7b6136542f928ac4923fdb250ea69828d6b39e";
 export const SUPPORTED_PROCEDURES = Object.freeze([
   // The operator's own identity. It is first because it is the first call the
   // console makes: it is the authorization probe, and its answer is what the

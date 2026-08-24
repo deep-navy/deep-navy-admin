@@ -19,6 +19,20 @@ const layout = readFileSync("_layouts/default.html", "utf8");
 
 const VIEWS = ["overview", "customers", "economics", "operations", "billing", "metrics", "audit"];
 
+// Slice one function out of the app source by brace matching. Shared, because more
+// than one test needs to reason about a single builder in isolation.
+function functionBody(signature) {
+  const start = app.indexOf(signature);
+  assert.notEqual(start, -1, `missing builder: ${signature}`);
+  let depth = 0;
+  let opened = false;
+  for (let index = start; index < app.length; index += 1) {
+    if (app[index] === "{") { depth += 1; opened = true; }
+    else if (app[index] === "}") { depth -= 1; if (opened && depth === 0) return app.slice(start, index + 1); }
+  }
+  return "";
+}
+
 test("every view is registered in the router, the markup, and the rail", () => {
   // The router's own registry.
   const registry = app.match(/const VIEWS = \[([^\]]+)\]/);
@@ -120,17 +134,6 @@ test("every table body emits exactly as many cells as its header declares", () =
     if (hook) headerCounts[hook] = (table.match(/<th scope="col"/g) || []).length;
   }
 
-  function functionBody(signature) {
-    const start = app.indexOf(signature);
-    assert.notEqual(start, -1, `missing builder: ${signature}`);
-    let depth = 0;
-    let opened = false;
-    for (let index = start; index < app.length; index += 1) {
-      if (app[index] === "{") { depth += 1; opened = true; }
-      else if (app[index] === "}") { depth -= 1; if (opened && depth === 0) return app.slice(start, index + 1); }
-    }
-    return "";
-  }
   function cellCount(body, rowVariable) {
     const direct = (body.match(new RegExp("(?<!numeric)\\bcell\\(" + rowVariable + "\\b", "g")) || []).length;
     const numeric = (body.match(new RegExp("\\bnumericCell\\(" + rowVariable + "\\b", "g")) || []).length;
@@ -343,4 +346,53 @@ test("a filtered audit page may not seed the tail's cursor", () => {
   assert.match(load, /state\.auditCursor = 0n;/);
   const guarded = load.slice(load.indexOf("if (!auditState.action)"), load.indexOf("renderAudit(response)"));
   assert.match(guarded, /state\.auditEvents\.set/, "seeding happens only on the unfiltered pass");
+});
+
+/* The live billing-provider projection.
+ *
+ * Everything below guards a way this surface could be WRONG ABOUT MONEY while
+ * looking perfectly healthy, which is the only class of bug on this page that an
+ * operator has no way to notice. */
+test("the customers surface reads the provider projection honestly", () => {
+  // Every billing field the markup declares must actually be written, or the panel
+  // shows a permanent em dash where a number belongs.
+  for (const field of ["billing-account", "charged", "card", "last-invoice"]) {
+    assert.ok(shell.includes(`data-customer-detail-field="${field}"`), `the detail panel lost its ${field} field`);
+    assert.ok(app.includes(`setCustomerDetailField("${field}"`), `nothing writes the ${field} detail field`);
+  }
+
+  // The subscription list is not a detail field, so the reset sweep over
+  // [data-customer-detail-field] does not reach it. Without an explicit clear it
+  // shows the previous customer's subscriptions beside the next customer's name.
+  assert.ok(shell.includes("data-customer-subscriptions"), "the subscriptions list is gone from the markup");
+  const reset = app.slice(app.indexOf("function resetCustomerDetailFields"));
+  assert.ok(
+    reset.slice(0, reset.indexOf("\n  }")).includes('querySelector("[data-customer-subscriptions]")?.replaceChildren()'),
+    "resetting the detail panel no longer clears the subscription list"
+  );
+
+  // An account's charge is a SUM over its subscriptions. An account can hold more
+  // than one — the live provider account already does — and reading a single
+  // subscription's amount reports half the customer's bill with nothing to show
+  // for the error.
+  const charged = functionBody("function providerChargedSummary");
+  assert.ok(charged.includes("recurringTotal"), "the charged summary no longer reads the provider's summed total");
+  assert.ok(charged.includes("activeSubscriptionCount"), "the charged summary no longer says how many subscriptions there are");
+
+  // Absence and failure must not render alike. An organization the provider has
+  // never heard of has never paid, which is an answer; a provider that could not be
+  // read is a gap, and the difference decides whether the operator chases the
+  // customer or chases us.
+  assert.ok(charged.includes("never billed"), "an account with no provider record no longer says so");
+  assert.ok(charged.includes("UNAVAILABLE"), "an unreadable provider no longer renders as unavailable");
+  assert.ok(
+    charged.indexOf('projectionFieldAvailable(customer, "stripe")') < charged.indexOf("never billed"),
+    "the charged summary decides 'never billed' before checking whether the provider was readable at all"
+  );
+
+  // Outstanding balance is the remaining amount, never the billed total, which
+  // stays positive on a fully paid invoice and would report every paying customer
+  // as owing money.
+  const invoice = functionBody("function providerInvoiceSummary");
+  assert.ok(invoice.includes("amountRemaining"), "the invoice summary no longer reads the outstanding balance");
 });

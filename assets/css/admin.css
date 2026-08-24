@@ -381,6 +381,11 @@ svg.dn-icon {
 .ad-kv__k--quiet { color: var(--text-tertiary); }
 .ad-kv__v { font-variant-numeric: tabular-nums; }
 
+/* One row per subscription. A grid rather than a summary line because an account
+   can hold several, and a second subscription against an organization licence is a
+   billing fault that only shows when each one is listed on its own. */
+.ad-subs { display: grid; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+
 .ad-probe { display: flex; align-items: center; gap: var(--space-2); }
 .ad-probe__path { flex: 1; font: var(--fw-regular) var(--fs-2xs)/1 var(--font-mono); }
 .ad-probe__foot {

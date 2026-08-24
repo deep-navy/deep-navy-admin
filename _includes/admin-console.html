@@ -307,8 +307,13 @@
             </div>
 
             <div class="ad-2">
+              <div class="ad-stack">
               <dl class="dn-meta">
                 <dt class="dn-meta__k">Plan</dt><dd class="dn-meta__v" data-customer-detail-field="plan">—</dd>
+                <dt class="dn-meta__k">Billing account</dt><dd class="dn-meta__v" data-customer-detail-field="billing-account">—</dd>
+                <dt class="dn-meta__k">Charged</dt><dd class="dn-meta__v" data-customer-detail-field="charged">—</dd>
+                <dt class="dn-meta__k">Card</dt><dd class="dn-meta__v" data-customer-detail-field="card">—</dd>
+                <dt class="dn-meta__k">Last invoice</dt><dd class="dn-meta__v" data-customer-detail-field="last-invoice">—</dd>
                 <dt class="dn-meta__k">Health</dt><dd class="dn-meta__v" data-customer-detail-field="health">—</dd>
                 <dt class="dn-meta__k">Support</dt><dd class="dn-meta__v" data-customer-detail-field="support">—</dd>
                 <dt class="dn-meta__k">Churn risk</dt><dd class="dn-meta__v" data-customer-detail-field="churn">—</dd>
@@ -321,6 +326,19 @@
                 <dt class="dn-meta__k">Credits / cost</dt><dd class="dn-meta__v" data-customer-detail-field="economics">—</dd>
                 <dt class="dn-meta__k">Projection</dt><dd class="dn-meta__v" data-customer-detail-field="projection">—</dd>
               </dl>
+
+              <!-- An account can hold more than one subscription, so every one is listed
+                   rather than summarised into a single line. A second subscription against
+                   a plan that licenses the organization is a billing fault, and it is only
+                   visible if each one is shown separately. -->
+              <div class="ad-stack">
+                <div class="ad-section__head">
+                  <span class="dn-eyebrow">Subscriptions</span>
+                  <span class="ad-section__count ad-row__end" data-customer-subscriptions-state>Not loaded.</span>
+                </div>
+                <ul class="ad-subs" data-customer-subscriptions></ul>
+              </div>
+              </div>
 
               <div class="ad-stack">
                 <div class="ad-section__head">

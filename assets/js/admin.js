@@ -158,7 +158,7 @@
   }
 
   function createAdminApi() {
-    if (!apiBaseUrl || generated?.PLATFORM_PROTOS_REVISION !== "0cd80ee818ad891e7bf6a6d046ebd49d933a7414" || typeof generated.createAdminApi !== "function") return null;
+    if (!apiBaseUrl || generated?.PLATFORM_PROTOS_REVISION !== "5f7b6136542f928ac4923fdb250ea69828d6b39e" || typeof generated.createAdminApi !== "function") return null;
     try {
       return generated.createAdminApi({ baseUrl: apiBaseUrl, defaultTimeoutMs: 12_000 });
     } catch {
@@ -1295,7 +1295,17 @@
       identity.append(name, id);
       row.append(identity);
 
-      cell(row, `${projectionFieldAvailable(customer, "plan") ? stringValue(customer?.plan?.name) || "No plan" : UNAVAILABLE} · ${subscriptionLabel}`);
+      // Two lines: what we agreed to bill above, what the provider actually charges
+      // below. Shown together because a disagreement between them is the finding,
+      // and a single line could only ever carry one of the two.
+      const billing = cell(row, "");
+      const agreed = document.createElement("div");
+      agreed.className = "ad-cell-main";
+      agreed.textContent = `${projectionFieldAvailable(customer, "plan") ? stringValue(customer?.plan?.name) || "No plan" : UNAVAILABLE} · ${subscriptionLabel}`;
+      const charged = document.createElement("div");
+      charged.className = "ad-cell-sub";
+      setValue(charged, providerChargedSummary(customer));
+      billing.replaceChildren(agreed, charged);
 
       const teams = numericCell(row, projectionValue(customer, "team_count", formatCount, customer?.teamCount));
       teams.title = `${projectionValue(customer, "user_count", formatCount, customer?.userCount)} people · ${projectionValue(customer, "repository_count", formatCount, customer?.repositoryCount)} repositories`;
@@ -1365,6 +1375,12 @@
 
   function resetCustomerDetailFields() {
     document.querySelectorAll("[data-customer-detail-field]").forEach((element) => { element.textContent = UNAVAILABLE; });
+    // The subscription list is not a detail FIELD, so the sweep above does not
+    // reach it. Left behind, it would show the previous customer's subscriptions
+    // beside the next customer's name.
+    document.querySelector("[data-customer-subscriptions]")?.replaceChildren();
+    const subscriptionsState = document.querySelector("[data-customer-subscriptions-state]");
+    if (subscriptionsState) subscriptionsState.textContent = "Not loaded.";
   }
 
   function resetCustomerReliability(message = "Not loaded.") {
@@ -1396,6 +1412,92 @@
     ui.customerDetailState.textContent = "Choose a customer to request its current AdminService projection and daily reliability history.";
     ui.customerDetail.hidden = true;
     document.querySelectorAll("[data-customer-detail-id]").forEach((button) => button.setAttribute("aria-expanded", "false"));
+  }
+
+  /* The billing provider's own view of an account.
+   *
+   * It is absent for two different reasons that must never look alike. An
+   * organization the provider has never heard of has never paid, which is an
+   * answer worth showing. A provider that could not be read is a gap, and the
+   * column has to disappear rather than render a zero an operator would read as
+   * "this customer pays nothing". The first is a missing field on an otherwise
+   * available row; the second is declared in unavailable_fields. */
+  function providerAccount(customer) {
+    return projectionFieldAvailable(customer, "stripe") ? customer?.stripe || null : null;
+  }
+
+  function safeCount(value) {
+    try { return integerValue(value); } catch { return 0n; }
+  }
+
+  /* What the provider actually charges, per interval. A SUM across every
+   * subscription that is billing, never one subscription's amount: an account
+   * holding two is charged for two, and reporting the first states half the
+   * customer's bill while looking entirely correct. */
+  function providerChargedSummary(customer) {
+    if (!projectionFieldAvailable(customer, "stripe")) return UNAVAILABLE;
+    const account = customer?.stripe;
+    if (!account) return "never billed";
+    const active = safeCount(account.activeSubscriptionCount);
+    if (active === 0n) return "nothing billing";
+    return `${formatOptionalMoney(account.recurringTotal)} · ${formatCount(active)} subscription${active === 1n ? "" : "s"}`;
+  }
+
+  function providerCardSummary(account) {
+    const card = (account?.subscriptions || []).map((entry) => entry?.paymentMethod).find(Boolean);
+    if (!card) return "no card on file";
+    const expiry = `${String(safeCount(card.expMonth)).padStart(2, "0")}/${safeCount(card.expYear)}`;
+    // Expired and expiring are decided by the server against the same clock it
+    // reports, so this never does calendar arithmetic of its own.
+    const warning = card.expired ? " · expired" : card.expiringSoon ? " · expires soon" : "";
+    const inherited = card.fromCustomerDefault ? " · account default" : "";
+    return `${stringValue(card.brand) || "card"} ····${stringValue(card.last4)} · ${expiry}${warning}${inherited}`;
+  }
+
+  function providerInvoiceSummary(account) {
+    const invoice = (account?.subscriptions || []).map((entry) => entry?.latestInvoice).find(Boolean);
+    if (!invoice) return "no invoice yet";
+    const status = stringValue(invoice.status) || "unknown";
+    const parts = [`${formatOptionalMoney(invoice.total)} · ${status}`, formatTimestamp(invoice.createdAt)];
+    // Outstanding is the balance, never the billed amount, which stays positive on
+    // a fully paid invoice and would report every paid customer as owing money.
+    if (status !== "paid") parts.push(`${formatOptionalMoney(invoice.amountRemaining)} outstanding`);
+    return parts.join(" · ");
+  }
+
+  /* Every subscription is listed rather than summarised. A second subscription on
+   * an account is how a customer ends up charged twice for a plan that licenses the
+   * organization once, and it is invisible in any view that shows only one. */
+  function renderCustomerSubscriptions(customer) {
+    const list = document.querySelector("[data-customer-subscriptions]");
+    const stateNode = document.querySelector("[data-customer-subscriptions-state]");
+    if (!list) return;
+    list.replaceChildren();
+    if (!projectionFieldAvailable(customer, "stripe")) {
+      if (stateNode) setValue(stateNode, UNAVAILABLE);
+      return;
+    }
+    const account = customer?.stripe;
+    const subscriptions = Array.isArray(account?.subscriptions) ? account.subscriptions : [];
+    if (!subscriptions.length) {
+      if (stateNode) stateNode.textContent = account ? "None." : "This account has never been billed.";
+      return;
+    }
+    if (stateNode) stateNode.textContent = `${formatCount(subscriptions.length)} on this account.`;
+    subscriptions.forEach((subscription) => {
+      const item = document.createElement("li");
+      item.className = "ad-kv";
+      const key = document.createElement("span");
+      key.className = "ad-kv__k";
+      const team = stringValue(subscription?.teamId);
+      key.textContent = `${stringValue(subscription?.status) || "unknown"} · ${team ? `team ${team.slice(0, 8)}` : "no team recorded"}`;
+      const value = document.createElement("span");
+      value.className = "ad-kv__v";
+      value.textContent = `${formatOptionalMoney(subscription?.unitAmount)} / ${stringValue(subscription?.interval) || "period"}`;
+      item.append(key, value);
+      item.title = `${stringValue(subscription?.id)} · renews ${formatTimestamp(subscription?.currentPeriodEnd)}${subscription?.cancelAtPeriodEnd ? " · cancels at period end" : ""}`;
+      list.append(item);
+    });
   }
 
   function customerDetailActivityValue(activity, field, formatter, value) {
@@ -1433,6 +1535,15 @@
       : UNAVAILABLE);
     setCustomerDetailField("mrr", projectionValue(customer, "monthly_recurring_revenue", formatOptionalMoney, customer.monthlyRecurringRevenue));
     setCustomerDetailField("economics", economics ? `${formatCredits(economics.creditsUsedMicros)} credits · ${formatOptionalMoney(economics.directCost)} direct cost` : UNAVAILABLE);
+    const account = providerAccount(customer);
+    const providerReadable = projectionFieldAvailable(customer, "stripe");
+    setCustomerDetailField("billing-account", providerReadable
+      ? (account ? `${stringValue(account.customerId) || "no identifier"}${account.delinquent ? " · last charge failed" : ""}` : "never billed")
+      : UNAVAILABLE);
+    setCustomerDetailField("charged", providerChargedSummary(customer));
+    setCustomerDetailField("card", providerReadable && account ? providerCardSummary(account) : (providerReadable ? "never billed" : UNAVAILABLE));
+    setCustomerDetailField("last-invoice", providerReadable && account ? providerInvoiceSummary(account) : (providerReadable ? "never billed" : UNAVAILABLE));
+    renderCustomerSubscriptions(customer);
     setCustomerDetailField("projection", projectionSummary(customer));
     ui.customerDetailState.textContent = `Current AdminService customer projection loaded · ${projectionSummary(customer)}.`;
   }
