@@ -14,7 +14,7 @@ import {
 // failure. The operator surface is AdminService, and it is the only surface this
 // client can reach, so there is no path from the admin console to a customer one.
 
-export const PLATFORM_PROTOS_REVISION = "31a489d8f0b073fd499207ab86bdea0f2faea0b7";
+export const PLATFORM_PROTOS_REVISION = "0cd80ee818ad891e7bf6a6d046ebd49d933a7414";
 export const SUPPORTED_PROCEDURES = Object.freeze([
   // The operator's own identity. It is first because it is the first call the
   // console makes: it is the authorization probe, and its answer is what the
@@ -43,7 +43,8 @@ type ProcedureName = (typeof SUPPORTED_PROCEDURES)[number];
 
 export const STREAM_PROCEDURES = Object.freeze([
   "admin_runtimes_stream",
-  "admin_alerts_stream"
+  "admin_alerts_stream",
+  "admin_audit_events_stream"
 ] as const);
 type StreamName = (typeof STREAM_PROCEDURES)[number];
 
@@ -328,6 +329,14 @@ export function createAdminApi(options: AdminApiOptions) {
           break;
         case "admin_alerts_stream":
           iterable = admin.streamAdminAlerts({ afterSequence }, callOptions);
+          break;
+        // The audit tail carries no scope filter from here. The console reads
+        // the whole administrative trail, and a filter applied at the transport
+        // would silently stop delivering records the moment the thing it
+        // filtered on changed — which for an audit log is data loss wearing a
+        // filter's clothes. Narrowing belongs to the view.
+        case "admin_audit_events_stream":
+          iterable = admin.streamAdminAuditEvents({ afterSequence }, callOptions);
           break;
         default:
           throw new AdminClientError("Unsupported administrator stream.", "invalid_argument", 400, requestId);

@@ -40,7 +40,7 @@ function parseStreamRequestBody(body) {
 }
 
 test("the browser bundle exposes the pinned read-only admin launch procedures", () => {
-  assert.equal(generated.PLATFORM_PROTOS_REVISION, "31a489d8f0b073fd499207ab86bdea0f2faea0b7");
+  assert.equal(generated.PLATFORM_PROTOS_REVISION, "0cd80ee818ad891e7bf6a6d046ebd49d933a7414");
   assert.deepEqual([...generated.SUPPORTED_PROCEDURES], [
     "admin_identity",
     "admin_overview", "admin_customers", "admin_customer",
@@ -79,7 +79,8 @@ test("an unsupported procedure reaches no network at all", async () => {
 });
 
 test("the browser bundle exposes the live admin streaming procedures", () => {
-  assert.deepEqual([...generated.STREAM_PROCEDURES], ["admin_runtimes_stream", "admin_alerts_stream"]);
+  assert.deepEqual([...generated.STREAM_PROCEDURES],
+    ["admin_runtimes_stream", "admin_alerts_stream", "admin_audit_events_stream"]);
   const api = generated.createAdminApi({ baseUrl: "https://dev.api.deep.navy", fetch: async () => new Response(null, { status: 200 }) });
   assert.equal(typeof api.stream, "function");
 });

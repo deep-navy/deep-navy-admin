@@ -158,7 +158,7 @@
   }
 
   function createAdminApi() {
-    if (!apiBaseUrl || generated?.PLATFORM_PROTOS_REVISION !== "31a489d8f0b073fd499207ab86bdea0f2faea0b7" || typeof generated.createAdminApi !== "function") return null;
+    if (!apiBaseUrl || generated?.PLATFORM_PROTOS_REVISION !== "0cd80ee818ad891e7bf6a6d046ebd49d933a7414" || typeof generated.createAdminApi !== "function") return null;
     try {
       return generated.createAdminApi({ baseUrl: apiBaseUrl, defaultTimeoutMs: 12_000 });
     } catch {
@@ -2652,6 +2652,29 @@
     if (applyStreamUpsert(state.alertInstances, message?.alert, message, "alertCursor")) scheduleAlertRender();
   }
 
+  // An audit record is immutable and append-only, so this map only ever grows
+  // within a session and UPSERT is the only change type the stream can send.
+  // The shared helper still applies: it is the cursor discipline that matters,
+  // not the mutability of what is being carried.
+  function applyAuditUpsert(message) {
+    if (applyStreamUpsert(state.auditEvents, message?.event, message, "auditCursor")) scheduleAuditRender();
+  }
+
+  function scheduleAuditRender() {
+    if (state.auditRenderQueued) return;
+    state.auditRenderQueued = true;
+    window.requestAnimationFrame(() => {
+      state.auditRenderQueued = false;
+      // Newest first, because that is what the page shows. The tail delivers
+      // oldest-first — it is following the order things happened — so the sort
+      // belongs here rather than in the transport.
+      const events = [...state.auditEvents.values()]
+        .sort((left, right) => Number(toSequence(right?.sequence) - toSequence(left?.sequence)));
+      try { renderAudit({ events }); }
+      catch { clearTable("audit", "Audit projection unavailable. Absence of a row is not evidence that no action occurred."); }
+    });
+  }
+
   function scheduleRuntimeRender() {
     if (state.runtimeRenderQueued) return;
     state.runtimeRenderQueued = true;
@@ -2715,6 +2738,7 @@
     state.streamController = controller;
     void runStream("admin_runtimes_stream", "runtimeCursor", controller, applyRuntimeUpsert);
     void runStream("admin_alerts_stream", "alertCursor", controller, applyAlertUpsert);
+    void runStream("admin_audit_events_stream", "auditCursor", controller, applyAuditUpsert);
   }
 
   async function loadAlerts(signal) {
@@ -2789,7 +2813,25 @@
 
   async function loadAudit(signal) {
     try {
-      renderAudit(await adminListRequest("admin_audit_events", "events", { action: auditState.action }, signal));
+      const response = await adminListRequest("admin_audit_events", "events", { action: auditState.action }, signal);
+      // Seed the map and the cursor from the page, exactly as the runtime and
+      // alert loads do, so the tail resumes past what is already on screen
+      // instead of re-delivering it. A filtered page is deliberately NOT
+      // allowed to seed: it is a subset by construction, and seeding the
+      // cursor from a subset's highest sequence would step the tail past every
+      // unfiltered record in between — which for an audit trail is silent loss.
+      if (!auditState.action) {
+        state.auditEvents = new Map();
+        state.auditCursor = 0n;
+        (response?.events || []).forEach((event) => {
+          const id = stringValue(event?.id);
+          if (!id) return;
+          state.auditEvents.set(id, event);
+          const sequence = toSequence(event?.sequence);
+          if (sequence > state.auditCursor) state.auditCursor = sequence;
+        });
+      }
+      renderAudit(response);
       return true;
     } catch (error) {
       clearTable("audit", "Audit projection unavailable. Absence of a row is not evidence that no action occurred.");
@@ -3144,6 +3186,8 @@
     state.runtimeCursor = 0n;
     state.alertInstances = new Map();
     state.alertCursor = 0n;
+    state.auditEvents = new Map();
+    state.auditCursor = 0n;
     closeCustomerDetail();
     state.refreshController = new AbortController();
     ui.refresh.disabled = true;
@@ -3243,8 +3287,11 @@
     economics: loadEconomics,
     operations: loadOperations,
     metrics: loadMetrics,
-    billing: loadBilling,
-    audit: loadAudit
+    billing: loadBilling
+    // audit is deliberately absent: it streams. A page that both tails and
+    // polls has two writers for the same rows, and loadAudit re-seeds the
+    // cursor from the page — so the poll would repeatedly drag the tail
+    // backwards and re-deliver records the operator had already seen.
   };
 
   function stopRevalidation() {

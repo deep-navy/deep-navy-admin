@@ -14,7 +14,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file deepnavy/v1/billing.proto.
  */
 export const file_deepnavy_v1_billing: GenFile = /*@__PURE__*/
-  fileDesc("ChlkZWVwbmF2eS92MS9iaWxsaW5nLnByb3RvEgtkZWVwbmF2eS52MSJbChJCaWxsaW5nRXJyb3JEZXRhaWwSLwoGcmVhc29uGAEgASgOMh8uZGVlcG5hdnkudjEuQmlsbGluZ0Vycm9yUmVhc29uEhQKDHNhZmVfbWVzc2FnZRgCIAEoCSLnAQoLQmlsbGluZ1BsYW4SCgoCaWQYASABKAkSDAoEbmFtZRgCIAEoCRITCgtkZXNjcmlwdGlvbhgDIAEoCRIrCg9yZWN1cnJpbmdfcHJpY2UYBCABKAsyEi5kZWVwbmF2eS52MS5Nb25leRIuCghpbnRlcnZhbBgFIAEoDjIcLmRlZXBuYXZ5LnYxLkJpbGxpbmdJbnRlcnZhbBIeChZpbmNsdWRlZF9jcmVkaXRfbWljcm9zGAYgASgDEiwKBXN0YXRlGAcgASgOMh0uZGVlcG5hdnkudjEuQmlsbGluZ1BsYW5TdGF0ZSLjAwoMU3Vic2NyaXB0aW9uEgoKAmlkGAEgASgJEhcKD29yZ2FuaXphdGlvbl9pZBgCIAEoCRIPCgdwbGFuX2lkGAMgASgJEhIKBnN0YXR1cxgEIAEoCUICGAESOgoWY3VycmVudF9wZXJpb2RfZW5kc19hdBgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASPAoTc3Vic2NyaXB0aW9uX3N0YXR1cxgGIAEoDjIfLmRlZXBuYXZ5LnYxLlN1YnNjcmlwdGlvblN0YXR1cxIcChRjYW5jZWxfYXRfcGVyaW9kX2VuZBgHIAEoCBIuCgpjcmVhdGVkX2F0GAggASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgp1cGRhdGVkX2F0GAkgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIXCg9wYWlkX3RlYW1fc2xvdHMYCiABKAMSFwoPdXNlZF90ZWFtX3Nsb3RzGAsgASgDEhwKFGF2YWlsYWJsZV90ZWFtX3Nsb3RzGAwgASgDEkEKFmRlZmF1bHRfcGF5bWVudF9tZXRob2QYDSABKAsyIS5kZWVwbmF2eS52MS5QYXltZW50TWV0aG9kU3VtbWFyeSJZChRQYXltZW50TWV0aG9kU3VtbWFyeRINCgVicmFuZBgBIAEoCRINCgVsYXN0NBgCIAEoCRIRCglleHBfbW9udGgYAyABKA0SEAoIZXhwX3llYXIYBCABKA0iKAoVR2V0QmlsbGluZ1BsYW5SZXF1ZXN0Eg8KB3BsYW5faWQYASABKAkiQAoWR2V0QmlsbGluZ1BsYW5SZXNwb25zZRImCgRwbGFuGAEgASgLMhguZGVlcG5hdnkudjEuQmlsbGluZ1BsYW4iMQoWR2V0U3Vic2NyaXB0aW9uUmVxdWVzdBIXCg9vcmdhbml6YXRpb25faWQYASABKAkicgoXR2V0U3Vic2NyaXB0aW9uUmVzcG9uc2USLwoMc3Vic2NyaXB0aW9uGAEgASgLMhkuZGVlcG5hdnkudjEuU3Vic2NyaXB0aW9uEiYKBHBsYW4YAiABKAsyGC5kZWVwbmF2eS52MS5CaWxsaW5nUGxhbiLoBAoHSW52b2ljZRIKCgJpZBgBIAEoCRIXCg9vcmdhbml6YXRpb25faWQYAiABKAkSFwoPc3Vic2NyaXB0aW9uX2lkGAMgASgJEioKBnN0YXR1cxgEIAEoDjIaLmRlZXBuYXZ5LnYxLkludm9pY2VTdGF0dXMSJAoIc3VidG90YWwYBSABKAsyEi5kZWVwbmF2eS52MS5Nb25leRIhCgV0b3RhbBgGIAEoCzISLmRlZXBuYXZ5LnYxLk1vbmV5EiYKCmFtb3VudF9kdWUYByABKAsyEi5kZWVwbmF2eS52MS5Nb25leRInCgthbW91bnRfcGFpZBgIIAEoCzISLmRlZXBuYXZ5LnYxLk1vbmV5EjQKEHBlcmlvZF9zdGFydHNfYXQYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjIKDnBlcmlvZF9lbmRzX2F0GAogASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIqCgZkdWVfYXQYCyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEisKB3BhaWRfYXQYDCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCmNyZWF0ZWRfYXQYDSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCnVwZGF0ZWRfYXQYDiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhoKEmhvc3RlZF9pbnZvaWNlX3VybBgPIAEoCRIaChJ0ZWFtX3Nsb3RfcXVhbnRpdHkYECABKAMiVgoTTGlzdEludm9pY2VzUmVxdWVzdBIXCg9vcmdhbml6YXRpb25faWQYASABKAkSJgoEcGFnZRgCIAEoCzIYLmRlZXBuYXZ5LnYxLlBhZ2VSZXF1ZXN0ImcKFExpc3RJbnZvaWNlc1Jlc3BvbnNlEiYKCGludm9pY2VzGAEgAygLMhQuZGVlcG5hdnkudjEuSW52b2ljZRInCgRwYWdlGAIgASgLMhkuZGVlcG5hdnkudjEuUGFnZVJlc3BvbnNlIkAKEUdldEludm9pY2VSZXF1ZXN0EhcKD29yZ2FuaXphdGlvbl9pZBgBIAEoCRISCgppbnZvaWNlX2lkGAIgASgJIjsKEkdldEludm9pY2VSZXNwb25zZRIlCgdpbnZvaWNlGAEgASgLMhQuZGVlcG5hdnkudjEuSW52b2ljZSKmAQocQ3JlYXRlQ2hlY2tvdXRTZXNzaW9uUmVxdWVzdBIXCg9vcmdhbml6YXRpb25faWQYASABKAkSDwoHcGxhbl9pZBgCIAEoCRIXCgtzdWNjZXNzX3VybBgDIAEoCUICGAESFgoKY2FuY2VsX3VybBgEIAEoCUICGAESFwoPaWRlbXBvdGVuY3lfa2V5GAUgASgJEhIKCnJldHVybl91cmwYBiABKAkisQEKHUNyZWF0ZUNoZWNrb3V0U2Vzc2lvblJlc3BvbnNlEhgKDGNoZWNrb3V0X3VybBgBIAEoCUICGAESGwoTY2hlY2tvdXRfc2Vzc2lvbl9pZBgCIAEoCRIuCgpleHBpcmVzX2F0GAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIVCg1jbGllbnRfc2VjcmV0GAQgASgJEhIKCnJldHVybl91cmwYBSABKAkivQEKCkNyZWRpdFBhY2sSCgoCaWQYASABKAkSDAoEbmFtZRgCIAEoCRITCgtkZXNjcmlwdGlvbhgDIAEoCRIhCgVwcmljZRgEIAEoCzISLmRlZXBuYXZ5LnYxLk1vbmV5EhUKDWNyZWRpdF9taWNyb3MYBSABKAMSGAoQbWF4aW11bV9xdWFudGl0eRgGIAEoAxIsCgVzdGF0ZRgHIAEoDjIdLmRlZXBuYXZ5LnYxLkJpbGxpbmdQbGFuU3RhdGUiMQoWTGlzdENyZWRpdFBhY2tzUmVxdWVzdBIXCg9vcmdhbml6YXRpb25faWQYASABKAkiSAoXTGlzdENyZWRpdFBhY2tzUmVzcG9uc2USLQoMY3JlZGl0X3BhY2tzGAEgAygLMhcuZGVlcG5hdnkudjEuQ3JlZGl0UGFjayKpAQomQ3JlYXRlQ3JlZGl0UGFja0NoZWNrb3V0U2Vzc2lvblJlcXVlc3QSFwoPb3JnYW5pemF0aW9uX2lkGAEgASgJEg8KB3RlYW1faWQYAiABKAkSFgoOY3JlZGl0X3BhY2tfaWQYAyABKAkSEAoIcXVhbnRpdHkYBCABKAMSEgoKcmV0dXJuX3VybBgFIAEoCRIXCg9pZGVtcG90ZW5jeV9rZXkYBiABKAkiuwEKJ0NyZWF0ZUNyZWRpdFBhY2tDaGVja291dFNlc3Npb25SZXNwb25zZRIYCgxjaGVja291dF91cmwYASABKAlCAhgBEhsKE2NoZWNrb3V0X3Nlc3Npb25faWQYAiABKAkSLgoKZXhwaXJlc19hdBgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASFQoNY2xpZW50X3NlY3JldBgEIAEoCRISCgpyZXR1cm5fdXJsGAUgASgJImkKIUNyZWF0ZUJpbGxpbmdQb3J0YWxTZXNzaW9uUmVxdWVzdBIXCg9vcmdhbml6YXRpb25faWQYASABKAkSEgoKcmV0dXJuX3VybBgCIAEoCRIXCg9pZGVtcG90ZW5jeV9rZXkYAyABKAkiiwEKIkNyZWF0ZUJpbGxpbmdQb3J0YWxTZXNzaW9uUmVzcG9uc2USEgoKcG9ydGFsX3VybBgBIAEoCRIhChliaWxsaW5nX3BvcnRhbF9zZXNzaW9uX2lkGAIgASgJEi4KCmV4cGlyZXNfYXQYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIkMKF0dldENyZWRpdEJhbGFuY2VSZXF1ZXN0EhcKD29yZ2FuaXphdGlvbl9pZBgBIAEoCRIPCgd0ZWFtX2lkGAIgASgJIjIKGEdldENyZWRpdEJhbGFuY2VSZXNwb25zZRIWCg5iYWxhbmNlX21pY3JvcxgBIAEoAyLBAwoRVGVhbUNyZWRpdENvbnRyb2wSDwoHdGVhbV9pZBgBIAEoCRIfChdsZWRnZXJfYXZhaWxhYmxlX21pY3JvcxgCIAEoAxIcChRvcGVuX3Jlc2VydmVkX21pY3JvcxgDIAEoAxIeChZwZXJpb2RfY29uc3VtZWRfbWljcm9zGAQgASgDEhkKEWhhcmRfbGltaXRfbWljcm9zGAUgASgDEh8KF2J1ZGdldF9yZW1haW5pbmdfbWljcm9zGAYgASgDEiIKGmVmZmVjdGl2ZV9hdmFpbGFibGVfbWljcm9zGAcgASgDEg4KBnBhdXNlZBgIIAEoCBIXCg9jdXN0b21lcl9wYXVzZWQYCSABKAgSOAoMcGF1c2VfcmVhc29uGAogASgOMiIuZGVlcG5hdnkudjEuVGVhbUNyZWRpdFBhdXNlUmVhc29uEjQKEHBlcmlvZF9zdGFydHNfYXQYCyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjIKDnBlcmlvZF9lbmRzX2F0GAwgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIPCgd2ZXJzaW9uGA0gASgDIkcKG0dldFRlYW1DcmVkaXRDb250cm9sUmVxdWVzdBIXCg9vcmdhbml6YXRpb25faWQYASABKAkSDwoHdGVhbV9pZBgCIAEoCSJPChxHZXRUZWFtQ3JlZGl0Q29udHJvbFJlc3BvbnNlEi8KB2NvbnRyb2wYASABKAsyHi5kZWVwbmF2eS52MS5UZWFtQ3JlZGl0Q29udHJvbCKxAQoeVXBkYXRlVGVhbUNyZWRpdENvbnRyb2xSZXF1ZXN0EhcKD29yZ2FuaXphdGlvbl9pZBgBIAEoCRIPCgd0ZWFtX2lkGAIgASgJEhkKEWhhcmRfbGltaXRfbWljcm9zGAMgASgDEhcKD2N1c3RvbWVyX3BhdXNlZBgEIAEoCBIYChBleHBlY3RlZF92ZXJzaW9uGAUgASgDEhcKD2lkZW1wb3RlbmN5X2tleRgGIAEoCSJSCh9VcGRhdGVUZWFtQ3JlZGl0Q29udHJvbFJlc3BvbnNlEi8KB2NvbnRyb2wYASABKAsyHi5kZWVwbmF2eS52MS5UZWFtQ3JlZGl0Q29udHJvbCrPAgoSU3Vic2NyaXB0aW9uU3RhdHVzEiMKH1NVQlNDUklQVElPTl9TVEFUVVNfVU5TUEVDSUZJRUQQABIiCh5TVUJTQ1JJUFRJT05fU1RBVFVTX0lOQ09NUExFVEUQARIqCiZTVUJTQ1JJUFRJT05fU1RBVFVTX0lOQ09NUExFVEVfRVhQSVJFRBACEiAKHFNVQlNDUklQVElPTl9TVEFUVVNfVFJJQUxJTkcQAxIeChpTVUJTQ1JJUFRJT05fU1RBVFVTX0FDVElWRRAEEiAKHFNVQlNDUklQVElPTl9TVEFUVVNfUEFTVF9EVUUQBRIgChxTVUJTQ1JJUFRJT05fU1RBVFVTX0NBTkNFTEVEEAYSHgoaU1VCU0NSSVBUSU9OX1NUQVRVU19VTlBBSUQQBxIeChpTVUJTQ1JJUFRJT05fU1RBVFVTX1BBVVNFRBAIKnYKEEJpbGxpbmdQbGFuU3RhdGUSIgoeQklMTElOR19QTEFOX1NUQVRFX1VOU1BFQ0lGSUVEEAASHQoZQklMTElOR19QTEFOX1NUQVRFX0FDVElWRRABEh8KG0JJTExJTkdfUExBTl9TVEFURV9BUkNISVZFRBACKmoKD0JpbGxpbmdJbnRlcnZhbBIgChxCSUxMSU5HX0lOVEVSVkFMX1VOU1BFQ0lGSUVEEAASGgoWQklMTElOR19JTlRFUlZBTF9NT05USBABEhkKFUJJTExJTkdfSU5URVJWQUxfWUVBUhACKrIHChJCaWxsaW5nRXJyb3JSZWFzb24SJAogQklMTElOR19FUlJPUl9SRUFTT05fVU5TUEVDSUZJRUQQABIrCidCSUxMSU5HX0VSUk9SX1JFQVNPTl9QTEFOX05PVF9BVkFJTEFCTEUQARI0CjBCSUxMSU5HX0VSUk9SX1JFQVNPTl9TVUJTQ1JJUFRJT05fQUxSRUFEWV9FWElTVFMQAhItCilCSUxMSU5HX0VSUk9SX1JFQVNPTl9QT1JUQUxfTk9UX0FWQUlMQUJMRRADEi0KKUJJTExJTkdfRVJST1JfUkVBU09OX1JFRElSRUNUX05PVF9BTExPV0VEEAQSMQotQklMTElOR19FUlJPUl9SRUFTT05fSURFTVBPVEVOQ1lfS0VZX1JFUVVJUkVEEAUSLworQklMTElOR19FUlJPUl9SRUFTT05fSURFTVBPVEVOQ1lfS0VZX1JFVVNFRBAGEicKI0JJTExJTkdfRVJST1JfUkVBU09OX05PVF9BVVRIT1JJWkVEEAcSLQopQklMTElOR19FUlJPUl9SRUFTT05fUFJPVklERVJfVU5BVkFJTEFCTEUQCBIyCi5CSUxMSU5HX0VSUk9SX1JFQVNPTl9DUkVESVRfUEFDS19OT1RfQVZBSUxBQkxFEAkSLAooQklMTElOR19FUlJPUl9SRUFTT05fVEVBTV9OT1RfQVVUSE9SSVpFRBAKEjUKMUJJTExJTkdfRVJST1JfUkVBU09OX0FDVElWRV9TVUJTQ1JJUFRJT05fUkVRVUlSRUQQCxI1CjFCSUxMSU5HX0VSUk9SX1JFQVNPTl9DUkVESVRfUEFDS19RVUFOVElUWV9JTlZBTElEEAwSMwovQklMTElOR19FUlJPUl9SRUFTT05fQlVER0VUX0NPTlRST0xfVU5BVkFJTEFCTEUQDRItCilCSUxMSU5HX0VSUk9SX1JFQVNPTl9DUkVESVRfTElNSVRfSU5WQUxJRBAOEjAKLEJJTExJTkdfRVJST1JfUkVBU09OX0NSRURJVF9DT05UUk9MX0NPTkZMSUNUEA8SLgoqQklMTElOR19FUlJPUl9SRUFTT05fSU5WT0lDRV9OT1RfQVZBSUxBQkxFEBASLQopQklMTElOR19FUlJPUl9SRUFTT05fSU5WT0lDRV9QQUdFX0lOVkFMSUQQERI0CjBCSUxMSU5HX0VSUk9SX1JFQVNPTl9JTlZPSUNFX0hJU1RPUllfVU5BVkFJTEFCTEUQEiq2AQoNSW52b2ljZVN0YXR1cxIeChpJTlZPSUNFX1NUQVRVU19VTlNQRUNJRklFRBAAEhgKFElOVk9JQ0VfU1RBVFVTX0RSQUZUEAESFwoTSU5WT0lDRV9TVEFUVVNfT1BFThACEhcKE0lOVk9JQ0VfU1RBVFVTX1BBSUQQAxIXChNJTlZPSUNFX1NUQVRVU19WT0lEEAQSIAocSU5WT0lDRV9TVEFUVVNfVU5DT0xMRUNUSUJMRRAFKqACChVUZWFtQ3JlZGl0UGF1c2VSZWFzb24SKAokVEVBTV9DUkVESVRfUEFVU0VfUkVBU09OX1VOU1BFQ0lGSUVEEAASIQodVEVBTV9DUkVESVRfUEFVU0VfUkVBU09OX05PTkUQARIsCihURUFNX0NSRURJVF9QQVVTRV9SRUFTT05fQ1VTVE9NRVJfUEFVU0VEEAISLQopVEVBTV9DUkVESVRfUEFVU0VfUkVBU09OX0JJTExJTkdfSU5BQ1RJVkUQAxIuCipURUFNX0NSRURJVF9QQVVTRV9SRUFTT05fQ1JFRElUU19FWEhBVVNURUQQBBItCilURUFNX0NSRURJVF9QQVVTRV9SRUFTT05fQlVER0VUX0VYSEFVU1RFRBAFMo0JCg5CaWxsaW5nU2VydmljZRJZCg5HZXRCaWxsaW5nUGxhbhIiLmRlZXBuYXZ5LnYxLkdldEJpbGxpbmdQbGFuUmVxdWVzdBojLmRlZXBuYXZ5LnYxLkdldEJpbGxpbmdQbGFuUmVzcG9uc2USXAoPR2V0U3Vic2NyaXB0aW9uEiMuZGVlcG5hdnkudjEuR2V0U3Vic2NyaXB0aW9uUmVxdWVzdBokLmRlZXBuYXZ5LnYxLkdldFN1YnNjcmlwdGlvblJlc3BvbnNlElMKDExpc3RJbnZvaWNlcxIgLmRlZXBuYXZ5LnYxLkxpc3RJbnZvaWNlc1JlcXVlc3QaIS5kZWVwbmF2eS52MS5MaXN0SW52b2ljZXNSZXNwb25zZRJNCgpHZXRJbnZvaWNlEh4uZGVlcG5hdnkudjEuR2V0SW52b2ljZVJlcXVlc3QaHy5kZWVwbmF2eS52MS5HZXRJbnZvaWNlUmVzcG9uc2USbgoVQ3JlYXRlQ2hlY2tvdXRTZXNzaW9uEikuZGVlcG5hdnkudjEuQ3JlYXRlQ2hlY2tvdXRTZXNzaW9uUmVxdWVzdBoqLmRlZXBuYXZ5LnYxLkNyZWF0ZUNoZWNrb3V0U2Vzc2lvblJlc3BvbnNlElwKD0xpc3RDcmVkaXRQYWNrcxIjLmRlZXBuYXZ5LnYxLkxpc3RDcmVkaXRQYWNrc1JlcXVlc3QaJC5kZWVwbmF2eS52MS5MaXN0Q3JlZGl0UGFja3NSZXNwb25zZRKMAQofQ3JlYXRlQ3JlZGl0UGFja0NoZWNrb3V0U2Vzc2lvbhIzLmRlZXBuYXZ5LnYxLkNyZWF0ZUNyZWRpdFBhY2tDaGVja291dFNlc3Npb25SZXF1ZXN0GjQuZGVlcG5hdnkudjEuQ3JlYXRlQ3JlZGl0UGFja0NoZWNrb3V0U2Vzc2lvblJlc3BvbnNlEn0KGkNyZWF0ZUJpbGxpbmdQb3J0YWxTZXNzaW9uEi4uZGVlcG5hdnkudjEuQ3JlYXRlQmlsbGluZ1BvcnRhbFNlc3Npb25SZXF1ZXN0Gi8uZGVlcG5hdnkudjEuQ3JlYXRlQmlsbGluZ1BvcnRhbFNlc3Npb25SZXNwb25zZRJfChBHZXRDcmVkaXRCYWxhbmNlEiQuZGVlcG5hdnkudjEuR2V0Q3JlZGl0QmFsYW5jZVJlcXVlc3QaJS5kZWVwbmF2eS52MS5HZXRDcmVkaXRCYWxhbmNlUmVzcG9uc2USawoUR2V0VGVhbUNyZWRpdENvbnRyb2wSKC5kZWVwbmF2eS52MS5HZXRUZWFtQ3JlZGl0Q29udHJvbFJlcXVlc3QaKS5kZWVwbmF2eS52MS5HZXRUZWFtQ3JlZGl0Q29udHJvbFJlc3BvbnNlEnQKF1VwZGF0ZVRlYW1DcmVkaXRDb250cm9sEisuZGVlcG5hdnkudjEuVXBkYXRlVGVhbUNyZWRpdENvbnRyb2xSZXF1ZXN0GiwuZGVlcG5hdnkudjEuVXBkYXRlVGVhbUNyZWRpdENvbnRyb2xSZXNwb25zZUJEWkJnaXRodWIuY29tL2RlZXAtbmF2eS9wbGF0Zm9ybS1wcm90b3MvZ2VuL2dvL2RlZXBuYXZ5L3YxO2RlZXBuYXZ5djFiBnByb3RvMw", [file_deepnavy_v1_common, file_google_protobuf_timestamp]);
+  fileDesc("ChlkZWVwbmF2eS92MS9iaWxsaW5nLnByb3RvEgtkZWVwbmF2eS52MSJbChJCaWxsaW5nRXJyb3JEZXRhaWwSLwoGcmVhc29uGAEgASgOMh8uZGVlcG5hdnkudjEuQmlsbGluZ0Vycm9yUmVhc29uEhQKDHNhZmVfbWVzc2FnZRgCIAEoCSLnAQoLQmlsbGluZ1BsYW4SCgoCaWQYASABKAkSDAoEbmFtZRgCIAEoCRITCgtkZXNjcmlwdGlvbhgDIAEoCRIrCg9yZWN1cnJpbmdfcHJpY2UYBCABKAsyEi5kZWVwbmF2eS52MS5Nb25leRIuCghpbnRlcnZhbBgFIAEoDjIcLmRlZXBuYXZ5LnYxLkJpbGxpbmdJbnRlcnZhbBIeChZpbmNsdWRlZF9jcmVkaXRfbWljcm9zGAYgASgDEiwKBXN0YXRlGAcgASgOMh0uZGVlcG5hdnkudjEuQmlsbGluZ1BsYW5TdGF0ZSLjAwoMU3Vic2NyaXB0aW9uEgoKAmlkGAEgASgJEhcKD29yZ2FuaXphdGlvbl9pZBgCIAEoCRIPCgdwbGFuX2lkGAMgASgJEhIKBnN0YXR1cxgEIAEoCUICGAESOgoWY3VycmVudF9wZXJpb2RfZW5kc19hdBgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASPAoTc3Vic2NyaXB0aW9uX3N0YXR1cxgGIAEoDjIfLmRlZXBuYXZ5LnYxLlN1YnNjcmlwdGlvblN0YXR1cxIcChRjYW5jZWxfYXRfcGVyaW9kX2VuZBgHIAEoCBIuCgpjcmVhdGVkX2F0GAggASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgp1cGRhdGVkX2F0GAkgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIXCg9wYWlkX3RlYW1fc2xvdHMYCiABKAMSFwoPdXNlZF90ZWFtX3Nsb3RzGAsgASgDEhwKFGF2YWlsYWJsZV90ZWFtX3Nsb3RzGAwgASgDEkEKFmRlZmF1bHRfcGF5bWVudF9tZXRob2QYDSABKAsyIS5kZWVwbmF2eS52MS5QYXltZW50TWV0aG9kU3VtbWFyeSJZChRQYXltZW50TWV0aG9kU3VtbWFyeRINCgVicmFuZBgBIAEoCRINCgVsYXN0NBgCIAEoCRIRCglleHBfbW9udGgYAyABKA0SEAoIZXhwX3llYXIYBCABKA0iKAoVR2V0QmlsbGluZ1BsYW5SZXF1ZXN0Eg8KB3BsYW5faWQYASABKAkiQAoWR2V0QmlsbGluZ1BsYW5SZXNwb25zZRImCgRwbGFuGAEgASgLMhguZGVlcG5hdnkudjEuQmlsbGluZ1BsYW4iMQoWR2V0U3Vic2NyaXB0aW9uUmVxdWVzdBIXCg9vcmdhbml6YXRpb25faWQYASABKAkicgoXR2V0U3Vic2NyaXB0aW9uUmVzcG9uc2USLwoMc3Vic2NyaXB0aW9uGAEgASgLMhkuZGVlcG5hdnkudjEuU3Vic2NyaXB0aW9uEiYKBHBsYW4YAiABKAsyGC5kZWVwbmF2eS52MS5CaWxsaW5nUGxhbiLoBAoHSW52b2ljZRIKCgJpZBgBIAEoCRIXCg9vcmdhbml6YXRpb25faWQYAiABKAkSFwoPc3Vic2NyaXB0aW9uX2lkGAMgASgJEioKBnN0YXR1cxgEIAEoDjIaLmRlZXBuYXZ5LnYxLkludm9pY2VTdGF0dXMSJAoIc3VidG90YWwYBSABKAsyEi5kZWVwbmF2eS52MS5Nb25leRIhCgV0b3RhbBgGIAEoCzISLmRlZXBuYXZ5LnYxLk1vbmV5EiYKCmFtb3VudF9kdWUYByABKAsyEi5kZWVwbmF2eS52MS5Nb25leRInCgthbW91bnRfcGFpZBgIIAEoCzISLmRlZXBuYXZ5LnYxLk1vbmV5EjQKEHBlcmlvZF9zdGFydHNfYXQYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjIKDnBlcmlvZF9lbmRzX2F0GAogASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIqCgZkdWVfYXQYCyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEisKB3BhaWRfYXQYDCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCmNyZWF0ZWRfYXQYDSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCnVwZGF0ZWRfYXQYDiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhoKEmhvc3RlZF9pbnZvaWNlX3VybBgPIAEoCRIaChJ0ZWFtX3Nsb3RfcXVhbnRpdHkYECABKAMiVgoTTGlzdEludm9pY2VzUmVxdWVzdBIXCg9vcmdhbml6YXRpb25faWQYASABKAkSJgoEcGFnZRgCIAEoCzIYLmRlZXBuYXZ5LnYxLlBhZ2VSZXF1ZXN0ImcKFExpc3RJbnZvaWNlc1Jlc3BvbnNlEiYKCGludm9pY2VzGAEgAygLMhQuZGVlcG5hdnkudjEuSW52b2ljZRInCgRwYWdlGAIgASgLMhkuZGVlcG5hdnkudjEuUGFnZVJlc3BvbnNlIkAKEUdldEludm9pY2VSZXF1ZXN0EhcKD29yZ2FuaXphdGlvbl9pZBgBIAEoCRISCgppbnZvaWNlX2lkGAIgASgJIjsKEkdldEludm9pY2VSZXNwb25zZRIlCgdpbnZvaWNlGAEgASgLMhQuZGVlcG5hdnkudjEuSW52b2ljZSKmAQocQ3JlYXRlQ2hlY2tvdXRTZXNzaW9uUmVxdWVzdBIXCg9vcmdhbml6YXRpb25faWQYASABKAkSDwoHcGxhbl9pZBgCIAEoCRIXCgtzdWNjZXNzX3VybBgDIAEoCUICGAESFgoKY2FuY2VsX3VybBgEIAEoCUICGAESFwoPaWRlbXBvdGVuY3lfa2V5GAUgASgJEhIKCnJldHVybl91cmwYBiABKAkisQEKHUNyZWF0ZUNoZWNrb3V0U2Vzc2lvblJlc3BvbnNlEhgKDGNoZWNrb3V0X3VybBgBIAEoCUICGAESGwoTY2hlY2tvdXRfc2Vzc2lvbl9pZBgCIAEoCRIuCgpleHBpcmVzX2F0GAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIVCg1jbGllbnRfc2VjcmV0GAQgASgJEhIKCnJldHVybl91cmwYBSABKAkivQEKCkNyZWRpdFBhY2sSCgoCaWQYASABKAkSDAoEbmFtZRgCIAEoCRITCgtkZXNjcmlwdGlvbhgDIAEoCRIhCgVwcmljZRgEIAEoCzISLmRlZXBuYXZ5LnYxLk1vbmV5EhUKDWNyZWRpdF9taWNyb3MYBSABKAMSGAoQbWF4aW11bV9xdWFudGl0eRgGIAEoAxIsCgVzdGF0ZRgHIAEoDjIdLmRlZXBuYXZ5LnYxLkJpbGxpbmdQbGFuU3RhdGUiMQoWTGlzdENyZWRpdFBhY2tzUmVxdWVzdBIXCg9vcmdhbml6YXRpb25faWQYASABKAkiSAoXTGlzdENyZWRpdFBhY2tzUmVzcG9uc2USLQoMY3JlZGl0X3BhY2tzGAEgAygLMhcuZGVlcG5hdnkudjEuQ3JlZGl0UGFjayKpAQomQ3JlYXRlQ3JlZGl0UGFja0NoZWNrb3V0U2Vzc2lvblJlcXVlc3QSFwoPb3JnYW5pemF0aW9uX2lkGAEgASgJEg8KB3RlYW1faWQYAiABKAkSFgoOY3JlZGl0X3BhY2tfaWQYAyABKAkSEAoIcXVhbnRpdHkYBCABKAMSEgoKcmV0dXJuX3VybBgFIAEoCRIXCg9pZGVtcG90ZW5jeV9rZXkYBiABKAkiuwEKJ0NyZWF0ZUNyZWRpdFBhY2tDaGVja291dFNlc3Npb25SZXNwb25zZRIYCgxjaGVja291dF91cmwYASABKAlCAhgBEhsKE2NoZWNrb3V0X3Nlc3Npb25faWQYAiABKAkSLgoKZXhwaXJlc19hdBgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASFQoNY2xpZW50X3NlY3JldBgEIAEoCRISCgpyZXR1cm5fdXJsGAUgASgJImkKIUNyZWF0ZUJpbGxpbmdQb3J0YWxTZXNzaW9uUmVxdWVzdBIXCg9vcmdhbml6YXRpb25faWQYASABKAkSEgoKcmV0dXJuX3VybBgCIAEoCRIXCg9pZGVtcG90ZW5jeV9rZXkYAyABKAkiiwEKIkNyZWF0ZUJpbGxpbmdQb3J0YWxTZXNzaW9uUmVzcG9uc2USEgoKcG9ydGFsX3VybBgBIAEoCRIhChliaWxsaW5nX3BvcnRhbF9zZXNzaW9uX2lkGAIgASgJEi4KCmV4cGlyZXNfYXQYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIkMKF0dldENyZWRpdEJhbGFuY2VSZXF1ZXN0EhcKD29yZ2FuaXphdGlvbl9pZBgBIAEoCRIPCgd0ZWFtX2lkGAIgASgJIlcKGEdldENyZWRpdEJhbGFuY2VSZXNwb25zZRIWCg5iYWxhbmNlX21pY3JvcxgBIAEoAxIjChtvcmdhbml6YXRpb25fYmFsYW5jZV9taWNyb3MYAiABKAMiwQMKEVRlYW1DcmVkaXRDb250cm9sEg8KB3RlYW1faWQYASABKAkSHwoXbGVkZ2VyX2F2YWlsYWJsZV9taWNyb3MYAiABKAMSHAoUb3Blbl9yZXNlcnZlZF9taWNyb3MYAyABKAMSHgoWcGVyaW9kX2NvbnN1bWVkX21pY3JvcxgEIAEoAxIZChFoYXJkX2xpbWl0X21pY3JvcxgFIAEoAxIfChdidWRnZXRfcmVtYWluaW5nX21pY3JvcxgGIAEoAxIiChplZmZlY3RpdmVfYXZhaWxhYmxlX21pY3JvcxgHIAEoAxIOCgZwYXVzZWQYCCABKAgSFwoPY3VzdG9tZXJfcGF1c2VkGAkgASgIEjgKDHBhdXNlX3JlYXNvbhgKIAEoDjIiLmRlZXBuYXZ5LnYxLlRlYW1DcmVkaXRQYXVzZVJlYXNvbhI0ChBwZXJpb2Rfc3RhcnRzX2F0GAsgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIyCg5wZXJpb2RfZW5kc19hdBgMIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASDwoHdmVyc2lvbhgNIAEoAyJHChtHZXRUZWFtQ3JlZGl0Q29udHJvbFJlcXVlc3QSFwoPb3JnYW5pemF0aW9uX2lkGAEgASgJEg8KB3RlYW1faWQYAiABKAkiTwocR2V0VGVhbUNyZWRpdENvbnRyb2xSZXNwb25zZRIvCgdjb250cm9sGAEgASgLMh4uZGVlcG5hdnkudjEuVGVhbUNyZWRpdENvbnRyb2wisQEKHlVwZGF0ZVRlYW1DcmVkaXRDb250cm9sUmVxdWVzdBIXCg9vcmdhbml6YXRpb25faWQYASABKAkSDwoHdGVhbV9pZBgCIAEoCRIZChFoYXJkX2xpbWl0X21pY3JvcxgDIAEoAxIXCg9jdXN0b21lcl9wYXVzZWQYBCABKAgSGAoQZXhwZWN0ZWRfdmVyc2lvbhgFIAEoAxIXCg9pZGVtcG90ZW5jeV9rZXkYBiABKAkiUgofVXBkYXRlVGVhbUNyZWRpdENvbnRyb2xSZXNwb25zZRIvCgdjb250cm9sGAEgASgLMh4uZGVlcG5hdnkudjEuVGVhbUNyZWRpdENvbnRyb2wiOAoXQ3JlZGl0VG9wVXBDb25zZW50VGVybXMSDwoHdmVyc2lvbhgBIAEoCRIMCgR0ZXh0GAIgASgJIncKEkNyZWRpdFRvcFVwQ29uc2VudBIVCg10ZXJtc192ZXJzaW9uGAEgASgJEi8KC3JlY29yZGVkX2F0GAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIZChFhZ3JlZWRfYnlfdXNlcl9pZBgDIAEoCSKRAwoLQ3JlZGl0VG9wVXASCgoCaWQYASABKAkSFwoPb3JnYW5pemF0aW9uX2lkGAIgASgJEiwKBXN0YXRlGAMgASgOMh0uZGVlcG5hdnkudjEuQ3JlZGl0VG9wVXBTdGF0ZRIYChB0aHJlc2hvbGRfbWljcm9zGAQgASgDEh8KF29ic2VydmVkX2JhbGFuY2VfbWljcm9zGAUgASgDEhYKDmNyZWRpdF9wYWNrX2lkGAYgASgJEhUKDXBhY2tfcXVhbnRpdHkYByABKAMSFQoNY3JlZGl0X21pY3JvcxgIIAEoAxIiCgZhbW91bnQYCSABKAsyEi5kZWVwbmF2eS52MS5Nb25leRIUCgxkZWNsaW5lX2NvZGUYCiABKAkSFAoMc2FmZV9tZXNzYWdlGAsgASgJEi4KCmNyZWF0ZWRfYXQYDCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCnNldHRsZWRfYXQYDSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIuAEChNDcmVkaXRUb3BVcFNldHRpbmdzEhcKD29yZ2FuaXphdGlvbl9pZBgBIAEoCRIPCgdlbmFibGVkGAIgASgIEhgKEHRocmVzaG9sZF9taWNyb3MYAyABKAMSFgoOY3JlZGl0X3BhY2tfaWQYBCABKAkSFQoNcGFja19xdWFudGl0eRgFIAEoAxImCgpwZXJpb2RfY2FwGAYgASgLMhIuZGVlcG5hdnkudjEuTW9uZXkSKAoMcGVyaW9kX3NwZW50GAcgASgLMhIuZGVlcG5hdnkudjEuTW9uZXkSGAoQY29vbGRvd25fc2Vjb25kcxgIIAEoAxI5CgxibG9ja19yZWFzb24YCSABKA4yIy5kZWVwbmF2eS52MS5DcmVkaXRUb3BVcEJsb2NrUmVhc29uEhcKD3JlX2FybV9yZXF1aXJlZBgKIAEoCBI0ChBuZXh0X2VsaWdpYmxlX2F0GAsgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIwCgdjb25zZW50GAwgASgLMh8uZGVlcG5hdnkudjEuQ3JlZGl0VG9wVXBDb25zZW50Ej4KEHJlcXVpcmVkX2NvbnNlbnQYDSABKAsyJC5kZWVwbmF2eS52MS5DcmVkaXRUb3BVcENvbnNlbnRUZXJtcxItCgtsYXN0X3RvcF91cBgOIAEoCzIYLmRlZXBuYXZ5LnYxLkNyZWRpdFRvcFVwEg8KB3ZlcnNpb24YDyABKAMSLgoKdXBkYXRlZF9hdBgQIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiOAodR2V0Q3JlZGl0VG9wVXBTZXR0aW5nc1JlcXVlc3QSFwoPb3JnYW5pemF0aW9uX2lkGAEgASgJIlQKHkdldENyZWRpdFRvcFVwU2V0dGluZ3NSZXNwb25zZRIyCghzZXR0aW5ncxgBIAEoCzIgLmRlZXBuYXZ5LnYxLkNyZWRpdFRvcFVwU2V0dGluZ3MikQIKIFVwZGF0ZUNyZWRpdFRvcFVwU2V0dGluZ3NSZXF1ZXN0EhcKD29yZ2FuaXphdGlvbl9pZBgBIAEoCRIPCgdlbmFibGVkGAIgASgIEhgKEHRocmVzaG9sZF9taWNyb3MYAyABKAMSFgoOY3JlZGl0X3BhY2tfaWQYBCABKAkSFQoNcGFja19xdWFudGl0eRgFIAEoAxIYChBwZXJpb2RfY2FwX21pbm9yGAYgASgDEh0KFWNvbnNlbnRfdGVybXNfdmVyc2lvbhgHIAEoCRIOCgZyZV9hcm0YCCABKAgSGAoQZXhwZWN0ZWRfdmVyc2lvbhgJIAEoAxIXCg9pZGVtcG90ZW5jeV9rZXkYCiABKAkiVwohVXBkYXRlQ3JlZGl0VG9wVXBTZXR0aW5nc1Jlc3BvbnNlEjIKCHNldHRpbmdzGAEgASgLMiAuZGVlcG5hdnkudjEuQ3JlZGl0VG9wVXBTZXR0aW5ncyJaChdMaXN0Q3JlZGl0VG9wVXBzUmVxdWVzdBIXCg9vcmdhbml6YXRpb25faWQYASABKAkSJgoEcGFnZRgCIAEoCzIYLmRlZXBuYXZ5LnYxLlBhZ2VSZXF1ZXN0Im4KGExpc3RDcmVkaXRUb3BVcHNSZXNwb25zZRIpCgd0b3BfdXBzGAEgAygLMhguZGVlcG5hdnkudjEuQ3JlZGl0VG9wVXASJwoEcGFnZRgCIAEoCzIZLmRlZXBuYXZ5LnYxLlBhZ2VSZXNwb25zZSrPAgoSU3Vic2NyaXB0aW9uU3RhdHVzEiMKH1NVQlNDUklQVElPTl9TVEFUVVNfVU5TUEVDSUZJRUQQABIiCh5TVUJTQ1JJUFRJT05fU1RBVFVTX0lOQ09NUExFVEUQARIqCiZTVUJTQ1JJUFRJT05fU1RBVFVTX0lOQ09NUExFVEVfRVhQSVJFRBACEiAKHFNVQlNDUklQVElPTl9TVEFUVVNfVFJJQUxJTkcQAxIeChpTVUJTQ1JJUFRJT05fU1RBVFVTX0FDVElWRRAEEiAKHFNVQlNDUklQVElPTl9TVEFUVVNfUEFTVF9EVUUQBRIgChxTVUJTQ1JJUFRJT05fU1RBVFVTX0NBTkNFTEVEEAYSHgoaU1VCU0NSSVBUSU9OX1NUQVRVU19VTlBBSUQQBxIeChpTVUJTQ1JJUFRJT05fU1RBVFVTX1BBVVNFRBAIKnYKEEJpbGxpbmdQbGFuU3RhdGUSIgoeQklMTElOR19QTEFOX1NUQVRFX1VOU1BFQ0lGSUVEEAASHQoZQklMTElOR19QTEFOX1NUQVRFX0FDVElWRRABEh8KG0JJTExJTkdfUExBTl9TVEFURV9BUkNISVZFRBACKmoKD0JpbGxpbmdJbnRlcnZhbBIgChxCSUxMSU5HX0lOVEVSVkFMX1VOU1BFQ0lGSUVEEAASGgoWQklMTElOR19JTlRFUlZBTF9NT05USBABEhkKFUJJTExJTkdfSU5URVJWQUxfWUVBUhACKskIChJCaWxsaW5nRXJyb3JSZWFzb24SJAogQklMTElOR19FUlJPUl9SRUFTT05fVU5TUEVDSUZJRUQQABIrCidCSUxMSU5HX0VSUk9SX1JFQVNPTl9QTEFOX05PVF9BVkFJTEFCTEUQARI0CjBCSUxMSU5HX0VSUk9SX1JFQVNPTl9TVUJTQ1JJUFRJT05fQUxSRUFEWV9FWElTVFMQAhItCilCSUxMSU5HX0VSUk9SX1JFQVNPTl9QT1JUQUxfTk9UX0FWQUlMQUJMRRADEi0KKUJJTExJTkdfRVJST1JfUkVBU09OX1JFRElSRUNUX05PVF9BTExPV0VEEAQSMQotQklMTElOR19FUlJPUl9SRUFTT05fSURFTVBPVEVOQ1lfS0VZX1JFUVVJUkVEEAUSLworQklMTElOR19FUlJPUl9SRUFTT05fSURFTVBPVEVOQ1lfS0VZX1JFVVNFRBAGEicKI0JJTExJTkdfRVJST1JfUkVBU09OX05PVF9BVVRIT1JJWkVEEAcSLQopQklMTElOR19FUlJPUl9SRUFTT05fUFJPVklERVJfVU5BVkFJTEFCTEUQCBIyCi5CSUxMSU5HX0VSUk9SX1JFQVNPTl9DUkVESVRfUEFDS19OT1RfQVZBSUxBQkxFEAkSLAooQklMTElOR19FUlJPUl9SRUFTT05fVEVBTV9OT1RfQVVUSE9SSVpFRBAKEjUKMUJJTExJTkdfRVJST1JfUkVBU09OX0FDVElWRV9TVUJTQ1JJUFRJT05fUkVRVUlSRUQQCxI1CjFCSUxMSU5HX0VSUk9SX1JFQVNPTl9DUkVESVRfUEFDS19RVUFOVElUWV9JTlZBTElEEAwSMwovQklMTElOR19FUlJPUl9SRUFTT05fQlVER0VUX0NPTlRST0xfVU5BVkFJTEFCTEUQDRItCilCSUxMSU5HX0VSUk9SX1JFQVNPTl9DUkVESVRfTElNSVRfSU5WQUxJRBAOEjAKLEJJTExJTkdfRVJST1JfUkVBU09OX0NSRURJVF9DT05UUk9MX0NPTkZMSUNUEA8SLgoqQklMTElOR19FUlJPUl9SRUFTT05fSU5WT0lDRV9OT1RfQVZBSUxBQkxFEBASLQopQklMTElOR19FUlJPUl9SRUFTT05fSU5WT0lDRV9QQUdFX0lOVkFMSUQQERI0CjBCSUxMSU5HX0VSUk9SX1JFQVNPTl9JTlZPSUNFX0hJU1RPUllfVU5BVkFJTEFCTEUQEhIwCixCSUxMSU5HX0VSUk9SX1JFQVNPTl9UT1BfVVBfQ09OU0VOVF9SRVFVSVJFRBATEjAKLEJJTExJTkdfRVJST1JfUkVBU09OX1RPUF9VUF9TRVRUSU5HU19JTlZBTElEEBQSMQotQklMTElOR19FUlJPUl9SRUFTT05fVE9QX1VQX1NFVFRJTkdTX0NPTkZMSUNUEBUqtgEKDUludm9pY2VTdGF0dXMSHgoaSU5WT0lDRV9TVEFUVVNfVU5TUEVDSUZJRUQQABIYChRJTlZPSUNFX1NUQVRVU19EUkFGVBABEhcKE0lOVk9JQ0VfU1RBVFVTX09QRU4QAhIXChNJTlZPSUNFX1NUQVRVU19QQUlEEAMSFwoTSU5WT0lDRV9TVEFUVVNfVk9JRBAEEiAKHElOVk9JQ0VfU1RBVFVTX1VOQ09MTEVDVElCTEUQBSqgAgoVVGVhbUNyZWRpdFBhdXNlUmVhc29uEigKJFRFQU1fQ1JFRElUX1BBVVNFX1JFQVNPTl9VTlNQRUNJRklFRBAAEiEKHVRFQU1fQ1JFRElUX1BBVVNFX1JFQVNPTl9OT05FEAESLAooVEVBTV9DUkVESVRfUEFVU0VfUkVBU09OX0NVU1RPTUVSX1BBVVNFRBACEi0KKVRFQU1fQ1JFRElUX1BBVVNFX1JFQVNPTl9CSUxMSU5HX0lOQUNUSVZFEAMSLgoqVEVBTV9DUkVESVRfUEFVU0VfUkVBU09OX0NSRURJVFNfRVhIQVVTVEVEEAQSLQopVEVBTV9DUkVESVRfUEFVU0VfUkVBU09OX0JVREdFVF9FWEhBVVNURUQQBSqRAgoQQ3JlZGl0VG9wVXBTdGF0ZRIjCh9DUkVESVRfVE9QX1VQX1NUQVRFX1VOU1BFQ0lGSUVEEAASHwobQ1JFRElUX1RPUF9VUF9TVEFURV9QRU5ESU5HEAESIAocQ1JFRElUX1RPUF9VUF9TVEFURV9DSEFSR0lORxACEh8KG0NSRURJVF9UT1BfVVBfU1RBVEVfR1JBTlRFRBADEiAKHENSRURJVF9UT1BfVVBfU1RBVEVfREVDTElORUQQBBIvCitDUkVESVRfVE9QX1VQX1NUQVRFX0FVVEhFTlRJQ0FUSU9OX1JFUVVJUkVEEAUSIQodQ1JFRElUX1RPUF9VUF9TVEFURV9BQkFORE9ORUQQBiqXAwoWQ3JlZGl0VG9wVXBCbG9ja1JlYXNvbhIqCiZDUkVESVRfVE9QX1VQX0JMT0NLX1JFQVNPTl9VTlNQRUNJRklFRBAAEiMKH0NSRURJVF9UT1BfVVBfQkxPQ0tfUkVBU09OX05PTkUQARIsCihDUkVESVRfVE9QX1VQX0JMT0NLX1JFQVNPTl9DQVJEX0RFQ0xJTkVEEAISNgoyQ1JFRElUX1RPUF9VUF9CTE9DS19SRUFTT05fQVVUSEVOVElDQVRJT05fUkVRVUlSRUQQAxIxCi1DUkVESVRfVE9QX1VQX0JMT0NLX1JFQVNPTl9QRVJJT0RfQ0FQX1JFQUNIRUQQBBI0CjBDUkVESVRfVE9QX1VQX0JMT0NLX1JFQVNPTl9TVUJTQ1JJUFRJT05fSU5BQ1RJVkUQBRIwCixDUkVESVRfVE9QX1VQX0JMT0NLX1JFQVNPTl9OT19QQVlNRU5UX01FVEhPRBAGEisKJ0NSRURJVF9UT1BfVVBfQkxPQ0tfUkVBU09OX0NPT0xJTkdfRE9XThAHMt0LCg5CaWxsaW5nU2VydmljZRJZCg5HZXRCaWxsaW5nUGxhbhIiLmRlZXBuYXZ5LnYxLkdldEJpbGxpbmdQbGFuUmVxdWVzdBojLmRlZXBuYXZ5LnYxLkdldEJpbGxpbmdQbGFuUmVzcG9uc2USXAoPR2V0U3Vic2NyaXB0aW9uEiMuZGVlcG5hdnkudjEuR2V0U3Vic2NyaXB0aW9uUmVxdWVzdBokLmRlZXBuYXZ5LnYxLkdldFN1YnNjcmlwdGlvblJlc3BvbnNlElMKDExpc3RJbnZvaWNlcxIgLmRlZXBuYXZ5LnYxLkxpc3RJbnZvaWNlc1JlcXVlc3QaIS5kZWVwbmF2eS52MS5MaXN0SW52b2ljZXNSZXNwb25zZRJNCgpHZXRJbnZvaWNlEh4uZGVlcG5hdnkudjEuR2V0SW52b2ljZVJlcXVlc3QaHy5kZWVwbmF2eS52MS5HZXRJbnZvaWNlUmVzcG9uc2USbgoVQ3JlYXRlQ2hlY2tvdXRTZXNzaW9uEikuZGVlcG5hdnkudjEuQ3JlYXRlQ2hlY2tvdXRTZXNzaW9uUmVxdWVzdBoqLmRlZXBuYXZ5LnYxLkNyZWF0ZUNoZWNrb3V0U2Vzc2lvblJlc3BvbnNlElwKD0xpc3RDcmVkaXRQYWNrcxIjLmRlZXBuYXZ5LnYxLkxpc3RDcmVkaXRQYWNrc1JlcXVlc3QaJC5kZWVwbmF2eS52MS5MaXN0Q3JlZGl0UGFja3NSZXNwb25zZRKMAQofQ3JlYXRlQ3JlZGl0UGFja0NoZWNrb3V0U2Vzc2lvbhIzLmRlZXBuYXZ5LnYxLkNyZWF0ZUNyZWRpdFBhY2tDaGVja291dFNlc3Npb25SZXF1ZXN0GjQuZGVlcG5hdnkudjEuQ3JlYXRlQ3JlZGl0UGFja0NoZWNrb3V0U2Vzc2lvblJlc3BvbnNlEn0KGkNyZWF0ZUJpbGxpbmdQb3J0YWxTZXNzaW9uEi4uZGVlcG5hdnkudjEuQ3JlYXRlQmlsbGluZ1BvcnRhbFNlc3Npb25SZXF1ZXN0Gi8uZGVlcG5hdnkudjEuQ3JlYXRlQmlsbGluZ1BvcnRhbFNlc3Npb25SZXNwb25zZRJfChBHZXRDcmVkaXRCYWxhbmNlEiQuZGVlcG5hdnkudjEuR2V0Q3JlZGl0QmFsYW5jZVJlcXVlc3QaJS5kZWVwbmF2eS52MS5HZXRDcmVkaXRCYWxhbmNlUmVzcG9uc2USawoUR2V0VGVhbUNyZWRpdENvbnRyb2wSKC5kZWVwbmF2eS52MS5HZXRUZWFtQ3JlZGl0Q29udHJvbFJlcXVlc3QaKS5kZWVwbmF2eS52MS5HZXRUZWFtQ3JlZGl0Q29udHJvbFJlc3BvbnNlEnQKF1VwZGF0ZVRlYW1DcmVkaXRDb250cm9sEisuZGVlcG5hdnkudjEuVXBkYXRlVGVhbUNyZWRpdENvbnRyb2xSZXF1ZXN0GiwuZGVlcG5hdnkudjEuVXBkYXRlVGVhbUNyZWRpdENvbnRyb2xSZXNwb25zZRJxChZHZXRDcmVkaXRUb3BVcFNldHRpbmdzEiouZGVlcG5hdnkudjEuR2V0Q3JlZGl0VG9wVXBTZXR0aW5nc1JlcXVlc3QaKy5kZWVwbmF2eS52MS5HZXRDcmVkaXRUb3BVcFNldHRpbmdzUmVzcG9uc2USegoZVXBkYXRlQ3JlZGl0VG9wVXBTZXR0aW5ncxItLmRlZXBuYXZ5LnYxLlVwZGF0ZUNyZWRpdFRvcFVwU2V0dGluZ3NSZXF1ZXN0Gi4uZGVlcG5hdnkudjEuVXBkYXRlQ3JlZGl0VG9wVXBTZXR0aW5nc1Jlc3BvbnNlEl8KEExpc3RDcmVkaXRUb3BVcHMSJC5kZWVwbmF2eS52MS5MaXN0Q3JlZGl0VG9wVXBzUmVxdWVzdBolLmRlZXBuYXZ5LnYxLkxpc3RDcmVkaXRUb3BVcHNSZXNwb25zZUJEWkJnaXRodWIuY29tL2RlZXAtbmF2eS9wbGF0Zm9ybS1wcm90b3MvZ2VuL2dvL2RlZXBuYXZ5L3YxO2RlZXBuYXZ5djFiBnByb3RvMw", [file_deepnavy_v1_common, file_google_protobuf_timestamp]);
 
 /**
  * BillingErrorDetail is attached to a non-OK Connect/gRPC status. safe_message
@@ -594,6 +594,9 @@ export const CreateCheckoutSessionResponseSchema: GenMessage<CreateCheckoutSessi
   messageDesc(file_deepnavy_v1_billing, 14);
 
 /**
+ * CreditPack is one purchasable block of prepaid credits. Buying it adds to the
+ * ORGANIZATION's shared pool; there is no per-team wallet to buy into.
+ *
  * @generated from message deepnavy.v1.CreditPack
  */
 export type CreditPack = Message<"deepnavy.v1.CreditPack"> & {
@@ -691,6 +694,14 @@ export type CreateCreditPackCheckoutSessionRequest = Message<"deepnavy.v1.Create
   organizationId: string;
 
   /**
+   * team_id RAISES THIS TEAM'S CEILING; it does not fence the credits. The
+   * purchased credits land in the organization's shared pool and are spendable
+   * by every team in it the moment they are granted, exactly like the included
+   * credits. What team_id changes is that team's hard_limit_micros — the cap
+   * INSIDE the pool — so the effect of naming a team is "let this team draw more
+   * of the pool", never "keep these credits for this team". A client must not
+   * tell a customer that a purchase is confined to one team.
+   *
    * @generated from field: string team_id = 2;
    */
   teamId: string;
@@ -842,8 +853,9 @@ export type GetCreditBalanceRequest = Message<"deepnavy.v1.GetCreditBalanceReque
   organizationId: string;
 
   /**
-   * Required. The team must belong to organization_id; balances are never
-   * pooled across an organization.
+   * Required, and used only to scope and authorize the read. It does NOT select
+   * a separate balance: credits are one pool per organization and every team
+   * draws from it. See GetCreditBalanceResponse.
    *
    * @generated from field: string team_id = 2;
    */
@@ -862,9 +874,27 @@ export const GetCreditBalanceRequestSchema: GenMessage<GetCreditBalanceRequest> 
  */
 export type GetCreditBalanceResponse = Message<"deepnavy.v1.GetCreditBalanceResponse"> & {
   /**
+   * balance_micros is the signed sum of the ledger entries that NAME team_id.
+   * It is an attribution diagnostic — "how much has been booked against this
+   * team" — and it is NOT what the team can spend. It is routinely negative for
+   * a fully funded team, because an organization grant carries no team while
+   * every charge names one. Nothing may gate work on it or present it to a
+   * customer as their remaining credit.
+   *
    * @generated from field: int64 balance_micros = 1;
    */
   balanceMicros: bigint;
+
+  /**
+   * organization_balance_micros is the shared prepaid pool: the balance the team
+   * can actually spend, and the number the spend gate reserves against. This is
+   * the figure a console shows a customer as "credits remaining", and it is the
+   * same number StreamCreditMovements publishes as
+   * organization_balance_after_micros.
+   *
+   * @generated from field: int64 organization_balance_micros = 2;
+   */
+  organizationBalanceMicros: bigint;
 };
 
 /**
@@ -1051,6 +1081,484 @@ export type UpdateTeamCreditControlResponse = Message<"deepnavy.v1.UpdateTeamCre
  */
 export const UpdateTeamCreditControlResponseSchema: GenMessage<UpdateTeamCreditControlResponse> = /*@__PURE__*/
   messageDesc(file_deepnavy_v1_billing, 28);
+
+/**
+ * CreditTopUpConsentTerms is the exact agreement the customer must accept before
+ * automatic top-up may be enabled, published by the server so a console renders
+ * what the server will record rather than its own wording. The version string is
+ * what UpdateCreditTopUpSettings echoes back; an unrecognized version is refused.
+ *
+ * @generated from message deepnavy.v1.CreditTopUpConsentTerms
+ */
+export type CreditTopUpConsentTerms = Message<"deepnavy.v1.CreditTopUpConsentTerms"> & {
+  /**
+   * @generated from field: string version = 1;
+   */
+  version: string;
+
+  /**
+   * text is the full agreement, already interpolated with this organization's
+   * configured threshold, amount, ceiling and cooldown, so what the customer
+   * reads is what the server enforces. Rendered as plain text.
+   *
+   * @generated from field: string text = 2;
+   */
+  text: string;
+};
+
+/**
+ * Describes the message deepnavy.v1.CreditTopUpConsentTerms.
+ * Use `create(CreditTopUpConsentTermsSchema)` to create a new message.
+ */
+export const CreditTopUpConsentTermsSchema: GenMessage<CreditTopUpConsentTerms> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_billing, 29);
+
+/**
+ * CreditTopUpConsent is the record of that acceptance. It exists because a card
+ * network requires a business to keep a record of the customer's agreement to
+ * off-session terms; it is not audit decoration.
+ *
+ * @generated from message deepnavy.v1.CreditTopUpConsent
+ */
+export type CreditTopUpConsent = Message<"deepnavy.v1.CreditTopUpConsent"> & {
+  /**
+   * @generated from field: string terms_version = 1;
+   */
+  termsVersion: string;
+
+  /**
+   * recorded_at is the server's clock at the moment consent was accepted. A
+   * client-supplied time is never recorded.
+   *
+   * @generated from field: google.protobuf.Timestamp recorded_at = 2;
+   */
+  recordedAt?: Timestamp | undefined;
+
+  /**
+   * agreed_by_user_id is the deep navy user who accepted, never an email or any
+   * other direct identifier.
+   *
+   * @generated from field: string agreed_by_user_id = 3;
+   */
+  agreedByUserId: string;
+};
+
+/**
+ * Describes the message deepnavy.v1.CreditTopUpConsent.
+ * Use `create(CreditTopUpConsentSchema)` to create a new message.
+ */
+export const CreditTopUpConsentSchema: GenMessage<CreditTopUpConsent> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_billing, 30);
+
+/**
+ * CreditTopUp is one automatic top-up, recorded whether or not money moved, so a
+ * customer can see that it happened, why it fired, and what it cost. It is
+ * deliberately a separate record from a manual credit-pack purchase: the two are
+ * distinguishable everywhere, including in the credit ledger, where an automatic
+ * grant carries its own reason.
+ *
+ * @generated from message deepnavy.v1.CreditTopUp
+ */
+export type CreditTopUp = Message<"deepnavy.v1.CreditTopUp"> & {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id: string;
+
+  /**
+   * @generated from field: string organization_id = 2;
+   */
+  organizationId: string;
+
+  /**
+   * @generated from field: deepnavy.v1.CreditTopUpState state = 3;
+   */
+  state: CreditTopUpState;
+
+  /**
+   * WHY IT FIRED, captured at the moment of the decision and never recomputed:
+   * the threshold in force and the pool balance actually observed beneath it.
+   *
+   * @generated from field: int64 threshold_micros = 4;
+   */
+  thresholdMicros: bigint;
+
+  /**
+   * @generated from field: int64 observed_balance_micros = 5;
+   */
+  observedBalanceMicros: bigint;
+
+  /**
+   * WHAT IT BOUGHT.
+   *
+   * @generated from field: string credit_pack_id = 6;
+   */
+  creditPackId: string;
+
+  /**
+   * @generated from field: int64 pack_quantity = 7;
+   */
+  packQuantity: bigint;
+
+  /**
+   * @generated from field: int64 credit_micros = 8;
+   */
+  creditMicros: bigint;
+
+  /**
+   * WHAT IT COST. Present from the decision onward, because the price is fixed
+   * when the top-up is decided, not when it settles.
+   *
+   * @generated from field: deepnavy.v1.Money amount = 9;
+   */
+  amount?: Money | undefined;
+
+  /**
+   * decline_code is the provider's classification of a refusal, present only in
+   * DECLINED and AUTHENTICATION_REQUIRED. It is a stable, non-secret code such
+   * as "insufficient_funds"; it is never a provider payload.
+   *
+   * @generated from field: string decline_code = 10;
+   */
+  declineCode: string;
+
+  /**
+   * safe_message may be shown to a customer. It says what happened, what it
+   * means, and what happens next, and carries no provider identifiers.
+   *
+   * @generated from field: string safe_message = 11;
+   */
+  safeMessage: string;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp created_at = 12;
+   */
+  createdAt?: Timestamp | undefined;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp settled_at = 13;
+   */
+  settledAt?: Timestamp | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.CreditTopUp.
+ * Use `create(CreditTopUpSchema)` to create a new message.
+ */
+export const CreditTopUpSchema: GenMessage<CreditTopUp> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_billing, 31);
+
+/**
+ * CreditTopUpSettings is one organization's automatic top-up policy plus enough
+ * live state for a console to explain what will happen next without a second
+ * call.
+ *
+ * @generated from message deepnavy.v1.CreditTopUpSettings
+ */
+export type CreditTopUpSettings = Message<"deepnavy.v1.CreditTopUpSettings"> & {
+  /**
+   * @generated from field: string organization_id = 1;
+   */
+  organizationId: string;
+
+  /**
+   * @generated from field: bool enabled = 2;
+   */
+  enabled: boolean;
+
+  /**
+   * threshold_micros is the organization pool balance at or beneath which a
+   * top-up fires. It is headroom, not a floor: detection is periodic, so it must
+   * cover what the organization can burn inside one detection interval.
+   *
+   * @generated from field: int64 threshold_micros = 3;
+   */
+  thresholdMicros: bigint;
+
+  /**
+   * What one top-up buys.
+   *
+   * @generated from field: string credit_pack_id = 4;
+   */
+  creditPackId: string;
+
+  /**
+   * @generated from field: int64 pack_quantity = 5;
+   */
+  packQuantity: bigint;
+
+  /**
+   * period_cap is the most automatic top-up may spend in one billing period,
+   * and period_spent is what it has already committed in the current one.
+   * Together they are the hard ceiling: no top-up is decided that would carry
+   * period_spent past period_cap.
+   *
+   * @generated from field: deepnavy.v1.Money period_cap = 6;
+   */
+  periodCap?: Money | undefined;
+
+  /**
+   * @generated from field: deepnavy.v1.Money period_spent = 7;
+   */
+  periodSpent?: Money | undefined;
+
+  /**
+   * cooldown_seconds is the minimum interval between one top-up settling and the
+   * next being decided. It is server-owned and not client-settable: a customer
+   * able to set it to zero could re-create the charge loop it prevents.
+   *
+   * @generated from field: int64 cooldown_seconds = 8;
+   */
+  cooldownSeconds: bigint;
+
+  /**
+   * block_reason is why nothing will fire right now, and is
+   * CREDIT_TOP_UP_BLOCK_REASON_NONE when nothing is in the way. When it is a
+   * stored disarm, last_top_up explains it and re_arm_required is true.
+   *
+   * @generated from field: deepnavy.v1.CreditTopUpBlockReason block_reason = 9;
+   */
+  blockReason: CreditTopUpBlockReason;
+
+  /**
+   * @generated from field: bool re_arm_required = 10;
+   */
+  reArmRequired: boolean;
+
+  /**
+   * next_eligible_at is when a cooldown expires. Absent when nothing is cooling.
+   *
+   * @generated from field: google.protobuf.Timestamp next_eligible_at = 11;
+   */
+  nextEligibleAt?: Timestamp | undefined;
+
+  /**
+   * consent is absent until the customer has accepted the terms. enabled is
+   * never true without it.
+   *
+   * @generated from field: deepnavy.v1.CreditTopUpConsent consent = 12;
+   */
+  consent?: CreditTopUpConsent | undefined;
+
+  /**
+   * required_consent is the agreement a caller must accept to enable automatic
+   * top-up, or to re-accept when the published version has moved on.
+   *
+   * @generated from field: deepnavy.v1.CreditTopUpConsentTerms required_consent = 13;
+   */
+  requiredConsent?: CreditTopUpConsentTerms | undefined;
+
+  /**
+   * last_top_up is the most recent attempt in any state, so a console can render
+   * a decline without a second call. Absent when none has ever run.
+   *
+   * @generated from field: deepnavy.v1.CreditTopUp last_top_up = 14;
+   */
+  lastTopUp?: CreditTopUp | undefined;
+
+  /**
+   * @generated from field: int64 version = 15;
+   */
+  version: bigint;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp updated_at = 16;
+   */
+  updatedAt?: Timestamp | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.CreditTopUpSettings.
+ * Use `create(CreditTopUpSettingsSchema)` to create a new message.
+ */
+export const CreditTopUpSettingsSchema: GenMessage<CreditTopUpSettings> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_billing, 32);
+
+/**
+ * @generated from message deepnavy.v1.GetCreditTopUpSettingsRequest
+ */
+export type GetCreditTopUpSettingsRequest = Message<"deepnavy.v1.GetCreditTopUpSettingsRequest"> & {
+  /**
+   * The authenticated principal must be a current organization member.
+   *
+   * @generated from field: string organization_id = 1;
+   */
+  organizationId: string;
+};
+
+/**
+ * Describes the message deepnavy.v1.GetCreditTopUpSettingsRequest.
+ * Use `create(GetCreditTopUpSettingsRequestSchema)` to create a new message.
+ */
+export const GetCreditTopUpSettingsRequestSchema: GenMessage<GetCreditTopUpSettingsRequest> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_billing, 33);
+
+/**
+ * @generated from message deepnavy.v1.GetCreditTopUpSettingsResponse
+ */
+export type GetCreditTopUpSettingsResponse = Message<"deepnavy.v1.GetCreditTopUpSettingsResponse"> & {
+  /**
+   * settings is always present. An organization that has never configured
+   * automatic top-up gets the server's defaults with enabled false and no
+   * consent — which is a configuration, not an absence.
+   *
+   * @generated from field: deepnavy.v1.CreditTopUpSettings settings = 1;
+   */
+  settings?: CreditTopUpSettings | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.GetCreditTopUpSettingsResponse.
+ * Use `create(GetCreditTopUpSettingsResponseSchema)` to create a new message.
+ */
+export const GetCreditTopUpSettingsResponseSchema: GenMessage<GetCreditTopUpSettingsResponse> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_billing, 34);
+
+/**
+ * @generated from message deepnavy.v1.UpdateCreditTopUpSettingsRequest
+ */
+export type UpdateCreditTopUpSettingsRequest = Message<"deepnavy.v1.UpdateCreditTopUpSettingsRequest"> & {
+  /**
+   * The authenticated principal must hold an owner or billing membership.
+   *
+   * @generated from field: string organization_id = 1;
+   */
+  organizationId: string;
+
+  /**
+   * @generated from field: bool enabled = 2;
+   */
+  enabled: boolean;
+
+  /**
+   * @generated from field: int64 threshold_micros = 3;
+   */
+  thresholdMicros: bigint;
+
+  /**
+   * @generated from field: string credit_pack_id = 4;
+   */
+  creditPackId: string;
+
+  /**
+   * @generated from field: int64 pack_quantity = 5;
+   */
+  packQuantity: bigint;
+
+  /**
+   * period_cap_minor is the ceiling in the pack currency's minor units (cents
+   * for USD). It is sent as an exact integer rather than a Money so a ceiling on
+   * a real card can never be set by a rounded decimal.
+   *
+   * @generated from field: int64 period_cap_minor = 6;
+   */
+  periodCapMinor: bigint;
+
+  /**
+   * consent_terms_version must equal the version in required_consent whenever
+   * this request enables automatic top-up, or re-arms it after a decline. The
+   * server records its own clock and the calling user; a client cannot supply
+   * either. Omitting it while enabling is refused, not defaulted.
+   *
+   * @generated from field: string consent_terms_version = 7;
+   */
+  consentTermsVersion: string;
+
+  /**
+   * re_arm clears a stored disarm (a decline, or an authentication demand) and
+   * is refused unless the caller also presents consent. Disabling never needs
+   * it; a customer can always turn automatic top-up off.
+   *
+   * @generated from field: bool re_arm = 8;
+   */
+  reArm: boolean;
+
+  /**
+   * expected_version is the optimistic guard against two people editing the
+   * policy at once. Zero is accepted only for an organization that has no
+   * settings row yet.
+   *
+   * @generated from field: int64 expected_version = 9;
+   */
+  expectedVersion: bigint;
+
+  /**
+   * @generated from field: string idempotency_key = 10;
+   */
+  idempotencyKey: string;
+};
+
+/**
+ * Describes the message deepnavy.v1.UpdateCreditTopUpSettingsRequest.
+ * Use `create(UpdateCreditTopUpSettingsRequestSchema)` to create a new message.
+ */
+export const UpdateCreditTopUpSettingsRequestSchema: GenMessage<UpdateCreditTopUpSettingsRequest> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_billing, 35);
+
+/**
+ * @generated from message deepnavy.v1.UpdateCreditTopUpSettingsResponse
+ */
+export type UpdateCreditTopUpSettingsResponse = Message<"deepnavy.v1.UpdateCreditTopUpSettingsResponse"> & {
+  /**
+   * @generated from field: deepnavy.v1.CreditTopUpSettings settings = 1;
+   */
+  settings?: CreditTopUpSettings | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.UpdateCreditTopUpSettingsResponse.
+ * Use `create(UpdateCreditTopUpSettingsResponseSchema)` to create a new message.
+ */
+export const UpdateCreditTopUpSettingsResponseSchema: GenMessage<UpdateCreditTopUpSettingsResponse> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_billing, 36);
+
+/**
+ * @generated from message deepnavy.v1.ListCreditTopUpsRequest
+ */
+export type ListCreditTopUpsRequest = Message<"deepnavy.v1.ListCreditTopUpsRequest"> & {
+  /**
+   * The authenticated principal must be a current organization member.
+   *
+   * @generated from field: string organization_id = 1;
+   */
+  organizationId: string;
+
+  /**
+   * Pages are ordered by decision time descending and then stable ID descending.
+   *
+   * @generated from field: deepnavy.v1.PageRequest page = 2;
+   */
+  page?: PageRequest | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.ListCreditTopUpsRequest.
+ * Use `create(ListCreditTopUpsRequestSchema)` to create a new message.
+ */
+export const ListCreditTopUpsRequestSchema: GenMessage<ListCreditTopUpsRequest> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_billing, 37);
+
+/**
+ * @generated from message deepnavy.v1.ListCreditTopUpsResponse
+ */
+export type ListCreditTopUpsResponse = Message<"deepnavy.v1.ListCreditTopUpsResponse"> & {
+  /**
+   * @generated from field: repeated deepnavy.v1.CreditTopUp top_ups = 1;
+   */
+  topUps: CreditTopUp[];
+
+  /**
+   * @generated from field: deepnavy.v1.PageResponse page = 2;
+   */
+  page?: PageResponse | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.ListCreditTopUpsResponse.
+ * Use `create(ListCreditTopUpsResponseSchema)` to create a new message.
+ */
+export const ListCreditTopUpsResponseSchema: GenMessage<ListCreditTopUpsResponse> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_billing, 38);
 
 /**
  * @generated from enum deepnavy.v1.SubscriptionStatus
@@ -1311,6 +1819,34 @@ export enum BillingErrorReason {
    * @generated from enum value: BILLING_ERROR_REASON_INVOICE_HISTORY_UNAVAILABLE = 18;
    */
   INVOICE_HISTORY_UNAVAILABLE = 18,
+
+  /**
+   * Automatic top-up cannot be enabled because the caller did not present the
+   * recorded consent the card networks require for an unscheduled off-session
+   * charge, or presented a terms version this server does not publish.
+   * Returned with FAILED_PRECONDITION.
+   *
+   * @generated from enum value: BILLING_ERROR_REASON_TOP_UP_CONSENT_REQUIRED = 19;
+   */
+  TOP_UP_CONSENT_REQUIRED = 19,
+
+  /**
+   * A top-up setting is outside the server-owned bounds: a non-positive
+   * threshold or ceiling, a quantity beyond the pack's maximum, a pack that is
+   * not in the catalog, or a single top-up that alone exceeds the period
+   * ceiling. Returned with INVALID_ARGUMENT.
+   *
+   * @generated from enum value: BILLING_ERROR_REASON_TOP_UP_SETTINGS_INVALID = 20;
+   */
+  TOP_UP_SETTINGS_INVALID = 20,
+
+  /**
+   * The optimistic version no longer matches the stored settings row.
+   * Returned with ABORTED.
+   *
+   * @generated from enum value: BILLING_ERROR_REASON_TOP_UP_SETTINGS_CONFLICT = 21;
+   */
+  TOP_UP_SETTINGS_CONFLICT = 21,
 }
 
 /**
@@ -1402,6 +1938,146 @@ export const TeamCreditPauseReasonSchema: GenEnum<TeamCreditPauseReason> = /*@__
   enumDesc(file_deepnavy_v1_billing, 5);
 
 /**
+ * CreditTopUpState is the lifecycle of one automatic top-up. PENDING and
+ * CHARGING are in flight; the rest are terminal. CHARGING specifically means
+ * "a charge was issued and its outcome is not yet recorded" — never "charge it
+ * again": recovery re-reads the provider rather than re-charging.
+ *
+ * @generated from enum deepnavy.v1.CreditTopUpState
+ */
+export enum CreditTopUpState {
+  /**
+   * @generated from enum value: CREDIT_TOP_UP_STATE_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * Decided and durably recorded; no charge has been issued yet.
+   *
+   * @generated from enum value: CREDIT_TOP_UP_STATE_PENDING = 1;
+   */
+  PENDING = 1,
+
+  /**
+   * A charge has been issued and its outcome is not yet known.
+   *
+   * @generated from enum value: CREDIT_TOP_UP_STATE_CHARGING = 2;
+   */
+  CHARGING = 2,
+
+  /**
+   * Paid, and the credits are in the organization's pool.
+   *
+   * @generated from enum value: CREDIT_TOP_UP_STATE_GRANTED = 3;
+   */
+  GRANTED = 3,
+
+  /**
+   * The card was declined. Customer-actionable, never retried.
+   *
+   * @generated from enum value: CREDIT_TOP_UP_STATE_DECLINED = 4;
+   */
+  DECLINED = 4,
+
+  /**
+   * The issuer demanded authentication, which cannot be completed off session.
+   * A designed state, not an error: the customer must come on session.
+   *
+   * @generated from enum value: CREDIT_TOP_UP_STATE_AUTHENTICATION_REQUIRED = 5;
+   */
+  AUTHENTICATION_REQUIRED = 5,
+
+  /**
+   * Abandoned before any money moved — a precondition stopped holding, or a
+   * charge's outcome could not be established and was proven not to exist.
+   *
+   * @generated from enum value: CREDIT_TOP_UP_STATE_ABANDONED = 6;
+   */
+  ABANDONED = 6,
+}
+
+/**
+ * Describes the enum deepnavy.v1.CreditTopUpState.
+ */
+export const CreditTopUpStateSchema: GenEnum<CreditTopUpState> = /*@__PURE__*/
+  enumDesc(file_deepnavy_v1_billing, 6);
+
+/**
+ * CreditTopUpBlockReason is why automatic top-up will not fire right now for an
+ * organization that has it enabled. Two of these are STORED disarms that persist
+ * until the customer acts (CARD_DECLINED, AUTHENTICATION_REQUIRED); the rest are
+ * computed from current state at read time and clear by themselves.
+ *
+ * @generated from enum deepnavy.v1.CreditTopUpBlockReason
+ */
+export enum CreditTopUpBlockReason {
+  /**
+   * @generated from enum value: CREDIT_TOP_UP_BLOCK_REASON_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * Nothing is blocking it.
+   *
+   * @generated from enum value: CREDIT_TOP_UP_BLOCK_REASON_NONE = 1;
+   */
+  NONE = 1,
+
+  /**
+   * Stored. The last top-up was declined; automatic top-up is disarmed until the
+   * customer fixes the card and re-arms it.
+   *
+   * @generated from enum value: CREDIT_TOP_UP_BLOCK_REASON_CARD_DECLINED = 2;
+   */
+  CARD_DECLINED = 2,
+
+  /**
+   * Stored. The last top-up needed authentication the customer must complete on
+   * session. Disarmed until they do and re-arm it.
+   *
+   * @generated from enum value: CREDIT_TOP_UP_BLOCK_REASON_AUTHENTICATION_REQUIRED = 3;
+   */
+  AUTHENTICATION_REQUIRED = 3,
+
+  /**
+   * Computed. This billing period's ceiling is spent; it resets with the period.
+   *
+   * @generated from enum value: CREDIT_TOP_UP_BLOCK_REASON_PERIOD_CAP_REACHED = 4;
+   */
+  PERIOD_CAP_REACHED = 4,
+
+  /**
+   * Computed. The organization has no active subscription, or no open billing
+   * period. A top-up never runs against an inactive subscription.
+   *
+   * @generated from enum value: CREDIT_TOP_UP_BLOCK_REASON_SUBSCRIPTION_INACTIVE = 5;
+   */
+  SUBSCRIPTION_INACTIVE = 5,
+
+  /**
+   * Computed. No saved card is on file to charge.
+   *
+   * @generated from enum value: CREDIT_TOP_UP_BLOCK_REASON_NO_PAYMENT_METHOD = 6;
+   */
+  NO_PAYMENT_METHOD = 6,
+
+  /**
+   * Computed. A top-up settled recently and the cooldown has not elapsed. This
+   * is what stops a pool that is drained as fast as it is filled from becoming a
+   * charge loop.
+   *
+   * @generated from enum value: CREDIT_TOP_UP_BLOCK_REASON_COOLING_DOWN = 7;
+   */
+  COOLING_DOWN = 7,
+}
+
+/**
+ * Describes the enum deepnavy.v1.CreditTopUpBlockReason.
+ */
+export const CreditTopUpBlockReasonSchema: GenEnum<CreditTopUpBlockReason> = /*@__PURE__*/
+  enumDesc(file_deepnavy_v1_billing, 7);
+
+/**
  * @generated from service deepnavy.v1.BillingService
  */
 export const BillingService: GenService<{
@@ -1462,8 +2138,10 @@ export const BillingService: GenService<{
     output: typeof ListCreditPacksResponseSchema;
   },
   /**
-   * CreateCreditPackCheckoutSession creates a team-scoped Embedded Checkout
-   * payment. Credits are granted only after a signed paid Stripe webhook.
+   * CreateCreditPackCheckoutSession opens an Embedded Checkout payment for a
+   * prepaid pack. Credits are granted only after a signed paid Stripe webhook,
+   * and they are granted TO THE ORGANIZATION POOL: team_id raises the named
+   * team's ceiling within that pool rather than reserving the credits for it.
    *
    * @generated from rpc deepnavy.v1.BillingService.CreateCreditPackCheckoutSession
    */
@@ -1512,6 +2190,42 @@ export const BillingService: GenService<{
     methodKind: "unary";
     input: typeof UpdateTeamCreditControlRequestSchema;
     output: typeof UpdateTeamCreditControlResponseSchema;
+  },
+  /**
+   * GetCreditTopUpSettings returns the organization's automatic top-up policy,
+   * what is blocking it, and the consent terms a caller must accept to enable
+   * it. Available to any organization member.
+   *
+   * @generated from rpc deepnavy.v1.BillingService.GetCreditTopUpSettings
+   */
+  getCreditTopUpSettings: {
+    methodKind: "unary";
+    input: typeof GetCreditTopUpSettingsRequestSchema;
+    output: typeof GetCreditTopUpSettingsResponseSchema;
+  },
+  /**
+   * UpdateCreditTopUpSettings requires an owner or billing membership. Enabling
+   * automatic top-up, or re-arming it after a decline, additionally requires the
+   * published consent terms version: the server records the agreement rather
+   * than inferring it from a toggle.
+   *
+   * @generated from rpc deepnavy.v1.BillingService.UpdateCreditTopUpSettings
+   */
+  updateCreditTopUpSettings: {
+    methodKind: "unary";
+    input: typeof UpdateCreditTopUpSettingsRequestSchema;
+    output: typeof UpdateCreditTopUpSettingsResponseSchema;
+  },
+  /**
+   * ListCreditTopUps is the audit trail: every automatic top-up, in every state,
+   * with the threshold and balance that provoked it and what it cost.
+   *
+   * @generated from rpc deepnavy.v1.BillingService.ListCreditTopUps
+   */
+  listCreditTopUps: {
+    methodKind: "unary";
+    input: typeof ListCreditTopUpsRequestSchema;
+    output: typeof ListCreditTopUpsResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_deepnavy_v1_billing, 0);

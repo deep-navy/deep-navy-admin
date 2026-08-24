@@ -286,12 +286,16 @@ test("the visible page keeps itself current, and only the visible one", () => {
   // operator's API budget keeping markup nobody is looking at warm.
   assert.match(app, /const loader = VIEW_LOADERS\[state\.view\];/);
   const loaders = app.slice(app.indexOf("const VIEW_LOADERS"), app.indexOf("function stopRevalidation"));
-  for (const view of ["overview", "customers", "economics", "operations", "metrics", "billing", "audit"]) {
+  // Every page WITHOUT a stream is revalidated. Audit used to be on this list
+  // and has since been given a real tail, so it moved to the streaming set —
+  // a page that both tails and polls has two writers for the same rows.
+  for (const view of ["overview", "customers", "economics", "operations", "metrics", "billing"]) {
     assert.ok(loaders.includes(`${view}:`), `${view} must be revalidatable`);
   }
-  // The two that stream are deliberately absent from the map: they are already
-  // live and re-reading them would fight their own cursors.
+  // What streams is deliberately absent from the map: it is already live, and
+  // re-reading it would fight its own cursor.
   assert.doesNotMatch(loaders, /runtimeCursor|alertCursor/);
+  assert.doesNotMatch(loaders, /audit:/, "audit streams; it must not also poll");
 });
 
 test("a backgrounded console stops, and a signed-out one cannot revalidate", () => {
@@ -309,4 +313,34 @@ test("a backgrounded console stops, and a signed-out one cannot revalidate", () 
   const revalidate = app.slice(app.indexOf("async function revalidateActiveView"), app.indexOf("function setView"));
   assert.match(revalidate, /catch \{/);
   assert.doesNotMatch(revalidate, /clearTable|setDataState\(/);
+});
+
+// The audit trail is the one admin surface where a live tail is the point: an
+// operator watching who touched a customer's account wants it as it happens.
+test("the audit page tails instead of polling", () => {
+  assert.match(app, /runStream\("admin_audit_events_stream", "auditCursor", controller, applyAuditUpsert\)/);
+  assert.match(app, /function applyAuditUpsert/);
+
+  // The tail delivers oldest-first because it follows the order things
+  // happened; the page shows newest-first. The sort belongs in the view.
+  const render = app.slice(app.indexOf("function scheduleAuditRender"), app.indexOf("function renderAuditFilter"));
+  assert.match(render, /toSequence\(right\?\.sequence\) - toSequence\(left\?\.sequence\)/);
+
+  // Audit is now live, so it must NOT also be revalidated on the timer — two
+  // mechanisms writing the same rows would fight, and the poll would undo the
+  // stream's cursor.
+  const loaders = app.slice(app.indexOf("const VIEW_LOADERS"), app.indexOf("function stopRevalidation"));
+  assert.doesNotMatch(loaders, /audit:/, "a streaming page must not also poll");
+});
+
+test("a filtered audit page may not seed the tail's cursor", () => {
+  // A filtered response is a subset by construction. Seeding the cursor from a
+  // subset's highest sequence would step the tail past every unfiltered record
+  // in between, and those audit records would never arrive — silent loss, which
+  // is the one thing an audit trail may not do.
+  const load = app.slice(app.indexOf("async function loadAudit"), app.indexOf("function renderBillingSummary"));
+  assert.match(load, /if \(!auditState\.action\) \{/);
+  assert.match(load, /state\.auditCursor = 0n;/);
+  const guarded = load.slice(load.indexOf("if (!auditState.action)"), load.indexOf("renderAudit(response)"));
+  assert.match(guarded, /state\.auditEvents\.set/, "seeding happens only on the unfiltered pass");
 });
