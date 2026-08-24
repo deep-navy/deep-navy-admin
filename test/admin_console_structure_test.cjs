@@ -379,16 +379,34 @@ test("the customers surface reads the provider projection honestly", () => {
   assert.ok(charged.includes("recurringTotal"), "the charged summary no longer reads the provider's summed total");
   assert.ok(charged.includes("activeSubscriptionCount"), "the charged summary no longer says how many subscriptions there are");
 
-  // Absence and failure must not render alike. An organization the provider has
-  // never heard of has never paid, which is an answer; a provider that could not be
-  // read is a gap, and the difference decides whether the operator chases the
-  // customer or chases us.
-  assert.ok(charged.includes("never billed"), "an account with no provider record no longer says so");
-  assert.ok(charged.includes("UNAVAILABLE"), "an unreadable provider no longer renders as unavailable");
+  /* Three states, never two.
+   *
+   * A projection that is PRESENT but empty means the provider was asked and holds
+   * nothing — never paid. A MISSING projection means nobody answered: either the
+   * provider could not be read, or this console is deployed ahead of a server that
+   * has never heard of the field. Reading "missing" as "never paid" would report
+   * every paying customer as unbilled the first time the console ran ahead of the
+   * server, which is this page being wrong about money and looking healthy.
+   *
+   * So "never billed" must be decided by the account being EMPTY, never by it
+   * being absent. */
+  assert.ok(charged.includes("never billed"), "an account the provider does not hold no longer says so");
+  assert.ok(charged.includes("UNAVAILABLE"), "an unanswered provider no longer renders as unavailable");
   assert.ok(
-    charged.indexOf('projectionFieldAvailable(customer, "stripe")') < charged.indexOf("never billed"),
-    "the charged summary decides 'never billed' before checking whether the provider was readable at all"
+    charged.indexOf("providerAnswered(customer)") < charged.indexOf("never billed"),
+    "the charged summary decides 'never billed' before checking whether anyone answered at all"
   );
+  assert.ok(
+    charged.includes("providerHoldsAccount(customer)"),
+    "'never billed' is no longer decided by an empty projection, so a missing one now reads as unpaid"
+  );
+  const answered = functionBody("function providerAnswered");
+  assert.ok(
+    answered.includes('projectionFieldAvailable(customer, "stripe")') && answered.includes("customer?.stripe"),
+    "providerAnswered must require BOTH that the field was not declared unavailable and that it is actually present"
+  );
+  const holds = functionBody("function providerHoldsAccount");
+  assert.ok(holds.includes("customerId"), "holding an account is no longer decided by the provider's own identifier");
 
   // Outstanding balance is the remaining amount, never the billed total, which
   // stays positive on a fully paid invoice and would report every paying customer

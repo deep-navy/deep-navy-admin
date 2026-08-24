@@ -2522,12 +2522,24 @@ export const GetAdminIdentityResponseSchema: GenMessage<GetAdminIdentityResponse
  * dashboard without the platform ever having to pretend the two ID spaces are
  * one.
  *
- * The whole message is absent when the organization has no provider record at
- * all — an account that has never paid — and when the provider could not be
- * read. Those two cases are NOT the same, and projection_status distinguishes
- * them: an unreadable provider names "stripe" in unavailable_fields, while an
- * organization with no provider record does not, because its absence is a fact
- * rather than a gap.
+ * Presence is a POSITIVE statement: this message exists whenever the provider was
+ * successfully read, including for an organization the provider has never heard
+ * of — that account gets a message with an empty customer_id and no
+ * subscriptions, which says "asked, and there is nothing", not "did not ask".
+ *
+ * That distinction cannot be carried by absence, because absence has a third
+ * meaning: a server too old to know this field sends nothing either. A client
+ * reading a missing message as "never paid" would then report every paying
+ * customer as unbilled the moment it was deployed ahead of the server — wrong
+ * about money, with nothing on screen to suggest it. So the three cases are
+ * separated by construction:
+ *
+ *   present, customer_id set    the provider holds this account
+ *   present, customer_id empty  the provider was asked and holds nothing
+ *   absent                      not answered — either the provider could not be
+ *                               read, which names "stripe" in
+ *                               unavailable_fields, or the server predates the
+ *                               field. Both must render as unavailable.
  *
  * @generated from message deepnavy.v1.AdminStripeAccount
  */

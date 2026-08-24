@@ -158,7 +158,7 @@
   }
 
   function createAdminApi() {
-    if (!apiBaseUrl || generated?.PLATFORM_PROTOS_REVISION !== "5f7b6136542f928ac4923fdb250ea69828d6b39e" || typeof generated.createAdminApi !== "function") return null;
+    if (!apiBaseUrl || generated?.PLATFORM_PROTOS_REVISION !== "aaf485ea57bd60a73f8551a0645c59b0c8b8c9bd" || typeof generated.createAdminApi !== "function") return null;
     try {
       return generated.createAdminApi({ baseUrl: apiBaseUrl, defaultTimeoutMs: 12_000 });
     } catch {
@@ -1414,16 +1414,29 @@
     document.querySelectorAll("[data-customer-detail-id]").forEach((button) => button.setAttribute("aria-expanded", "false"));
   }
 
-  /* The billing provider's own view of an account.
+  /* The billing provider's own view of an account, in three states that must never
+   * be confused with one another.
    *
-   * It is absent for two different reasons that must never look alike. An
-   * organization the provider has never heard of has never paid, which is an
-   * answer worth showing. A provider that could not be read is a gap, and the
-   * column has to disappear rather than render a zero an operator would read as
-   * "this customer pays nothing". The first is a missing field on an otherwise
-   * available row; the second is declared in unavailable_fields. */
+   * PRESENT with an identifier — the provider holds this account.
+   * PRESENT with none — the provider was asked and holds nothing. Never paid.
+   * MISSING — nobody answered. Either the provider could not be read, which the
+   *   server declares in unavailable_fields, or the server predates the field
+   *   entirely. Both must render as unavailable.
+   *
+   * That last case is why "never paid" is read from an EMPTY projection and never
+   * from a missing one. A console deployed ahead of its server sees the field on
+   * no row at all, and reading that as "never paid" would report every paying
+   * customer as unbilled — wrong about money, with nothing on screen to show it. */
+  function providerAnswered(customer) {
+    return projectionFieldAvailable(customer, "stripe") && Boolean(customer?.stripe);
+  }
+
   function providerAccount(customer) {
-    return projectionFieldAvailable(customer, "stripe") ? customer?.stripe || null : null;
+    return providerAnswered(customer) ? customer.stripe : null;
+  }
+
+  function providerHoldsAccount(customer) {
+    return Boolean(stringValue(providerAccount(customer)?.customerId));
   }
 
   function safeCount(value) {
@@ -1435,9 +1448,9 @@
    * holding two is charged for two, and reporting the first states half the
    * customer's bill while looking entirely correct. */
   function providerChargedSummary(customer) {
-    if (!projectionFieldAvailable(customer, "stripe")) return UNAVAILABLE;
-    const account = customer?.stripe;
-    if (!account) return "never billed";
+    if (!providerAnswered(customer)) return UNAVAILABLE;
+    if (!providerHoldsAccount(customer)) return "never billed";
+    const account = providerAccount(customer);
     const active = safeCount(account.activeSubscriptionCount);
     if (active === 0n) return "nothing billing";
     return `${formatOptionalMoney(account.recurringTotal)} · ${formatCount(active)} subscription${active === 1n ? "" : "s"}`;
@@ -1473,14 +1486,14 @@
     const stateNode = document.querySelector("[data-customer-subscriptions-state]");
     if (!list) return;
     list.replaceChildren();
-    if (!projectionFieldAvailable(customer, "stripe")) {
+    if (!providerAnswered(customer)) {
       if (stateNode) setValue(stateNode, UNAVAILABLE);
       return;
     }
-    const account = customer?.stripe;
+    const account = providerAccount(customer);
     const subscriptions = Array.isArray(account?.subscriptions) ? account.subscriptions : [];
     if (!subscriptions.length) {
-      if (stateNode) stateNode.textContent = account ? "None." : "This account has never been billed.";
+      if (stateNode) stateNode.textContent = providerHoldsAccount(customer) ? "None." : "This account has never been billed.";
       return;
     }
     if (stateNode) stateNode.textContent = `${formatCount(subscriptions.length)} on this account.`;
@@ -1536,13 +1549,13 @@
     setCustomerDetailField("mrr", projectionValue(customer, "monthly_recurring_revenue", formatOptionalMoney, customer.monthlyRecurringRevenue));
     setCustomerDetailField("economics", economics ? `${formatCredits(economics.creditsUsedMicros)} credits · ${formatOptionalMoney(economics.directCost)} direct cost` : UNAVAILABLE);
     const account = providerAccount(customer);
-    const providerReadable = projectionFieldAvailable(customer, "stripe");
-    setCustomerDetailField("billing-account", providerReadable
-      ? (account ? `${stringValue(account.customerId) || "no identifier"}${account.delinquent ? " · last charge failed" : ""}` : "never billed")
-      : UNAVAILABLE);
+    const held = providerHoldsAccount(customer);
+    const providerField = (value) => (providerAnswered(customer) ? (held ? value() : "never billed") : UNAVAILABLE);
+    setCustomerDetailField("billing-account", providerField(() =>
+      `${stringValue(account.customerId)}${account.delinquent ? " · last charge failed" : ""}`));
     setCustomerDetailField("charged", providerChargedSummary(customer));
-    setCustomerDetailField("card", providerReadable && account ? providerCardSummary(account) : (providerReadable ? "never billed" : UNAVAILABLE));
-    setCustomerDetailField("last-invoice", providerReadable && account ? providerInvoiceSummary(account) : (providerReadable ? "never billed" : UNAVAILABLE));
+    setCustomerDetailField("card", providerField(() => providerCardSummary(account)));
+    setCustomerDetailField("last-invoice", providerField(() => providerInvoiceSummary(account)));
     renderCustomerSubscriptions(customer);
     setCustomerDetailField("projection", projectionSummary(customer));
     ui.customerDetailState.textContent = `Current AdminService customer projection loaded · ${projectionSummary(customer)}.`;
