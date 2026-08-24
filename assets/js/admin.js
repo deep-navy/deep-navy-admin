@@ -158,7 +158,7 @@
   }
 
   function createAdminApi() {
-    if (!apiBaseUrl || generated?.PLATFORM_PROTOS_REVISION !== "aaf485ea57bd60a73f8551a0645c59b0c8b8c9bd" || typeof generated.createAdminApi !== "function") return null;
+    if (!apiBaseUrl || generated?.PLATFORM_PROTOS_REVISION !== "5a3d34b92328aa4d222ae74ac70cb7699985e09d" || typeof generated.createAdminApi !== "function") return null;
     try {
       return generated.createAdminApi({ baseUrl: apiBaseUrl, defaultTimeoutMs: 12_000 });
     } catch {
@@ -814,12 +814,91 @@
     return document.querySelectorAll(`[data-metric="${name}"]`);
   }
 
+  // Money as one integer, so two amounts can be compared and subtracted without
+  // going through a formatted string.
+  function moneyNanos(value) {
+    if (!value || typeof value !== "object") throw new Error("invalid_money");
+    return integerValue(value.units) * 1_000_000_000n + BigInt(Number(value.nanos || 0));
+  }
+
+  function nanosToMoney(currencyCode, nanos) {
+    const negative = nanos < 0n;
+    const magnitude = negative ? -nanos : nanos;
+    const units = magnitude / 1_000_000_000n;
+    const remainder = Number(magnitude % 1_000_000_000n);
+    return {
+      currencyCode,
+      units: negative ? -units : units,
+      nanos: negative ? -remainder : remainder
+    };
+  }
+
+  /* What Stripe charges, against what our own books recorded.
+   *
+   * These come from different places on purpose. The MRR above sums the
+   * subscriptions table, whose organization_id is UNIQUE — one organization, one
+   * subscription, and the schema cannot express anything else. Stripe can, and a
+   * second subscription on one account is therefore money we bill and do not
+   * record. Every figure derived from MRR is then wrong in the same direction
+   * with nothing else on this page able to show it.
+   *
+   * So the line reports the gap rather than resolving it: a disagreement here is
+   * a billing defect, and it should keep saying so until the defect is fixed. */
+  function renderContractedRevenue(overview) {
+    document.querySelectorAll('[data-metric-delta="mrr"]').forEach((element) => {
+      element.classList.remove("ad-val--success", "ad-val--attention", "ad-val--danger");
+      element.removeAttribute("title");
+      const contracted = projectionFieldAvailable(overview, "contracted") ? overview?.contracted : null;
+      if (!contracted) {
+        element.textContent = "Stripe not read";
+        return;
+      }
+      const subscriptions = safeCount(contracted.activeSubscriptionCount);
+      const accounts = safeCount(contracted.billedAccountCount);
+      element.title = [
+        `${formatCount(subscriptions)} active subscription${subscriptions === 1n ? "" : "s"} across ${formatCount(accounts)} billed account${accounts === 1n ? "" : "s"}`,
+        subscriptions > accounts ? "an account carries more than one subscription, which our records cannot hold" : "",
+        `Stripe read ${formatTimestamp(contracted.observedAt)}`
+      ].filter(Boolean).join(" · ");
+
+      let charged;
+      let difference;
+      try {
+        charged = moneyNanos(contracted.monthlyRecurringRevenue);
+        difference = charged - moneyNanos(overview.monthlyRecurringRevenue);
+      } catch {
+        element.textContent = "Stripe not read";
+        return;
+      }
+      if (difference === 0n) {
+        element.textContent = `matches Stripe · ${formatCount(subscriptions)} subscription${subscriptions === 1n ? "" : "s"}`;
+        return;
+      }
+      const currency = stringValue(contracted.monthlyRecurringRevenue?.currencyCode) || "USD";
+      const gap = formatOptionalMoney(nanosToMoney(currency, difference < 0n ? -difference : difference));
+      // Under-recording is the dangerous direction: we are charging money our own
+      // books do not know about. Over-recording is wrong too, but it overstates
+      // revenue rather than hiding a charge.
+      element.classList.add(difference > 0n ? "ad-val--danger" : "ad-val--attention");
+      element.textContent = difference > 0n
+        ? `Stripe charges ${formatOptionalMoney(contracted.monthlyRecurringRevenue)} · ${gap} unrecorded`
+        : `Stripe charges ${formatOptionalMoney(contracted.monthlyRecurringRevenue)} · ${gap} over-recorded`;
+    });
+  }
+
   function setMetric(name, value) {
     metricElements(name).forEach((element) => setValue(element, value));
   }
 
   function resetOverviewMetrics() {
     ["mrr", "arr", "active-customers", "active-teams", "gross-margin", "nrr", "churn", "new-customers", "churned-customers", "active-agents", "open-alerts", "at-risk-customers", "incidents", "prs-merged"].forEach((name) => setMetric(name, "—"));
+    // The MRR delta carries a reconciliation against Stripe. Left behind on a
+    // reset it would keep asserting a gap after the figures it compared are gone.
+    document.querySelectorAll('[data-metric-delta="mrr"]').forEach((element) => {
+      element.textContent = "";
+      element.removeAttribute("title");
+      element.classList.remove("ad-val--success", "ad-val--attention", "ad-val--danger");
+    });
   }
 
   function resetMetrics() {
@@ -1148,6 +1227,7 @@
     setMetric("incidents", projectionValue(overview, "production_incidents", formatCount, overview.productionIncidents));
     setMetric("prs-merged", projectionValue(overview, "pull_requests_merged", formatCount, overview.pullRequestsMerged));
     ui.overviewSource.forEach((element) => setValue(element, projectionSummary(overview)));
+    renderContractedRevenue(overview);
     document.querySelectorAll('[data-metric-delta="nrr"]').forEach((element) => {
       element.textContent = projectionFieldAvailable(overview, "net_revenue_retention_ratio") ? "measured this period" : "denominator was zero or untrustworthy";
     });

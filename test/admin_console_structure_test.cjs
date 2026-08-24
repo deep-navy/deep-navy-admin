@@ -414,3 +414,47 @@ test("the customers surface reads the provider projection honestly", () => {
   const invoice = functionBody("function providerInvoiceSummary");
   assert.ok(invoice.includes("amountRemaining"), "the invoice summary no longer reads the outstanding balance");
 });
+
+/* The overview's books-versus-Stripe reconciliation.
+ *
+ * MRR sums the subscriptions table, whose organization_id is UNIQUE — one
+ * organization, one subscription, and the schema cannot express anything else.
+ * Stripe can. A second subscription on one account is money we charge and do not
+ * record, and every figure derived from MRR is then understated with nothing
+ * else on the page able to show it. */
+test("the overview reports the gap between recorded and charged revenue", () => {
+  assert.ok(shell.includes('data-metric-delta="mrr"'), "the MRR tile lost its reconciliation slot");
+  const render = functionBody("function renderContractedRevenue");
+
+  // It must read the live figure through the availability gate, so an unread
+  // provider renders as unread rather than as zero — a zero here would say
+  // "Stripe charges nothing", which is the most alarming reading available and
+  // is untrue.
+  assert.ok(render.includes('projectionFieldAvailable(overview, "contracted")'),
+    "the contracted figure is no longer gated on availability");
+  assert.ok(render.includes("Stripe not read"), "an unread provider no longer says so");
+
+  // The gap is the point. Reporting only Stripe's number, or only ours, hides
+  // the disagreement that makes this worth showing.
+  assert.ok(/difference\s*=\s*charged\s*-\s*moneyNanos\(overview\.monthlyRecurringRevenue\)/.test(render),
+    "the delta no longer compares Stripe against our own recorded figure");
+  assert.ok(render.includes("unrecorded"), "under-recording is no longer named");
+
+  // Under-recording is the dangerous direction and must read as such: we are
+  // charging money our own books do not know about.
+  assert.ok(/difference > 0n \? "ad-val--danger"/.test(render),
+    "charging more than we record no longer reads as danger");
+
+  // The count difference is the CAUSE, and belongs with the number it explains.
+  assert.ok(render.includes("subscriptions > accounts"),
+    "the overview no longer explains that one account carries more than one subscription");
+
+  // The platform's own MRR is never rewritten here. Correcting it would silence
+  // the alarm instead of raising it.
+  assert.ok(!/setMetric\("mrr"/.test(render), "the reconciliation rewrites the recorded MRR");
+
+  // A reset must clear it, or the line keeps asserting a gap between figures
+  // that are no longer on screen.
+  const reset = functionBody("function resetOverviewMetrics");
+  assert.ok(reset.includes('[data-metric-delta="mrr"]'), "resetting the overview no longer clears the reconciliation");
+});
