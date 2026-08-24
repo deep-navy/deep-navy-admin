@@ -47,6 +47,9 @@
   const state = {
     // The ID token. See the token exchange for why it is not the access token.
     bearerToken: "",
+    view: "overview",
+    revalidateTimer: 0,
+    revalidateController: null,
     authorized: false,
     deadline: 0,
     sessionTimer: 0,
@@ -737,6 +740,9 @@
 
   function clearSession() {
     state.bearerToken = "";
+    // A revalidation outliving its session would send a cleared credential.
+    stopRevalidation();
+    state.revalidateController?.abort();
     state.authorized = false;
     state.deadline = 0;
     if (state.sessionTimer) window.clearTimeout(state.sessionTimer);
@@ -3212,8 +3218,84 @@
     audit: "Audit"
   };
 
+  // ---- keeping a page current -------------------------------------------
+  //
+  // Two of these projections stream: runtime instances and alerts arrive as
+  // sequence-ordered deltas and stay live on their own. The other seven are
+  // unary reads with no stream on the contract, so once refreshAll had run they
+  // were frozen — an operator could sit on Customers for an hour looking at a
+  // projection generated when they signed in, with nothing on screen advancing.
+  //
+  // Absent a stream, a periodic re-read of the ONE view being looked at is the
+  // honest mechanism. Not all seven: re-reading pages nobody is looking at
+  // spends the operator's API budget to keep hidden markup warm. And not while
+  // the tab is hidden, for the same reason — a background console must not
+  // poll.
+  //
+  // The projections already carry generated_at and the console already shows it
+  // through setFreshness, so this makes the displayed age move rather than
+  // introducing a new claim about currency. When a stream for these lands on the
+  // contract, this comes out and the subscription replaces it.
+  const REVALIDATE_MS = 30000;
+  const VIEW_LOADERS = {
+    overview: loadOverview,
+    customers: loadCustomers,
+    economics: loadEconomics,
+    operations: loadOperations,
+    metrics: loadMetrics,
+    billing: loadBilling,
+    audit: loadAudit
+  };
+
+  function stopRevalidation() {
+    if (state.revalidateTimer) {
+      window.clearInterval(state.revalidateTimer);
+      state.revalidateTimer = 0;
+    }
+  }
+
+  // A backgrounded console stops entirely rather than polling into a tab nobody
+  // is looking at, and re-reads once on return so the first thing an operator
+  // sees after switching back is current rather than however old the page was
+  // when they left it.
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") {
+      stopRevalidation();
+      return;
+    }
+    scheduleRevalidation();
+    void revalidateActiveView();
+  });
+
+  function scheduleRevalidation() {
+    stopRevalidation();
+    if (!state.authorized || document.visibilityState === "hidden") return;
+    state.revalidateTimer = window.setInterval(() => { void revalidateActiveView(); }, REVALIDATE_MS);
+  }
+
+  async function revalidateActiveView() {
+    if (!state.authorized || document.visibilityState === "hidden") return;
+    // A revalidation must never outlive the session it was scheduled in, and a
+    // manual refresh already reloads everything — so it yields rather than
+    // racing a full load for the same rows.
+    if (state.refreshController && ui.refresh?.disabled) return;
+    const loader = VIEW_LOADERS[state.view];
+    if (!loader) return;
+    const controller = new AbortController();
+    state.revalidateController = controller;
+    try {
+      await loader(controller.signal);
+    } catch {
+      // Each loader already renders its own honest failure state and sets its
+      // own freshness. A revalidation that fails must not blank a page that is
+      // currently showing good data, so nothing is done here.
+    }
+  }
+
   function setView(view) {
     const target = VIEWS.includes(view) ? view : "overview";
+    state.view = target;
+    scheduleRevalidation();
     document.querySelectorAll("[data-view]").forEach((section) => { section.hidden = section.dataset.view !== target; });
     // aria-current belongs to the NAVS, not to every control that happens to change
     // view. The overview's "All alerts" button and its attention rows also carry

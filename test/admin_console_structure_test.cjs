@@ -273,3 +273,40 @@ test("the billing chart is the one the data supports", () => {
   assert.match(app, /compositionSheet/);
   assert.doesNotMatch(app.slice(app.indexOf("function renderBillingComposition")), /\.style\./);
 });
+
+// Two projections stream — runtime instances and alerts arrive as
+// sequence-ordered deltas. The other seven are unary reads with no stream on
+// the contract, and once refreshAll had run they were frozen: an operator could
+// sit on Customers for an hour reading a projection generated at sign-in.
+test("the visible page keeps itself current, and only the visible one", () => {
+  assert.match(app, /const REVALIDATE_MS = \d+;/);
+  assert.match(app, /state\.revalidateTimer = window\.setInterval/);
+
+  // Only the view being looked at is re-read. Re-reading hidden pages spends an
+  // operator's API budget keeping markup nobody is looking at warm.
+  assert.match(app, /const loader = VIEW_LOADERS\[state\.view\];/);
+  const loaders = app.slice(app.indexOf("const VIEW_LOADERS"), app.indexOf("function stopRevalidation"));
+  for (const view of ["overview", "customers", "economics", "operations", "metrics", "billing", "audit"]) {
+    assert.ok(loaders.includes(`${view}:`), `${view} must be revalidatable`);
+  }
+  // The two that stream are deliberately absent from the map: they are already
+  // live and re-reading them would fight their own cursors.
+  assert.doesNotMatch(loaders, /runtimeCursor|alertCursor/);
+});
+
+test("a backgrounded console stops, and a signed-out one cannot revalidate", () => {
+  // Polling into a tab nobody is looking at is the same waste as polling hidden
+  // pages, and it happens for hours rather than seconds.
+  assert.match(app, /document\.visibilityState === "hidden"/);
+  assert.match(app, /document\.addEventListener\("visibilitychange"/);
+
+  // A revalidation outliving its session would send a cleared credential.
+  const signOut = app.slice(app.indexOf('state.bearerToken = "";'), app.indexOf('state.bearerToken = "";') + 400);
+  assert.match(signOut, /stopRevalidation\(\)/);
+  assert.match(signOut, /revalidateController\?\.abort\(\)/);
+
+  // A failed revalidation must not blank a page that is showing good data.
+  const revalidate = app.slice(app.indexOf("async function revalidateActiveView"), app.indexOf("function setView"));
+  assert.match(revalidate, /catch \{/);
+  assert.doesNotMatch(revalidate, /clearTable|setDataState\(/);
+});
