@@ -1794,6 +1794,34 @@
     });
   }
 
+  // The composition bars get their own adopted stylesheet rather than sharing
+  // the mix sheet: sizeMixSegments clears every rule it owns on each call, so a
+  // second writer into the same sheet would erase the first one's widths the
+  // next time either repainted. Same reasoning as that function otherwise —
+  // style-src 'self' refuses a style attribute silently, and a silently-refused
+  // width is a bar that renders at zero while looking right in the source.
+  let compositionSheet = null;
+  let compositionSequence = 0;
+  function sizeCompositionBars(fills) {
+    if (!("adoptedStyleSheets" in document) || typeof CSSStyleSheet !== "function") return;
+    if (!compositionSheet) {
+      try {
+        compositionSheet = new CSSStyleSheet();
+        document.adoptedStyleSheets = [...document.adoptedStyleSheets, compositionSheet];
+      } catch {
+        return;
+      }
+    }
+    for (let index = compositionSheet.cssRules.length - 1; index >= 0; index -= 1) compositionSheet.deleteRule(index);
+    compositionSequence += 1;
+    fills.forEach(({ element, share }, index) => {
+      const id = `b${compositionSequence}-${index}`;
+      element.dataset.bar = id;
+      const width = Math.max(0, Math.min(100, Number(share) || 0));
+      compositionSheet.insertRule(`[data-bar="${id}"]{width:${width.toFixed(2)}%}`, compositionSheet.cssRules.length);
+    });
+  }
+
   async function loadEconomics(signal) {
     setSectionState("economics", "Loading", "pending");
     const [economicsResult, slicesResult] = await Promise.allSettled([
@@ -2786,6 +2814,27 @@
     };
     Object.entries(values).forEach(([name, value]) => document.querySelectorAll(`[data-billing-metric="${name}"]`).forEach((element) => setValue(element, value)));
 
+    // Tone comes from the value, never from the markup. Zero is the healthy
+    // state for all four readings in the "Needs a person" row, and a platform
+    // with nothing wrong must not be painted in alarm colours — an operator who
+    // sees red every day stops reading red. A count the projection could not
+    // produce is left achromatic too: an unknown is not a reassurance and not an
+    // alarm, and colouring it either way would be a claim we cannot make.
+    //
+    // The two mismatch readings are danger rather than attention because each
+    // one is money already wrong in a specific direction: a paid customer with
+    // no crew has been billed for something undelivered, and a crew with no
+    // valid subscription is executing and drawing credits against nothing.
+    [["team-no-subscription", "danger"], ["paid-no-team", "danger"],
+     ["failed-payments", "danger"], ["mismatches", "attention"]].forEach(([name, tone]) => {
+      const raw = billingRiskCount(billing, name);
+      document.querySelectorAll(`[data-billing-risk="${name}"]`).forEach((card) => {
+        if (raw === null || raw === 0) card.removeAttribute("data-tone");
+        else card.setAttribute("data-tone", tone);
+      });
+    });
+    renderBillingComposition(billing);
+
     // The breakdown beside the mismatch count names the two kinds the projection
     // counts separately. A kind whose count is unavailable is listed as unavailable
     // rather than dropped, so the lines always add up to the headline or explain why
@@ -2816,6 +2865,74 @@
         : "the projection exposes one period revenue value";
     });
     return projectionSummary(billing);
+  }
+
+
+  // The raw count behind a risk reading, or null when the projection could not
+  // produce it. Deliberately NOT parsed back out of the rendered string: a
+  // formatted "—" and a formatted "0" are different facts and the formatter has
+  // already flattened them.
+  function billingRiskCount(billing, name) {
+    const field = {
+      "team-no-subscription": billing.provisionedTeamsWithoutValidSubscriptions,
+      "paid-no-team": billing.paidCustomersWithoutProvisionedTeams,
+      "failed-payments": billing.failedPayments,
+      mismatches: billing.openReconciliationIssues
+    }[name];
+    const parsed = Number(field);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+
+  // How the book divides, drawn. AdminBilling carries sixteen scalars and no
+  // series, so revenue-over-time is not available and is not invented here —
+  // this is the chart the data honestly supports. Bars rank against the largest
+  // slice rather than the total: with one dominant state every other row would
+  // be an identical sliver. Every figure stays printed beside its bar, so the
+  // drawing orders what the numbers already say.
+  function renderBillingComposition(billing) {
+    const host = document.querySelector("[data-billing-composition]");
+    const meta = document.querySelector("[data-billing-composition-meta]");
+    if (!host) return;
+    const slices = [
+      { state: "active", label: "Active", count: Number(billing.activeSubscriptions) },
+      { state: "trialing", label: "Trialing", count: Number(billing.trialingSubscriptions) },
+      { state: "past-due", label: "Past due", count: Number(billing.pastDueInvoices) },
+      { state: "cancelled", label: "Cancelled this period", count: Number(billing.cancellations) }
+    ].filter((slice) => Number.isFinite(slice.count));
+
+    host.replaceChildren();
+    if (!slices.length) {
+      const note = document.createElement("p");
+      note.className = "ad-note";
+      note.textContent = "The subscription projection did not report any state counts, so nothing is drawn. This is not a book with no subscriptions in it — the counts were not produced.";
+      host.append(note);
+      if (meta) meta.textContent = "";
+      return;
+    }
+    const largest = slices.reduce((most, slice) => (slice.count > most ? slice.count : most), 0);
+    const total = slices.reduce((sum, slice) => sum + slice.count, 0);
+    const pending = [];
+    slices.forEach((slice) => {
+      const row = document.createElement("div");
+      row.className = "ad-split";
+      const name = document.createElement("span");
+      name.className = "ad-split__name";
+      name.textContent = slice.label;
+      const value = document.createElement("span");
+      value.className = "ad-split__num";
+      value.textContent = new Intl.NumberFormat().format(slice.count);
+      const track = document.createElement("span");
+      track.className = "ad-split__track";
+      const fill = document.createElement("i");
+      fill.className = "ad-split__fill";
+      fill.dataset.slice = slice.state;
+      pending.push({ element: fill, share: largest > 0 ? (slice.count / largest) * 100 : 0 });
+      track.append(fill);
+      row.append(name, value, track);
+      host.append(row);
+    });
+    sizeCompositionBars(pending);
+    if (meta) meta.textContent = `${new Intl.NumberFormat().format(total)} counted · ranked against the largest`;
   }
 
   function renderBillingAccounts(accountsResponse) {

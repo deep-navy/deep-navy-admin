@@ -82,13 +82,18 @@ test("the metrics explorer speaks the proxy's real vocabulary", () => {
   // Same ten names the proxy accepts, now in the approved mockup's display order:
   // the six that report first, then the four that are empty by construction, so the
   // callout that explains them sits directly under them.
-  const panelOrder = [...js.matchAll(/\{ key: "([a-z0-9_]+)"/g)].map((match) => match[1]);
+  // Scoped to METRICS_PANELS. This scanned the whole file, so any unrelated
+  // object literal with a key property joined the panel list and failed this
+  // test from somewhere else entirely — which is how a billing chart broke the
+  // metrics vocabulary pin.
+  const panelBlock = js.slice(js.indexOf("const METRICS_PANELS"), js.indexOf("];", js.indexOf("const METRICS_PANELS")));
+  const panelOrder = [...panelBlock.matchAll(/\{ key: "([a-z0-9_]+)"/g)].map((match) => match[1]);
   assert.deepEqual(panelOrder, [
     "request_rate", "error_rate", "latency_p95", "goroutines", "memory_bytes", "queue_depth",
     "target_health", "llm_tokens", "llm_cost_usd", "run_duration"
   ]);
-  assert.equal([...js.matchAll(/filterable: true/g)].length, 5);
-  assert.ok(panelOrder.slice(5).every((key) => new RegExp(`key: "${key}"[^\\n]*filterable: false`).test(js)));
+  assert.equal([...panelBlock.matchAll(/filterable: true/g)].length, 5);
+  assert.ok(panelOrder.slice(5).every((key) => new RegExp(`key: "${key}"[^\\n]*filterable: false`).test(panelBlock)));
   // This pin previously named "builder" and "gateway" — neither is a service we
   // run, so the filter they produced could never match a series and the panel
   // read as an outage. The list must equal the deployments' OTEL_SERVICE_NAME

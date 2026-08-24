@@ -528,3 +528,40 @@ svg.dn-icon {
   .ad-theme:hover { color: var(--text-primary); }
   .skip-link:hover { color: var(--text-primary); }
 }
+
+/* ---- money at risk, first ----
+   Four readings that need a person, above everything the page merely reports.
+   The row is achromatic until admin.js reads a value: zero is the healthy state
+   for all four, and painting a healthy platform in alarm colours is how an
+   operator learns to ignore the colour. Tone arrives from the data. */
+.ad-attention { display: grid; gap: var(--space-2); margin-bottom: var(--space-4); }
+.ad-attention__row { display: grid; gap: var(--space-3); grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 900px) { .ad-attention__row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .ad-attention__row { grid-template-columns: minmax(0, 1fr); } }
+/* Non-zero is the whole point of the row, so it is said three ways — the border,
+   the figure's colour, and the words already in the label — and never by hue
+   alone. filter: grayscale(1) must leave it readable. */
+[data-billing-risk][data-tone="danger"] { border-color: var(--status-danger-border); background: var(--status-danger-bg); }
+[data-billing-risk][data-tone="danger"] .dn-stat__value { color: var(--status-danger-fg); }
+[data-billing-risk][data-tone="attention"] { border-color: var(--status-attention-border); background: var(--status-attention-bg); }
+[data-billing-risk][data-tone="attention"] .dn-stat__value { color: var(--status-attention-fg); }
+
+/* .ad-3 and .ad-4 already define the grid above; this only adds the space that
+   separates the two named groups, so the two definitions cannot disagree about
+   columns or gap. Their existing responsive rules still apply. */
+.ad-3, .ad-4 { margin-bottom: var(--space-4); }
+
+/* ---- how the book divides ----
+   The only chart AdminBilling honestly supports: sixteen scalars, no series.
+   Bars rank against the largest slice; the figures stay printed beside them. */
+.ad-composition { margin-bottom: var(--space-4); }
+.ad-split { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-1) var(--space-3); align-items: baseline; }
+.ad-split + .ad-split { margin-top: var(--space-25); }
+.ad-split__name { font: var(--type-ui-sm); color: var(--text-primary); }
+.ad-split__num { font-family: var(--font-mono); font-size: var(--fs-micro); font-variant-numeric: tabular-nums; color: var(--text-secondary); }
+.ad-split__track { grid-column: 1 / -1; position: relative; display: block; height: 6px; border-radius: var(--radius-xs); background: var(--surface-sunken); overflow: hidden; }
+.ad-split__fill { position: absolute; left: 0; top: 0; bottom: 0; min-width: 2px; background: var(--text-tertiary); }
+.ad-split__fill[data-slice="active"] { background: var(--status-success-fg); }
+.ad-split__fill[data-slice="trialing"] { background: var(--status-live-fg); }
+.ad-split__fill[data-slice="past-due"] { background: var(--status-attention-fg); }
+.ad-split__fill[data-slice="cancelled"] { background: var(--status-danger-fg); }

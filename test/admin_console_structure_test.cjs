@@ -227,3 +227,49 @@ test("the audit trail filters on the server and says so where it cannot", () => 
   assert.match(app, /auditRequestId\.disabled = true/);
   assert.match(app, /There is no request-ID filter in the API/);
 });
+
+// The billing page was a wall: fourteen figures and three tables in no order of
+// importance, with the two readings that need a person smallest and last. These
+// pin the ordering decision, not the styling.
+test("billing leads with what needs a person", () => {
+  const billing = shell.slice(shell.indexOf('data-view="billing"'), shell.indexOf('data-view="metrics"'));
+
+  // The risk row comes before the money, and the money before the movement.
+  const attention = billing.indexOf("data-billing-attention");
+  const money = billing.indexOf('data-billing-metric="collected"');
+  const movement = billing.indexOf('data-billing-metric="upgrades"');
+  assert.ok(attention !== -1, "the risk row exists");
+  assert.ok(attention < money && money < movement,
+    "risk, then money, then subscription movement");
+
+  // The two mismatch readings are the sharp end and must be in that row — one
+  // says we billed for something undelivered, the other that a crew is running
+  // and drawing credits with nothing behind it.
+  const risk = billing.slice(attention, money);
+  for (const metric of ["team-no-subscription", "paid-no-team", "failed-payments", "mismatches"]) {
+    assert.ok(risk.includes(`data-billing-metric="${metric}"`), `${metric} belongs in the risk row`);
+  }
+
+  // Tone is never baked into the markup: zero is the healthy state for all four,
+  // and a platform with nothing wrong must not be painted in alarm colours.
+  assert.doesNotMatch(risk, /data-tone="(danger|attention)"/,
+    "tone must come from the value, not the template");
+  assert.match(app, /if \(raw === null \|\| raw === 0\) card\.removeAttribute\("data-tone"\)/,
+    "zero and unknown clear the tone");
+});
+
+test("the billing chart is the one the data supports", () => {
+  // AdminBilling is sixteen scalars with no series, so revenue-over-time is not
+  // available. Composition is, and it must not be faked into a trend.
+  assert.match(shell, /data-billing-composition/);
+  assert.doesNotMatch(app, /renderBillingComposition[\s\S]{0,900}(daily|perDay|overTime|trend)/i,
+    "no time series may be synthesised from point-in-time scalars");
+  // Ranked against the largest slice, with every figure still printed.
+  assert.match(app, /largest > 0 \? \(slice\.count \/ largest\) \* 100 : 0/);
+  assert.match(app, /value\.textContent = new Intl\.NumberFormat\(\)\.format\(slice\.count\)/);
+  // style-src 'self' refuses a style attribute silently, so widths go through an
+  // adopted stylesheet — and its own, because sizeMixSegments clears every rule
+  // in the sheet it owns.
+  assert.match(app, /compositionSheet/);
+  assert.doesNotMatch(app.slice(app.indexOf("function renderBillingComposition")), /\.style\./);
+});

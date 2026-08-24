@@ -477,18 +477,90 @@
           <span class="dn-badge ad-badge-none" data-section-state="billing">Waiting</span>
         </div>
 
-        <div class="ad-6">
-          <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm"><span class="dn-stat__label">Active subs</span><span class="dn-stat__value" data-billing-metric="active">—</span></div>
+        {%- comment -%}
+          Money at risk, first and on its own.
+
+          These four were spread across the page: failed payments sat in a
+          six-across strip beside Upgrades, and the two mismatch counts were the
+          smallest thing on the screen, in a sub-card in the right column. They
+          are the only figures here that require a person to do something, and
+          the two mismatches are the sharper end of that — one says we have taken
+          money and delivered nothing, the other says we are delivering with no
+          valid subscription behind it. A team running without a subscription is
+          not hypothetical: it is what happens when a provisioning reconcile
+          stalls before it records the runtime, and this row is where it shows.
+
+          Tone is applied by admin.js from the value, never baked into the
+          markup: zero is the good state and must not be painted as an alarm, so
+          a static danger class would cry wolf on a healthy platform.
+        {%- endcomment -%}
+        <section class="ad-attention" data-billing-attention aria-labelledby="billing-attention-title">
+          <span class="dn-eyebrow" id="billing-attention-title">Needs a person</span>
+          <div class="ad-attention__row">
+            <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm" data-billing-risk="team-no-subscription">
+              <span class="dn-stat__label">Teams with no valid subscription</span>
+              <span class="dn-stat__value" data-billing-metric="team-no-subscription">—</span>
+              <span class="dn-stat__delta">running, unbilled</span>
+            </div>
+            <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm" data-billing-risk="paid-no-team">
+              <span class="dn-stat__label">Paid with no team provisioned</span>
+              <span class="dn-stat__value" data-billing-metric="paid-no-team">—</span>
+              <span class="dn-stat__delta">billed, undelivered</span>
+            </div>
+            <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm" data-billing-risk="failed-payments">
+              <span class="dn-stat__label">Failed payments</span>
+              <span class="dn-stat__value" data-billing-metric="failed-payments">—</span>
+              <span class="dn-stat__delta">in this period</span>
+            </div>
+            <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm" data-billing-risk="mismatches">
+              <span class="dn-stat__label">Open mismatches</span>
+              <span class="dn-stat__value" data-billing-metric="mismatches">—</span>
+              <span class="dn-stat__delta" data-mismatch-breakdown></span>
+            </div>
+          </div>
+        </section>
+
+        {%- comment -%}
+          Then the money, then the movement. Two named groups rather than one
+          six-across row: "Collected revenue" and "Upgrades" are different kinds
+          of fact and reading them as one strip is what made the page a wall.
+        {%- endcomment -%}
+        <span class="dn-eyebrow">Money in this period</span>
+        <div class="ad-3">
+          <div class="dn-card dn-card--pad-sm dn-stat"><span class="dn-stat__label">Collected revenue</span><span class="dn-stat__value" data-billing-metric="collected">—</span><span class="dn-stat__delta" data-billing-metric-delta="collected"></span></div>
+          <div class="dn-card dn-card--pad-sm dn-stat"><span class="dn-stat__label">Customer credit balance</span><span class="dn-stat__value" data-billing-metric="credit-balance">—</span><span class="dn-stat__delta" data-billing-metric-delta="credit-balance"></span></div>
+          <div class="dn-card dn-card--pad-sm dn-stat"><span class="dn-stat__label">Renewals in 30 days</span><span class="dn-stat__value" data-billing-metric="renewals">—</span><span class="dn-stat__delta">next billing cycle</span></div>
+        </div>
+
+        <span class="dn-eyebrow">Subscriptions</span>
+        <div class="ad-4">
+          <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm"><span class="dn-stat__label">Active</span><span class="dn-stat__value" data-billing-metric="active">—</span></div>
           <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm"><span class="dn-stat__label">Trials</span><span class="dn-stat__value" data-billing-metric="trialing">—</span></div>
           <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm"><span class="dn-stat__label">Upgrades</span><span class="dn-stat__value" data-billing-metric="upgrades">—</span></div>
           <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm"><span class="dn-stat__label">Downgrades</span><span class="dn-stat__value" data-billing-metric="downgrades">—</span></div>
-          <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm"><span class="dn-stat__label">Failed payments</span><span class="dn-stat__value" data-billing-metric="failed-payments" data-tone="danger">—</span></div>
-          <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm"><span class="dn-stat__label">Renewals in 30d</span><span class="dn-stat__value" data-billing-metric="renewals">—</span></div>
         </div>
+
+        {%- comment -%}
+          The composition of the book, drawn. AdminBilling is sixteen scalars
+          with no time series, so revenue-over-time is not available without a
+          proto change and is not faked here — this is the one chart the data
+          honestly supports: how the subscriptions divide right now. Bars are
+          proportional to the largest slice and every figure stays printed, so
+          the drawing ranks what the numbers say rather than replacing them.
+        {%- endcomment -%}
+        <section class="dn-chart__frame ad-composition" data-billing-composition-panel aria-labelledby="billing-composition-title">
+          <div class="dn-chart__head">
+            <strong class="dn-chart__title" id="billing-composition-title">How the book divides</strong>
+            <span class="dn-chart__meta" data-billing-composition-meta></span>
+          </div>
+          <div class="dn-chart__body">
+            <div class="dn-chart" data-billing-composition></div>
+          </div>
+        </section>
 
         <div class="ad-cols ad-cols--narrow">
           <section class="ad-section">
-            <span class="dn-eyebrow">Team execution capacity</span>
+            <span class="dn-eyebrow">Per team · execution capacity</span>
             <div class="dn-card ad-scroll">
               <table class="dn-table dn-table--dense">
                 <caption class="visually-hidden">Current paid-period team credit controls</caption>
@@ -498,7 +570,7 @@
               <p class="dn-card__body ad-note" data-table-empty="team-credit-controls">No current team credit controls loaded.</p>
             </div>
 
-            <span class="dn-eyebrow">Customer billing accounts</span>
+            <span class="dn-eyebrow">Per customer · subscription and credits</span>
             <div class="dn-card ad-scroll">
               <table class="dn-table dn-table--dense">
                 <caption class="visually-hidden">Customer subscription and credit accounts</caption>
@@ -520,15 +592,6 @@
           </section>
 
           <section class="ad-section">
-            <div class="dn-card dn-card--pad-sm dn-stat"><span class="dn-stat__label">Customer credit balance</span><span class="dn-stat__value" data-billing-metric="credit-balance">—</span><span class="dn-stat__delta" data-billing-metric-delta="credit-balance"></span></div>
-            <div class="dn-card dn-card--pad-sm dn-stat"><span class="dn-stat__label">Collected revenue</span><span class="dn-stat__value" data-billing-metric="collected">—</span><span class="dn-stat__delta" data-billing-metric-delta="collected"></span></div>
-            <div class="dn-card dn-card--pad-sm ad-stack">
-              <span class="dn-eyebrow">Open mismatches</span>
-              <div class="ad-mismatch">
-                <span class="ad-mismatch__n" data-billing-metric="mismatches">—</span>
-                <span class="ad-mismatch__list" data-mismatch-breakdown></span>
-              </div>
-            </div>
             <div class="ad-guard">
               <div class="ad-guard__title">Privileged controls stay unavailable until they are auditable</div>
               <div class="ad-guard__body">Suspend, resume, delete and reconciliation mutations need explicit confirmation, idempotency, server-side founder authorization and immutable audit records. This portal will not route around that boundary with customer-scoped methods.</div>
