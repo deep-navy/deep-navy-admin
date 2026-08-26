@@ -6,3 +6,8 @@ vendor/bundle/
 .bundle/
 node_modules/
 _config.runtime.yml
+
+# Local agent worktrees and scratch. Never publishable: this repo is
+# PUBLIC and .claude/worktrees can hold whole stale copies of the site,
+# internal redesign notes included. One `git add -A` would ship them.
+.claude/
