@@ -29,6 +29,7 @@ export const SUPPORTED_PROCEDURES = Object.freeze([
   "admin_customer",
   "admin_customer_reliability",
   "admin_economics",
+  "admin_cost_truth",
   "admin_team_economics",
   "admin_fleet",
   "admin_runtimes",
