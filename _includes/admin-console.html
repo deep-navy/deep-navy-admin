@@ -386,6 +386,27 @@
           <span class="dn-badge ad-badge-none" data-section-state="economics">Waiting</span>
         </div>
 
+        {%- comment -%}
+          Ground truth. Every other number in this section is the platform's
+          own ledger; these three cards are what AWS, the model proxy and the
+          observability plane each say, fetched live when the section loads.
+          A source that cannot be read renders "unavailable", never zero.
+        {%- endcomment -%}
+        <div class="ad-cols" data-cost-truth>
+          <div class="dn-card dn-card--pad-sm ad-stack">
+            <div class="ad-section__head"><span class="dn-eyebrow">Cloud spend, per its own bill</span><span class="ad-section__count" data-truth-note="aws">waiting</span></div>
+            <ul class="ad-list" data-truth-list="aws"></ul>
+          </div>
+          <div class="dn-card dn-card--pad-sm ad-stack">
+            <div class="ad-section__head"><span class="dn-eyebrow">Model proxy spend, per team</span><span class="ad-section__count" data-truth-note="litellm">waiting</span></div>
+            <ul class="ad-list" data-truth-list="litellm"></ul>
+          </div>
+          <div class="dn-card dn-card--pad-sm ad-stack">
+            <div class="ad-section__head"><span class="dn-eyebrow">Observed model traffic, 24h</span><span class="ad-section__count" data-truth-note="langfuse">waiting</span></div>
+            <ul class="ad-list" data-truth-list="langfuse"></ul>
+          </div>
+        </div>
+
         <div class="ad-4">
           <div class="dn-card dn-card--pad-sm dn-stat"><span class="dn-stat__label">Direct cost</span><span class="dn-stat__value" data-economics-metric="direct-cost">—</span><span class="dn-stat__delta">model · compute · storage · tooling</span></div>
           <div class="dn-card dn-card--pad-sm dn-stat"><span class="dn-stat__label">Recognized revenue</span><span class="dn-stat__value" data-economics-metric="revenue">—</span><span class="dn-stat__delta">same reporting period</span></div>

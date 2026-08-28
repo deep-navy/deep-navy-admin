@@ -4,6 +4,8 @@
 
 import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
 import { enumDesc, fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
+import type { LifecycleState } from "./common_pb.js";
+import { file_deepnavy_v1_common } from "./common_pb.js";
 import type { Duration, Timestamp } from "@bufbuild/protobuf/wkt";
 import { file_google_protobuf_duration, file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
 import type { Message } from "@bufbuild/protobuf";
@@ -12,7 +14,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file deepnavy/v1/provisioning.proto.
  */
 export const file_deepnavy_v1_provisioning: GenFile = /*@__PURE__*/
-  fileDesc("Ch5kZWVwbmF2eS92MS9wcm92aXNpb25pbmcucHJvdG8SC2RlZXBuYXZ5LnYxImUKF1Byb3Zpc2lvbmluZ0Vycm9yRGV0YWlsEjQKBnJlYXNvbhgBIAEoDjIkLmRlZXBuYXZ5LnYxLlByb3Zpc2lvbmluZ0Vycm9yUmVhc29uEhQKDHNhZmVfbWVzc2FnZRgCIAEoCSKaBAoSUHJvdmlzaW9uaW5nU3RhdHVzEg8KB3RlYW1faWQYASABKAkSFQoJb3BlcmF0aW9uGAIgASgJQgIYARISCgZzdGF0dXMYAyABKAlCAhgBEhAKBHN0ZXAYBCABKAlCAhgBEhIKCnNhZmVfZXJyb3IYBSABKAkSLgoKdXBkYXRlZF9hdBgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASOgoOb3BlcmF0aW9uX3R5cGUYByABKA4yIi5kZWVwbmF2eS52MS5Qcm92aXNpb25pbmdPcGVyYXRpb24SOgoScHJvdmlzaW9uaW5nX3N0YXRlGAggASgOMh4uZGVlcG5hdnkudjEuUHJvdmlzaW9uaW5nU3RhdGUSOAoRcHJvdmlzaW9uaW5nX3N0ZXAYCSABKA4yHS5kZWVwbmF2eS52MS5Qcm92aXNpb25pbmdTdGVwEhoKEmRlc2lyZWRfZ2VuZXJhdGlvbhgKIAEoAxISCgpjb21tYW5kX2lkGAsgASgJEg8KB2F0dGVtcHQYDCABKAUSMQoNbmV4dF9yZXRyeV9hdBgNIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASEAoIc2VxdWVuY2UYDiABKAMSOgoMZXJyb3JfcmVhc29uGA8gASgOMiQuZGVlcG5hdnkudjEuUHJvdmlzaW9uaW5nRXJyb3JSZWFzb24i+QIKE1Byb3Zpc2lvbmluZ0NvbW1hbmQSCgoCaWQYASABKAkSDwoHdGVhbV9pZBgCIAEoCRIXCg9vcmdhbml6YXRpb25faWQYAyABKAkSNQoJb3BlcmF0aW9uGAQgASgOMiIuZGVlcG5hdnkudjEuUHJvdmlzaW9uaW5nT3BlcmF0aW9uEhoKEmRlc2lyZWRfZ2VuZXJhdGlvbhgFIAEoAxIRCgl0ZWFtX25hbWUYBiABKAkSGAoQdGVtcGxhdGVfdmVyc2lvbhgHIAEoCRIeChZnaXRodWJfaW5zdGFsbGF0aW9uX2lkGAggASgDEhYKDnJlcG9zaXRvcnlfaWRzGAkgAygJEg8KB3BsYW5faWQYCiABKAkSGQoRZGVkdXBsaWNhdGlvbl9rZXkYCyABKAkSMAoMcmVxdWVzdGVkX2F0GAwgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIWCg5lbmdpbmVlcl9jb3VudBgNIAEoBSL0AgoRUHJvdmlzaW9uaW5nRXZlbnQSCgoCaWQYASABKAkSEgoKY29tbWFuZF9pZBgCIAEoCRIPCgd0ZWFtX2lkGAMgASgJEhAKCHNlcXVlbmNlGAQgASgDEjoKEnByb3Zpc2lvbmluZ19zdGF0ZRgFIAEoDjIeLmRlZXBuYXZ5LnYxLlByb3Zpc2lvbmluZ1N0YXRlEjgKEXByb3Zpc2lvbmluZ19zdGVwGAYgASgOMh0uZGVlcG5hdnkudjEuUHJvdmlzaW9uaW5nU3RlcBIPCgdhdHRlbXB0GAcgASgFEjoKDGVycm9yX3JlYXNvbhgIIAEoDjIkLmRlZXBuYXZ5LnYxLlByb3Zpc2lvbmluZ0Vycm9yUmVhc29uEhQKDHNhZmVfc3VtbWFyeRgJIAEoCRISCgpzYWZlX2Vycm9yGAogASgJEi8KC29jY3VycmVkX2F0GAsgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCKPAQoZUHJvdmlzaW9uaW5nUnVudGltZVJlc3VsdBIcChRrdWJlcm5ldGVzX25hbWVzcGFjZRgBIAEoCRIeChZvcGVuY2xhd19pbnN0YW5jZV9uYW1lGAIgASgJEhcKD2xpdGVsbG1fdGVhbV9pZBgDIAEoCRIbChNsYW5nZnVzZV9wcm9qZWN0X2lkGAQgASgJIvoCChZQcm92aXNpb25pbmdFdmVudElucHV0EgoKAmlkGAEgASgJEjoKEnByb3Zpc2lvbmluZ19zdGF0ZRgCIAEoDjIeLmRlZXBuYXZ5LnYxLlByb3Zpc2lvbmluZ1N0YXRlEjgKEXByb3Zpc2lvbmluZ19zdGVwGAMgASgOMh0uZGVlcG5hdnkudjEuUHJvdmlzaW9uaW5nU3RlcBIPCgdhdHRlbXB0GAQgASgFEjoKDGVycm9yX3JlYXNvbhgFIAEoDjIkLmRlZXBuYXZ5LnYxLlByb3Zpc2lvbmluZ0Vycm9yUmVhc29uEhQKDHNhZmVfc3VtbWFyeRgGIAEoCRISCgpzYWZlX2Vycm9yGAcgASgJEi8KC29ic2VydmVkX2F0GAggASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBI2CgZyZXN1bHQYCSABKAsyJi5kZWVwbmF2eS52MS5Qcm92aXNpb25pbmdSdW50aW1lUmVzdWx0IuoBChFUZWFtUnVudGltZUhlYWx0aBIuCgVzdGF0ZRgBIAEoDjIfLmRlZXBuYXZ5LnYxLlJ1bnRpbWVIZWFsdGhTdGF0ZRIVCg1nYXRld2F5X3JlYWR5GAIgASgIEhkKEXJlYWR5X2FnZW50X2NvdW50GAMgASgFEjAKBnJlYXNvbhgEIAEoDjIgLmRlZXBuYXZ5LnYxLlJ1bnRpbWVIZWFsdGhSZWFzb24SLwoLb2JzZXJ2ZWRfYXQYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhAKCHNlcXVlbmNlGAYgASgDIi8KHEdldFByb3Zpc2lvbmluZ1N0YXR1c1JlcXVlc3QSDwoHdGVhbV9pZBgBIAEoCSKOAQodR2V0UHJvdmlzaW9uaW5nU3RhdHVzUmVzcG9uc2USNQoMcHJvdmlzaW9uaW5nGAEgASgLMh8uZGVlcG5hdnkudjEuUHJvdmlzaW9uaW5nU3RhdHVzEjYKDnJ1bnRpbWVfaGVhbHRoGAIgASgLMh4uZGVlcG5hdnkudjEuVGVhbVJ1bnRpbWVIZWFsdGgiSgofU3RyZWFtUHJvdmlzaW9uaW5nU3RhdHVzUmVxdWVzdBIPCgd0ZWFtX2lkGAEgASgJEhYKDmFmdGVyX3NlcXVlbmNlGAIgASgDIsABCiBTdHJlYW1Qcm92aXNpb25pbmdTdGF0dXNSZXNwb25zZRI1Cgxwcm92aXNpb25pbmcYASABKAsyHy5kZWVwbmF2eS52MS5Qcm92aXNpb25pbmdTdGF0dXMSLQoFZXZlbnQYAiABKAsyHi5kZWVwbmF2eS52MS5Qcm92aXNpb25pbmdFdmVudBI2Cg5ydW50aW1lX2hlYWx0aBgDIAEoCzIeLmRlZXBuYXZ5LnYxLlRlYW1SdW50aW1lSGVhbHRoIn4KIExlYXNlUHJvdmlzaW9uaW5nQ29tbWFuZHNSZXF1ZXN0EhEKCXdvcmtlcl9pZBgBIAEoCRIUCgxtYXhfY29tbWFuZHMYAiABKAUSMQoObGVhc2VfZHVyYXRpb24YAyABKAsyGS5nb29nbGUucHJvdG9idWYuRHVyYXRpb24iqgEKGUxlYXNlZFByb3Zpc2lvbmluZ0NvbW1hbmQSMQoHY29tbWFuZBgBIAEoCzIgLmRlZXBuYXZ5LnYxLlByb3Zpc2lvbmluZ0NvbW1hbmQSEwoLbGVhc2VfdG9rZW4YAiABKAkSNAoQbGVhc2VfZXhwaXJlc19hdBgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASDwoHYXR0ZW1wdBgEIAEoBSJdCiFMZWFzZVByb3Zpc2lvbmluZ0NvbW1hbmRzUmVzcG9uc2USOAoIY29tbWFuZHMYASADKAsyJi5kZWVwbmF2eS52MS5MZWFzZWRQcm92aXNpb25pbmdDb21tYW5kIoIBCiRSZW5ld1Byb3Zpc2lvbmluZ0NvbW1hbmRMZWFzZVJlcXVlc3QSEgoKY29tbWFuZF9pZBgBIAEoCRITCgtsZWFzZV90b2tlbhgCIAEoCRIxCg5sZWFzZV9kdXJhdGlvbhgDIAEoCzIZLmdvb2dsZS5wcm90b2J1Zi5EdXJhdGlvbiJdCiVSZW5ld1Byb3Zpc2lvbmluZ0NvbW1hbmRMZWFzZVJlc3BvbnNlEjQKEGxlYXNlX2V4cGlyZXNfYXQYASABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIn0KHlJlY29yZFByb3Zpc2lvbmluZ0V2ZW50UmVxdWVzdBISCgpjb21tYW5kX2lkGAEgASgJEhMKC2xlYXNlX3Rva2VuGAIgASgJEjIKBWV2ZW50GAMgASgLMiMuZGVlcG5hdnkudjEuUHJvdmlzaW9uaW5nRXZlbnRJbnB1dCJYCh9SZWNvcmRQcm92aXNpb25pbmdFdmVudFJlc3BvbnNlEjUKDHByb3Zpc2lvbmluZxgBIAEoCzIfLmRlZXBuYXZ5LnYxLlByb3Zpc2lvbmluZ1N0YXR1cyLuAgoTUnVudGltZUhlYWx0aFJlcG9ydBIKCgJpZBgBIAEoCRIPCgd0ZWFtX2lkGAIgASgJEhoKEmRlc2lyZWRfZ2VuZXJhdGlvbhgDIAEoAxIbChNvYnNlcnZlZF9nZW5lcmF0aW9uGAQgASgDEhwKFGt1YmVybmV0ZXNfbmFtZXNwYWNlGAUgASgJEh4KFm9wZW5jbGF3X2luc3RhbmNlX25hbWUYBiABKAkSLgoFc3RhdGUYByABKA4yHy5kZWVwbmF2eS52MS5SdW50aW1lSGVhbHRoU3RhdGUSFQoNZ2F0ZXdheV9yZWFkeRgIIAEoCBIZChFyZWFkeV9hZ2VudF9jb3VudBgJIAEoBRIwCgZyZWFzb24YCiABKA4yIC5kZWVwbmF2eS52MS5SdW50aW1lSGVhbHRoUmVhc29uEi8KC29ic2VydmVkX2F0GAsgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCLMAwoVUnVudGltZUhlYWx0aFNuYXBzaG90EgoKAmlkGAEgASgJEhcKD29yZ2FuaXphdGlvbl9pZBgCIAEoCRIPCgd0ZWFtX2lkGAMgASgJEhoKEmRlc2lyZWRfZ2VuZXJhdGlvbhgEIAEoAxIbChNvYnNlcnZlZF9nZW5lcmF0aW9uGAUgASgDEhwKFGt1YmVybmV0ZXNfbmFtZXNwYWNlGAYgASgJEh4KFm9wZW5jbGF3X2luc3RhbmNlX25hbWUYByABKAkSLgoFc3RhdGUYCCABKA4yHy5kZWVwbmF2eS52MS5SdW50aW1lSGVhbHRoU3RhdGUSFQoNZ2F0ZXdheV9yZWFkeRgJIAEoCBIZChFyZWFkeV9hZ2VudF9jb3VudBgKIAEoBRIwCgZyZWFzb24YCyABKA4yIC5kZWVwbmF2eS52MS5SdW50aW1lSGVhbHRoUmVhc29uEi8KC29ic2VydmVkX2F0GAwgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIvCgtyZWNlaXZlZF9hdBgNIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASEAoIc2VxdWVuY2UYDiABKAMiTgoaUmVwb3J0UnVudGltZUhlYWx0aFJlcXVlc3QSMAoGcmVwb3J0GAEgASgLMiAuZGVlcG5hdnkudjEuUnVudGltZUhlYWx0aFJlcG9ydCJxChtSZXBvcnRSdW50aW1lSGVhbHRoUmVzcG9uc2USOgoOcnVudGltZV9oZWFsdGgYASABKAsyIi5kZWVwbmF2eS52MS5SdW50aW1lSGVhbHRoU25hcHNob3QSFgoOYmVjYW1lX2N1cnJlbnQYAiABKAgqzwEKFVByb3Zpc2lvbmluZ09wZXJhdGlvbhImCiJQUk9WSVNJT05JTkdfT1BFUkFUSU9OX1VOU1BFQ0lGSUVEEAASJAogUFJPVklTSU9OSU5HX09QRVJBVElPTl9QUk9WSVNJT04QARIiCh5QUk9WSVNJT05JTkdfT1BFUkFUSU9OX1NVU1BFTkQQAhIhCh1QUk9WSVNJT05JTkdfT1BFUkFUSU9OX1JFU1VNRRADEiEKHVBST1ZJU0lPTklOR19PUEVSQVRJT05fREVMRVRFEAQq+QEKEVByb3Zpc2lvbmluZ1N0YXRlEiIKHlBST1ZJU0lPTklOR19TVEFURV9VTlNQRUNJRklFRBAAEh0KGVBST1ZJU0lPTklOR19TVEFURV9RVUVVRUQQARIeChpQUk9WSVNJT05JTkdfU1RBVEVfUlVOTklORxACEh8KG1BST1ZJU0lPTklOR19TVEFURV9SRVRSWUlORxADEiAKHFBST1ZJU0lPTklOR19TVEFURV9TVUNDRUVERUQQBBIdChlQUk9WSVNJT05JTkdfU1RBVEVfRkFJTEVEEAUSHwobUFJPVklTSU9OSU5HX1NUQVRFX0NBTkNFTEVEEAYqtgMKEFByb3Zpc2lvbmluZ1N0ZXASIQodUFJPVklTSU9OSU5HX1NURVBfVU5TUEVDSUZJRUQQABIcChhQUk9WSVNJT05JTkdfU1RFUF9RVUVVRUQQARIuCipQUk9WSVNJT05JTkdfU1RFUF9WQUxJREFUSU5HX1BSRVJFUVVJU0lURVMQAhIoCiRQUk9WSVNJT05JTkdfU1RFUF9DUkVBVElOR19OQU1FU1BBQ0UQAxIpCiVQUk9WSVNJT05JTkdfU1RFUF9DT05GSUdVUklOR19SVU5USU1FEAQSMAosUFJPVklTSU9OSU5HX1NURVBfQ1JFQVRJTkdfT1BFTkNMQVdfSU5TVEFOQ0UQBRIpCiVQUk9WSVNJT05JTkdfU1RFUF9XQUlUSU5HX0ZPUl9HQVRFV0FZEAYSGwoXUFJPVklTSU9OSU5HX1NURVBfUkVBRFkQBxIgChxQUk9WSVNJT05JTkdfU1RFUF9TVVNQRU5ESU5HEAgSIAocUFJPVklTSU9OSU5HX1NURVBfQkFDS0lOR19VUBAJEh4KGlBST1ZJU0lPTklOR19TVEVQX0RFTEVUSU5HEAoqvQUKF1Byb3Zpc2lvbmluZ0Vycm9yUmVhc29uEikKJVBST1ZJU0lPTklOR19FUlJPUl9SRUFTT05fVU5TUEVDSUZJRUQQABItCilQUk9WSVNJT05JTkdfRVJST1JfUkVBU09OX0lOVkFMSURfQ09NTUFORBABEjYKMlBST1ZJU0lPTklOR19FUlJPUl9SRUFTT05fUFJFUkVRVUlTSVRFX1VOQVZBSUxBQkxFEAISOgo2UFJPVklTSU9OSU5HX0VSUk9SX1JFQVNPTl9CSUxMSU5HX0VOVElUTEVNRU5UX0lOQUNUSVZFEAMSOgo2UFJPVklTSU9OSU5HX0VSUk9SX1JFQVNPTl9HSVRIVUJfSU5TVEFMTEFUSU9OX0lOQUNUSVZFEAQSOAo0UFJPVklTSU9OSU5HX0VSUk9SX1JFQVNPTl9SRVBPU0lUT1JZX1NFTEVDVElPTl9FTVBUWRAFEjUKMVBST1ZJU0lPTklOR19FUlJPUl9SRUFTT05fS1VCRVJORVRFU19BUFBMWV9GQUlMRUQQBhIwCixQUk9WSVNJT05JTkdfRVJST1JfUkVBU09OX09QRU5DTEFXX05PVF9SRUFEWRAHEi0KKVBST1ZJU0lPTklOR19FUlJPUl9SRUFTT05fUkVUUllfRVhIQVVTVEVEEAgSKwonUFJPVklTSU9OSU5HX0VSUk9SX1JFQVNPTl9MRUFTRV9JTlZBTElEEAkSMgouUFJPVklTSU9OSU5HX0VSUk9SX1JFQVNPTl9JREVNUE9URU5DWV9DT05GTElDVBAKEiwKKFBST1ZJU0lPTklOR19FUlJPUl9SRUFTT05fTk9UX0FVVEhPUklaRUQQCxI3CjNQUk9WSVNJT05JTkdfRVJST1JfUkVBU09OX1JVTlRJTUVfSURFTlRJVFlfTUlTTUFUQ0gQDCrCAQoSUnVudGltZUhlYWx0aFN0YXRlEiQKIFJVTlRJTUVfSEVBTFRIX1NUQVRFX1VOU1BFQ0lGSUVEEAASHgoaUlVOVElNRV9IRUFMVEhfU1RBVEVfUkVBRFkQARIhCh1SVU5USU1FX0hFQUxUSF9TVEFURV9ERUdSQURFRBACEiIKHlJVTlRJTUVfSEVBTFRIX1NUQVRFX1NVU1BFTkRFRBADEh8KG1JVTlRJTUVfSEVBTFRIX1NUQVRFX0ZBSUxFRBAEKpIDChNSdW50aW1lSGVhbHRoUmVhc29uEiUKIVJVTlRJTUVfSEVBTFRIX1JFQVNPTl9VTlNQRUNJRklFRBAAEh4KGlJVTlRJTUVfSEVBTFRIX1JFQVNPTl9OT05FEAESJQohUlVOVElNRV9IRUFMVEhfUkVBU09OX1JFQ09OQ0lMSU5HEAISLQopUlVOVElNRV9IRUFMVEhfUkVBU09OX0dFTkVSQVRJT05fTUlTTUFUQ0gQAxIrCidSVU5USU1FX0hFQUxUSF9SRUFTT05fR0FURVdBWV9OT1RfUkVBRFkQBBIwCixSVU5USU1FX0hFQUxUSF9SRUFTT05fQUdFTlRfUk9TVEVSX05PVF9SRUFEWRAFEiMKH1JVTlRJTUVfSEVBTFRIX1JFQVNPTl9TVVNQRU5ERUQQBhIvCitSVU5USU1FX0hFQUxUSF9SRUFTT05fUkVDT05DSUxJQVRJT05fRkFJTEVEEAcSKQolUlVOVElNRV9IRUFMVEhfUkVBU09OX0hFQVJUQkVBVF9TVEFMRRAIMoACChNQcm92aXNpb25pbmdTZXJ2aWNlEm4KFUdldFByb3Zpc2lvbmluZ1N0YXR1cxIpLmRlZXBuYXZ5LnYxLkdldFByb3Zpc2lvbmluZ1N0YXR1c1JlcXVlc3QaKi5kZWVwbmF2eS52MS5HZXRQcm92aXNpb25pbmdTdGF0dXNSZXNwb25zZRJ5ChhTdHJlYW1Qcm92aXNpb25pbmdTdGF0dXMSLC5kZWVwbmF2eS52MS5TdHJlYW1Qcm92aXNpb25pbmdTdGF0dXNSZXF1ZXN0Gi0uZGVlcG5hdnkudjEuU3RyZWFtUHJvdmlzaW9uaW5nU3RhdHVzUmVzcG9uc2UwATKWAwoZUHJvdmlzaW9uaW5nV29ya2VyU2VydmljZRJ6ChlMZWFzZVByb3Zpc2lvbmluZ0NvbW1hbmRzEi0uZGVlcG5hdnkudjEuTGVhc2VQcm92aXNpb25pbmdDb21tYW5kc1JlcXVlc3QaLi5kZWVwbmF2eS52MS5MZWFzZVByb3Zpc2lvbmluZ0NvbW1hbmRzUmVzcG9uc2UShgEKHVJlbmV3UHJvdmlzaW9uaW5nQ29tbWFuZExlYXNlEjEuZGVlcG5hdnkudjEuUmVuZXdQcm92aXNpb25pbmdDb21tYW5kTGVhc2VSZXF1ZXN0GjIuZGVlcG5hdnkudjEuUmVuZXdQcm92aXNpb25pbmdDb21tYW5kTGVhc2VSZXNwb25zZRJ0ChdSZWNvcmRQcm92aXNpb25pbmdFdmVudBIrLmRlZXBuYXZ5LnYxLlJlY29yZFByb3Zpc2lvbmluZ0V2ZW50UmVxdWVzdBosLmRlZXBuYXZ5LnYxLlJlY29yZFByb3Zpc2lvbmluZ0V2ZW50UmVzcG9uc2UygAEKFFJ1bnRpbWVIZWFsdGhTZXJ2aWNlEmgKE1JlcG9ydFJ1bnRpbWVIZWFsdGgSJy5kZWVwbmF2eS52MS5SZXBvcnRSdW50aW1lSGVhbHRoUmVxdWVzdBooLmRlZXBuYXZ5LnYxLlJlcG9ydFJ1bnRpbWVIZWFsdGhSZXNwb25zZUJEWkJnaXRodWIuY29tL2RlZXAtbmF2eS9wbGF0Zm9ybS1wcm90b3MvZ2VuL2dvL2RlZXBuYXZ5L3YxO2RlZXBuYXZ5djFiBnByb3RvMw", [file_google_protobuf_duration, file_google_protobuf_timestamp]);
+  fileDesc("Ch5kZWVwbmF2eS92MS9wcm92aXNpb25pbmcucHJvdG8SC2RlZXBuYXZ5LnYxImUKF1Byb3Zpc2lvbmluZ0Vycm9yRGV0YWlsEjQKBnJlYXNvbhgBIAEoDjIkLmRlZXBuYXZ5LnYxLlByb3Zpc2lvbmluZ0Vycm9yUmVhc29uEhQKDHNhZmVfbWVzc2FnZRgCIAEoCSKaBAoSUHJvdmlzaW9uaW5nU3RhdHVzEg8KB3RlYW1faWQYASABKAkSFQoJb3BlcmF0aW9uGAIgASgJQgIYARISCgZzdGF0dXMYAyABKAlCAhgBEhAKBHN0ZXAYBCABKAlCAhgBEhIKCnNhZmVfZXJyb3IYBSABKAkSLgoKdXBkYXRlZF9hdBgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASOgoOb3BlcmF0aW9uX3R5cGUYByABKA4yIi5kZWVwbmF2eS52MS5Qcm92aXNpb25pbmdPcGVyYXRpb24SOgoScHJvdmlzaW9uaW5nX3N0YXRlGAggASgOMh4uZGVlcG5hdnkudjEuUHJvdmlzaW9uaW5nU3RhdGUSOAoRcHJvdmlzaW9uaW5nX3N0ZXAYCSABKA4yHS5kZWVwbmF2eS52MS5Qcm92aXNpb25pbmdTdGVwEhoKEmRlc2lyZWRfZ2VuZXJhdGlvbhgKIAEoAxISCgpjb21tYW5kX2lkGAsgASgJEg8KB2F0dGVtcHQYDCABKAUSMQoNbmV4dF9yZXRyeV9hdBgNIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASEAoIc2VxdWVuY2UYDiABKAMSOgoMZXJyb3JfcmVhc29uGA8gASgOMiQuZGVlcG5hdnkudjEuUHJvdmlzaW9uaW5nRXJyb3JSZWFzb24i+QIKE1Byb3Zpc2lvbmluZ0NvbW1hbmQSCgoCaWQYASABKAkSDwoHdGVhbV9pZBgCIAEoCRIXCg9vcmdhbml6YXRpb25faWQYAyABKAkSNQoJb3BlcmF0aW9uGAQgASgOMiIuZGVlcG5hdnkudjEuUHJvdmlzaW9uaW5nT3BlcmF0aW9uEhoKEmRlc2lyZWRfZ2VuZXJhdGlvbhgFIAEoAxIRCgl0ZWFtX25hbWUYBiABKAkSGAoQdGVtcGxhdGVfdmVyc2lvbhgHIAEoCRIeChZnaXRodWJfaW5zdGFsbGF0aW9uX2lkGAggASgDEhYKDnJlcG9zaXRvcnlfaWRzGAkgAygJEg8KB3BsYW5faWQYCiABKAkSGQoRZGVkdXBsaWNhdGlvbl9rZXkYCyABKAkSMAoMcmVxdWVzdGVkX2F0GAwgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIWCg5lbmdpbmVlcl9jb3VudBgNIAEoBSL0AgoRUHJvdmlzaW9uaW5nRXZlbnQSCgoCaWQYASABKAkSEgoKY29tbWFuZF9pZBgCIAEoCRIPCgd0ZWFtX2lkGAMgASgJEhAKCHNlcXVlbmNlGAQgASgDEjoKEnByb3Zpc2lvbmluZ19zdGF0ZRgFIAEoDjIeLmRlZXBuYXZ5LnYxLlByb3Zpc2lvbmluZ1N0YXRlEjgKEXByb3Zpc2lvbmluZ19zdGVwGAYgASgOMh0uZGVlcG5hdnkudjEuUHJvdmlzaW9uaW5nU3RlcBIPCgdhdHRlbXB0GAcgASgFEjoKDGVycm9yX3JlYXNvbhgIIAEoDjIkLmRlZXBuYXZ5LnYxLlByb3Zpc2lvbmluZ0Vycm9yUmVhc29uEhQKDHNhZmVfc3VtbWFyeRgJIAEoCRISCgpzYWZlX2Vycm9yGAogASgJEi8KC29jY3VycmVkX2F0GAsgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCKPAQoZUHJvdmlzaW9uaW5nUnVudGltZVJlc3VsdBIcChRrdWJlcm5ldGVzX25hbWVzcGFjZRgBIAEoCRIeChZvcGVuY2xhd19pbnN0YW5jZV9uYW1lGAIgASgJEhcKD2xpdGVsbG1fdGVhbV9pZBgDIAEoCRIbChNsYW5nZnVzZV9wcm9qZWN0X2lkGAQgASgJIvoCChZQcm92aXNpb25pbmdFdmVudElucHV0EgoKAmlkGAEgASgJEjoKEnByb3Zpc2lvbmluZ19zdGF0ZRgCIAEoDjIeLmRlZXBuYXZ5LnYxLlByb3Zpc2lvbmluZ1N0YXRlEjgKEXByb3Zpc2lvbmluZ19zdGVwGAMgASgOMh0uZGVlcG5hdnkudjEuUHJvdmlzaW9uaW5nU3RlcBIPCgdhdHRlbXB0GAQgASgFEjoKDGVycm9yX3JlYXNvbhgFIAEoDjIkLmRlZXBuYXZ5LnYxLlByb3Zpc2lvbmluZ0Vycm9yUmVhc29uEhQKDHNhZmVfc3VtbWFyeRgGIAEoCRISCgpzYWZlX2Vycm9yGAcgASgJEi8KC29ic2VydmVkX2F0GAggASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBI2CgZyZXN1bHQYCSABKAsyJi5kZWVwbmF2eS52MS5Qcm92aXNpb25pbmdSdW50aW1lUmVzdWx0IuoBChFUZWFtUnVudGltZUhlYWx0aBIuCgVzdGF0ZRgBIAEoDjIfLmRlZXBuYXZ5LnYxLlJ1bnRpbWVIZWFsdGhTdGF0ZRIVCg1nYXRld2F5X3JlYWR5GAIgASgIEhkKEXJlYWR5X2FnZW50X2NvdW50GAMgASgFEjAKBnJlYXNvbhgEIAEoDjIgLmRlZXBuYXZ5LnYxLlJ1bnRpbWVIZWFsdGhSZWFzb24SLwoLb2JzZXJ2ZWRfYXQYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhAKCHNlcXVlbmNlGAYgASgDIi8KHEdldFByb3Zpc2lvbmluZ1N0YXR1c1JlcXVlc3QSDwoHdGVhbV9pZBgBIAEoCSLMAQodR2V0UHJvdmlzaW9uaW5nU3RhdHVzUmVzcG9uc2USNQoMcHJvdmlzaW9uaW5nGAEgASgLMh8uZGVlcG5hdnkudjEuUHJvdmlzaW9uaW5nU3RhdHVzEjYKDnJ1bnRpbWVfaGVhbHRoGAIgASgLMh4uZGVlcG5hdnkudjEuVGVhbVJ1bnRpbWVIZWFsdGgSPAoRd29ya3NwYWNlX3N0b3JhZ2UYAyABKAsyIS5kZWVwbmF2eS52MS5UZWFtV29ya3NwYWNlU3RvcmFnZSJKCh9TdHJlYW1Qcm92aXNpb25pbmdTdGF0dXNSZXF1ZXN0Eg8KB3RlYW1faWQYASABKAkSFgoOYWZ0ZXJfc2VxdWVuY2UYAiABKAMi/gEKIFN0cmVhbVByb3Zpc2lvbmluZ1N0YXR1c1Jlc3BvbnNlEjUKDHByb3Zpc2lvbmluZxgBIAEoCzIfLmRlZXBuYXZ5LnYxLlByb3Zpc2lvbmluZ1N0YXR1cxItCgVldmVudBgCIAEoCzIeLmRlZXBuYXZ5LnYxLlByb3Zpc2lvbmluZ0V2ZW50EjYKDnJ1bnRpbWVfaGVhbHRoGAMgASgLMh4uZGVlcG5hdnkudjEuVGVhbVJ1bnRpbWVIZWFsdGgSPAoRd29ya3NwYWNlX3N0b3JhZ2UYBCABKAsyIS5kZWVwbmF2eS52MS5UZWFtV29ya3NwYWNlU3RvcmFnZSJ3ChRUZWFtV29ya3NwYWNlU3RvcmFnZRIVCg1jdXJyZW50X2J5dGVzGAEgASgDEhcKD2N1cnJlbnRfb2JqZWN0cxgCIAEoAxIvCgttZWFzdXJlZF9hdBgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAifgogTGVhc2VQcm92aXNpb25pbmdDb21tYW5kc1JlcXVlc3QSEQoJd29ya2VyX2lkGAEgASgJEhQKDG1heF9jb21tYW5kcxgCIAEoBRIxCg5sZWFzZV9kdXJhdGlvbhgDIAEoCzIZLmdvb2dsZS5wcm90b2J1Zi5EdXJhdGlvbiKqAQoZTGVhc2VkUHJvdmlzaW9uaW5nQ29tbWFuZBIxCgdjb21tYW5kGAEgASgLMiAuZGVlcG5hdnkudjEuUHJvdmlzaW9uaW5nQ29tbWFuZBITCgtsZWFzZV90b2tlbhgCIAEoCRI0ChBsZWFzZV9leHBpcmVzX2F0GAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIPCgdhdHRlbXB0GAQgASgFIl0KIUxlYXNlUHJvdmlzaW9uaW5nQ29tbWFuZHNSZXNwb25zZRI4Cghjb21tYW5kcxgBIAMoCzImLmRlZXBuYXZ5LnYxLkxlYXNlZFByb3Zpc2lvbmluZ0NvbW1hbmQiggEKJFJlbmV3UHJvdmlzaW9uaW5nQ29tbWFuZExlYXNlUmVxdWVzdBISCgpjb21tYW5kX2lkGAEgASgJEhMKC2xlYXNlX3Rva2VuGAIgASgJEjEKDmxlYXNlX2R1cmF0aW9uGAMgASgLMhkuZ29vZ2xlLnByb3RvYnVmLkR1cmF0aW9uIl0KJVJlbmV3UHJvdmlzaW9uaW5nQ29tbWFuZExlYXNlUmVzcG9uc2USNAoQbGVhc2VfZXhwaXJlc19hdBgBIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAifQoeUmVjb3JkUHJvdmlzaW9uaW5nRXZlbnRSZXF1ZXN0EhIKCmNvbW1hbmRfaWQYASABKAkSEwoLbGVhc2VfdG9rZW4YAiABKAkSMgoFZXZlbnQYAyABKAsyIy5kZWVwbmF2eS52MS5Qcm92aXNpb25pbmdFdmVudElucHV0IlgKH1JlY29yZFByb3Zpc2lvbmluZ0V2ZW50UmVzcG9uc2USNQoMcHJvdmlzaW9uaW5nGAEgASgLMh8uZGVlcG5hdnkudjEuUHJvdmlzaW9uaW5nU3RhdHVzIu4CChNSdW50aW1lSGVhbHRoUmVwb3J0EgoKAmlkGAEgASgJEg8KB3RlYW1faWQYAiABKAkSGgoSZGVzaXJlZF9nZW5lcmF0aW9uGAMgASgDEhsKE29ic2VydmVkX2dlbmVyYXRpb24YBCABKAMSHAoUa3ViZXJuZXRlc19uYW1lc3BhY2UYBSABKAkSHgoWb3BlbmNsYXdfaW5zdGFuY2VfbmFtZRgGIAEoCRIuCgVzdGF0ZRgHIAEoDjIfLmRlZXBuYXZ5LnYxLlJ1bnRpbWVIZWFsdGhTdGF0ZRIVCg1nYXRld2F5X3JlYWR5GAggASgIEhkKEXJlYWR5X2FnZW50X2NvdW50GAkgASgFEjAKBnJlYXNvbhgKIAEoDjIgLmRlZXBuYXZ5LnYxLlJ1bnRpbWVIZWFsdGhSZWFzb24SLwoLb2JzZXJ2ZWRfYXQYCyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIswDChVSdW50aW1lSGVhbHRoU25hcHNob3QSCgoCaWQYASABKAkSFwoPb3JnYW5pemF0aW9uX2lkGAIgASgJEg8KB3RlYW1faWQYAyABKAkSGgoSZGVzaXJlZF9nZW5lcmF0aW9uGAQgASgDEhsKE29ic2VydmVkX2dlbmVyYXRpb24YBSABKAMSHAoUa3ViZXJuZXRlc19uYW1lc3BhY2UYBiABKAkSHgoWb3BlbmNsYXdfaW5zdGFuY2VfbmFtZRgHIAEoCRIuCgVzdGF0ZRgIIAEoDjIfLmRlZXBuYXZ5LnYxLlJ1bnRpbWVIZWFsdGhTdGF0ZRIVCg1nYXRld2F5X3JlYWR5GAkgASgIEhkKEXJlYWR5X2FnZW50X2NvdW50GAogASgFEjAKBnJlYXNvbhgLIAEoDjIgLmRlZXBuYXZ5LnYxLlJ1bnRpbWVIZWFsdGhSZWFzb24SLwoLb2JzZXJ2ZWRfYXQYDCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi8KC3JlY2VpdmVkX2F0GA0gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIQCghzZXF1ZW5jZRgOIAEoAyJOChpSZXBvcnRSdW50aW1lSGVhbHRoUmVxdWVzdBIwCgZyZXBvcnQYASABKAsyIC5kZWVwbmF2eS52MS5SdW50aW1lSGVhbHRoUmVwb3J0InEKG1JlcG9ydFJ1bnRpbWVIZWFsdGhSZXNwb25zZRI6Cg5ydW50aW1lX2hlYWx0aBgBIAEoCzIiLmRlZXBuYXZ5LnYxLlJ1bnRpbWVIZWFsdGhTbmFwc2hvdBIWCg5iZWNhbWVfY3VycmVudBgCIAEoCCKnAQobUmVwb3J0VGVhbVN1c3BlbnNpb25SZXF1ZXN0Eg8KB3RlYW1faWQYASABKAkSMQoGcmVhc29uGAIgASgOMiEuZGVlcG5hdnkudjEuVGVhbVN1c3BlbnNpb25SZWFzb24SEwoLc2FmZV9kZXRhaWwYAyABKAkSLwoLb2NjdXJyZWRfYXQYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIqQBCh1SZXBvcnRXb3Jrc3BhY2VTdG9yYWdlUmVxdWVzdBIPCgd0ZWFtX2lkGAEgASgJEhUKDWN1cnJlbnRfYnl0ZXMYAiABKAMSFwoPY3VycmVudF9vYmplY3RzGAMgASgDEi8KC21lYXN1cmVkX2F0GAQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIRCglyZXBvcnRfaWQYBSABKAkiIAoeUmVwb3J0V29ya3NwYWNlU3RvcmFnZVJlc3BvbnNlIkoKHFJlcG9ydFRlYW1TdXNwZW5zaW9uUmVzcG9uc2USKgoFc3RhdGUYASABKA4yGy5kZWVwbmF2eS52MS5MaWZlY3ljbGVTdGF0ZSrPAQoVUHJvdmlzaW9uaW5nT3BlcmF0aW9uEiYKIlBST1ZJU0lPTklOR19PUEVSQVRJT05fVU5TUEVDSUZJRUQQABIkCiBQUk9WSVNJT05JTkdfT1BFUkFUSU9OX1BST1ZJU0lPThABEiIKHlBST1ZJU0lPTklOR19PUEVSQVRJT05fU1VTUEVORBACEiEKHVBST1ZJU0lPTklOR19PUEVSQVRJT05fUkVTVU1FEAMSIQodUFJPVklTSU9OSU5HX09QRVJBVElPTl9ERUxFVEUQBCr5AQoRUHJvdmlzaW9uaW5nU3RhdGUSIgoeUFJPVklTSU9OSU5HX1NUQVRFX1VOU1BFQ0lGSUVEEAASHQoZUFJPVklTSU9OSU5HX1NUQVRFX1FVRVVFRBABEh4KGlBST1ZJU0lPTklOR19TVEFURV9SVU5OSU5HEAISHwobUFJPVklTSU9OSU5HX1NUQVRFX1JFVFJZSU5HEAMSIAocUFJPVklTSU9OSU5HX1NUQVRFX1NVQ0NFRURFRBAEEh0KGVBST1ZJU0lPTklOR19TVEFURV9GQUlMRUQQBRIfChtQUk9WSVNJT05JTkdfU1RBVEVfQ0FOQ0VMRUQQBiq2AwoQUHJvdmlzaW9uaW5nU3RlcBIhCh1QUk9WSVNJT05JTkdfU1RFUF9VTlNQRUNJRklFRBAAEhwKGFBST1ZJU0lPTklOR19TVEVQX1FVRVVFRBABEi4KKlBST1ZJU0lPTklOR19TVEVQX1ZBTElEQVRJTkdfUFJFUkVRVUlTSVRFUxACEigKJFBST1ZJU0lPTklOR19TVEVQX0NSRUFUSU5HX05BTUVTUEFDRRADEikKJVBST1ZJU0lPTklOR19TVEVQX0NPTkZJR1VSSU5HX1JVTlRJTUUQBBIwCixQUk9WSVNJT05JTkdfU1RFUF9DUkVBVElOR19PUEVOQ0xBV19JTlNUQU5DRRAFEikKJVBST1ZJU0lPTklOR19TVEVQX1dBSVRJTkdfRk9SX0dBVEVXQVkQBhIbChdQUk9WSVNJT05JTkdfU1RFUF9SRUFEWRAHEiAKHFBST1ZJU0lPTklOR19TVEVQX1NVU1BFTkRJTkcQCBIgChxQUk9WSVNJT05JTkdfU1RFUF9CQUNLSU5HX1VQEAkSHgoaUFJPVklTSU9OSU5HX1NURVBfREVMRVRJTkcQCiq9BQoXUHJvdmlzaW9uaW5nRXJyb3JSZWFzb24SKQolUFJPVklTSU9OSU5HX0VSUk9SX1JFQVNPTl9VTlNQRUNJRklFRBAAEi0KKVBST1ZJU0lPTklOR19FUlJPUl9SRUFTT05fSU5WQUxJRF9DT01NQU5EEAESNgoyUFJPVklTSU9OSU5HX0VSUk9SX1JFQVNPTl9QUkVSRVFVSVNJVEVfVU5BVkFJTEFCTEUQAhI6CjZQUk9WSVNJT05JTkdfRVJST1JfUkVBU09OX0JJTExJTkdfRU5USVRMRU1FTlRfSU5BQ1RJVkUQAxI6CjZQUk9WSVNJT05JTkdfRVJST1JfUkVBU09OX0dJVEhVQl9JTlNUQUxMQVRJT05fSU5BQ1RJVkUQBBI4CjRQUk9WSVNJT05JTkdfRVJST1JfUkVBU09OX1JFUE9TSVRPUllfU0VMRUNUSU9OX0VNUFRZEAUSNQoxUFJPVklTSU9OSU5HX0VSUk9SX1JFQVNPTl9LVUJFUk5FVEVTX0FQUExZX0ZBSUxFRBAGEjAKLFBST1ZJU0lPTklOR19FUlJPUl9SRUFTT05fT1BFTkNMQVdfTk9UX1JFQURZEAcSLQopUFJPVklTSU9OSU5HX0VSUk9SX1JFQVNPTl9SRVRSWV9FWEhBVVNURUQQCBIrCidQUk9WSVNJT05JTkdfRVJST1JfUkVBU09OX0xFQVNFX0lOVkFMSUQQCRIyCi5QUk9WSVNJT05JTkdfRVJST1JfUkVBU09OX0lERU1QT1RFTkNZX0NPTkZMSUNUEAoSLAooUFJPVklTSU9OSU5HX0VSUk9SX1JFQVNPTl9OT1RfQVVUSE9SSVpFRBALEjcKM1BST1ZJU0lPTklOR19FUlJPUl9SRUFTT05fUlVOVElNRV9JREVOVElUWV9NSVNNQVRDSBAMKsIBChJSdW50aW1lSGVhbHRoU3RhdGUSJAogUlVOVElNRV9IRUFMVEhfU1RBVEVfVU5TUEVDSUZJRUQQABIeChpSVU5USU1FX0hFQUxUSF9TVEFURV9SRUFEWRABEiEKHVJVTlRJTUVfSEVBTFRIX1NUQVRFX0RFR1JBREVEEAISIgoeUlVOVElNRV9IRUFMVEhfU1RBVEVfU1VTUEVOREVEEAMSHwobUlVOVElNRV9IRUFMVEhfU1RBVEVfRkFJTEVEEAQqkgMKE1J1bnRpbWVIZWFsdGhSZWFzb24SJQohUlVOVElNRV9IRUFMVEhfUkVBU09OX1VOU1BFQ0lGSUVEEAASHgoaUlVOVElNRV9IRUFMVEhfUkVBU09OX05PTkUQARIlCiFSVU5USU1FX0hFQUxUSF9SRUFTT05fUkVDT05DSUxJTkcQAhItCilSVU5USU1FX0hFQUxUSF9SRUFTT05fR0VORVJBVElPTl9NSVNNQVRDSBADEisKJ1JVTlRJTUVfSEVBTFRIX1JFQVNPTl9HQVRFV0FZX05PVF9SRUFEWRAEEjAKLFJVTlRJTUVfSEVBTFRIX1JFQVNPTl9BR0VOVF9ST1NURVJfTk9UX1JFQURZEAUSIwofUlVOVElNRV9IRUFMVEhfUkVBU09OX1NVU1BFTkRFRBAGEi8KK1JVTlRJTUVfSEVBTFRIX1JFQVNPTl9SRUNPTkNJTElBVElPTl9GQUlMRUQQBxIpCiVSVU5USU1FX0hFQUxUSF9SRUFTT05fSEVBUlRCRUFUX1NUQUxFEAgqagoUVGVhbVN1c3BlbnNpb25SZWFzb24SJgoiVEVBTV9TVVNQRU5TSU9OX1JFQVNPTl9VTlNQRUNJRklFRBAAEioKJlRFQU1fU1VTUEVOU0lPTl9SRUFTT05fQ1JFREVOVElBTF9MT1NTEAEygAIKE1Byb3Zpc2lvbmluZ1NlcnZpY2USbgoVR2V0UHJvdmlzaW9uaW5nU3RhdHVzEikuZGVlcG5hdnkudjEuR2V0UHJvdmlzaW9uaW5nU3RhdHVzUmVxdWVzdBoqLmRlZXBuYXZ5LnYxLkdldFByb3Zpc2lvbmluZ1N0YXR1c1Jlc3BvbnNlEnkKGFN0cmVhbVByb3Zpc2lvbmluZ1N0YXR1cxIsLmRlZXBuYXZ5LnYxLlN0cmVhbVByb3Zpc2lvbmluZ1N0YXR1c1JlcXVlc3QaLS5kZWVwbmF2eS52MS5TdHJlYW1Qcm92aXNpb25pbmdTdGF0dXNSZXNwb25zZTABMvYEChlQcm92aXNpb25pbmdXb3JrZXJTZXJ2aWNlEnoKGUxlYXNlUHJvdmlzaW9uaW5nQ29tbWFuZHMSLS5kZWVwbmF2eS52MS5MZWFzZVByb3Zpc2lvbmluZ0NvbW1hbmRzUmVxdWVzdBouLmRlZXBuYXZ5LnYxLkxlYXNlUHJvdmlzaW9uaW5nQ29tbWFuZHNSZXNwb25zZRKGAQodUmVuZXdQcm92aXNpb25pbmdDb21tYW5kTGVhc2USMS5kZWVwbmF2eS52MS5SZW5ld1Byb3Zpc2lvbmluZ0NvbW1hbmRMZWFzZVJlcXVlc3QaMi5kZWVwbmF2eS52MS5SZW5ld1Byb3Zpc2lvbmluZ0NvbW1hbmRMZWFzZVJlc3BvbnNlEnQKF1JlY29yZFByb3Zpc2lvbmluZ0V2ZW50EisuZGVlcG5hdnkudjEuUmVjb3JkUHJvdmlzaW9uaW5nRXZlbnRSZXF1ZXN0GiwuZGVlcG5hdnkudjEuUmVjb3JkUHJvdmlzaW9uaW5nRXZlbnRSZXNwb25zZRJrChRSZXBvcnRUZWFtU3VzcGVuc2lvbhIoLmRlZXBuYXZ5LnYxLlJlcG9ydFRlYW1TdXNwZW5zaW9uUmVxdWVzdBopLmRlZXBuYXZ5LnYxLlJlcG9ydFRlYW1TdXNwZW5zaW9uUmVzcG9uc2UScQoWUmVwb3J0V29ya3NwYWNlU3RvcmFnZRIqLmRlZXBuYXZ5LnYxLlJlcG9ydFdvcmtzcGFjZVN0b3JhZ2VSZXF1ZXN0GisuZGVlcG5hdnkudjEuUmVwb3J0V29ya3NwYWNlU3RvcmFnZVJlc3BvbnNlMoABChRSdW50aW1lSGVhbHRoU2VydmljZRJoChNSZXBvcnRSdW50aW1lSGVhbHRoEicuZGVlcG5hdnkudjEuUmVwb3J0UnVudGltZUhlYWx0aFJlcXVlc3QaKC5kZWVwbmF2eS52MS5SZXBvcnRSdW50aW1lSGVhbHRoUmVzcG9uc2VCRFpCZ2l0aHViLmNvbS9kZWVwLW5hdnkvcGxhdGZvcm0tcHJvdG9zL2dlbi9nby9kZWVwbmF2eS92MTtkZWVwbmF2eXYxYgZwcm90bzM", [file_deepnavy_v1_common, file_google_protobuf_duration, file_google_protobuf_timestamp]);
 
 /**
  * ProvisioningErrorDetail is attached to a non-OK Connect/gRPC status.
@@ -511,6 +513,14 @@ export type GetProvisioningStatusResponse = Message<"deepnavy.v1.GetProvisioning
    * @generated from field: deepnavy.v1.TeamRuntimeHealth runtime_health = 2;
    */
   runtimeHealth?: TeamRuntimeHealth | undefined;
+
+  /**
+   * workspace_storage is absent until the first inventory report lands -
+   * PENDING, never zero, exactly like runtime_health's absence.
+   *
+   * @generated from field: deepnavy.v1.TeamWorkspaceStorage workspace_storage = 3;
+   */
+  workspaceStorage?: TeamWorkspaceStorage | undefined;
 };
 
 /**
@@ -572,6 +582,16 @@ export type StreamProvisioningStatusResponse = Message<"deepnavy.v1.StreamProvis
    * @generated from field: deepnavy.v1.TeamRuntimeHealth runtime_health = 3;
    */
   runtimeHealth?: TeamRuntimeHealth | undefined;
+
+  /**
+   * workspace_storage carries the team's most recent measured workspace
+   * storage, on the same emit-on-change contract as runtime_health: the
+   * console learns a new inventory measurement landed without polling. A
+   * frame reporting only a storage change carries no event.
+   *
+   * @generated from field: deepnavy.v1.TeamWorkspaceStorage workspace_storage = 4;
+   */
+  workspaceStorage?: TeamWorkspaceStorage | undefined;
 };
 
 /**
@@ -580,6 +600,40 @@ export type StreamProvisioningStatusResponse = Message<"deepnavy.v1.StreamProvis
  */
 export const StreamProvisioningStatusResponseSchema: GenMessage<StreamProvisioningStatusResponse> = /*@__PURE__*/
   messageDesc(file_deepnavy_v1_provisioning, 10);
+
+/**
+ * TeamWorkspaceStorage is what a customer may know about their team's
+ * measured workspace storage: the billable bytes and object count from the
+ * most recent S3 inventory report, and when AWS measured them. It is a
+ * SNAPSHOT WITH LATENCY - reports are daily - so measured_at is load-bearing:
+ * consoles must date the number, never present it as live. Absent entirely
+ * means PENDING (the first report has not landed), which is not zero.
+ *
+ * @generated from message deepnavy.v1.TeamWorkspaceStorage
+ */
+export type TeamWorkspaceStorage = Message<"deepnavy.v1.TeamWorkspaceStorage"> & {
+  /**
+   * @generated from field: int64 current_bytes = 1;
+   */
+  currentBytes: bigint;
+
+  /**
+   * @generated from field: int64 current_objects = 2;
+   */
+  currentObjects: bigint;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp measured_at = 3;
+   */
+  measuredAt?: Timestamp | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.TeamWorkspaceStorage.
+ * Use `create(TeamWorkspaceStorageSchema)` to create a new message.
+ */
+export const TeamWorkspaceStorageSchema: GenMessage<TeamWorkspaceStorage> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_provisioning, 11);
 
 /**
  * @generated from message deepnavy.v1.LeaseProvisioningCommandsRequest
@@ -611,7 +665,7 @@ export type LeaseProvisioningCommandsRequest = Message<"deepnavy.v1.LeaseProvisi
  * Use `create(LeaseProvisioningCommandsRequestSchema)` to create a new message.
  */
 export const LeaseProvisioningCommandsRequestSchema: GenMessage<LeaseProvisioningCommandsRequest> = /*@__PURE__*/
-  messageDesc(file_deepnavy_v1_provisioning, 11);
+  messageDesc(file_deepnavy_v1_provisioning, 12);
 
 /**
  * @generated from message deepnavy.v1.LeasedProvisioningCommand
@@ -649,7 +703,7 @@ export type LeasedProvisioningCommand = Message<"deepnavy.v1.LeasedProvisioningC
  * Use `create(LeasedProvisioningCommandSchema)` to create a new message.
  */
 export const LeasedProvisioningCommandSchema: GenMessage<LeasedProvisioningCommand> = /*@__PURE__*/
-  messageDesc(file_deepnavy_v1_provisioning, 12);
+  messageDesc(file_deepnavy_v1_provisioning, 13);
 
 /**
  * @generated from message deepnavy.v1.LeaseProvisioningCommandsResponse
@@ -666,7 +720,7 @@ export type LeaseProvisioningCommandsResponse = Message<"deepnavy.v1.LeaseProvis
  * Use `create(LeaseProvisioningCommandsResponseSchema)` to create a new message.
  */
 export const LeaseProvisioningCommandsResponseSchema: GenMessage<LeaseProvisioningCommandsResponse> = /*@__PURE__*/
-  messageDesc(file_deepnavy_v1_provisioning, 13);
+  messageDesc(file_deepnavy_v1_provisioning, 14);
 
 /**
  * @generated from message deepnavy.v1.RenewProvisioningCommandLeaseRequest
@@ -695,7 +749,7 @@ export type RenewProvisioningCommandLeaseRequest = Message<"deepnavy.v1.RenewPro
  * Use `create(RenewProvisioningCommandLeaseRequestSchema)` to create a new message.
  */
 export const RenewProvisioningCommandLeaseRequestSchema: GenMessage<RenewProvisioningCommandLeaseRequest> = /*@__PURE__*/
-  messageDesc(file_deepnavy_v1_provisioning, 14);
+  messageDesc(file_deepnavy_v1_provisioning, 15);
 
 /**
  * @generated from message deepnavy.v1.RenewProvisioningCommandLeaseResponse
@@ -712,7 +766,7 @@ export type RenewProvisioningCommandLeaseResponse = Message<"deepnavy.v1.RenewPr
  * Use `create(RenewProvisioningCommandLeaseResponseSchema)` to create a new message.
  */
 export const RenewProvisioningCommandLeaseResponseSchema: GenMessage<RenewProvisioningCommandLeaseResponse> = /*@__PURE__*/
-  messageDesc(file_deepnavy_v1_provisioning, 15);
+  messageDesc(file_deepnavy_v1_provisioning, 16);
 
 /**
  * @generated from message deepnavy.v1.RecordProvisioningEventRequest
@@ -745,7 +799,7 @@ export type RecordProvisioningEventRequest = Message<"deepnavy.v1.RecordProvisio
  * Use `create(RecordProvisioningEventRequestSchema)` to create a new message.
  */
 export const RecordProvisioningEventRequestSchema: GenMessage<RecordProvisioningEventRequest> = /*@__PURE__*/
-  messageDesc(file_deepnavy_v1_provisioning, 16);
+  messageDesc(file_deepnavy_v1_provisioning, 17);
 
 /**
  * @generated from message deepnavy.v1.RecordProvisioningEventResponse
@@ -762,7 +816,7 @@ export type RecordProvisioningEventResponse = Message<"deepnavy.v1.RecordProvisi
  * Use `create(RecordProvisioningEventResponseSchema)` to create a new message.
  */
 export const RecordProvisioningEventResponseSchema: GenMessage<RecordProvisioningEventResponse> = /*@__PURE__*/
-  messageDesc(file_deepnavy_v1_provisioning, 17);
+  messageDesc(file_deepnavy_v1_provisioning, 18);
 
 /**
  * RuntimeHealthReport is emitted by team-provisioner on every observed state
@@ -837,7 +891,7 @@ export type RuntimeHealthReport = Message<"deepnavy.v1.RuntimeHealthReport"> & {
  * Use `create(RuntimeHealthReportSchema)` to create a new message.
  */
 export const RuntimeHealthReportSchema: GenMessage<RuntimeHealthReport> = /*@__PURE__*/
-  messageDesc(file_deepnavy_v1_provisioning, 18);
+  messageDesc(file_deepnavy_v1_provisioning, 19);
 
 /**
  * RuntimeHealthSnapshot is the canonical persisted report. organization_id,
@@ -923,7 +977,7 @@ export type RuntimeHealthSnapshot = Message<"deepnavy.v1.RuntimeHealthSnapshot">
  * Use `create(RuntimeHealthSnapshotSchema)` to create a new message.
  */
 export const RuntimeHealthSnapshotSchema: GenMessage<RuntimeHealthSnapshot> = /*@__PURE__*/
-  messageDesc(file_deepnavy_v1_provisioning, 19);
+  messageDesc(file_deepnavy_v1_provisioning, 20);
 
 /**
  * @generated from message deepnavy.v1.ReportRuntimeHealthRequest
@@ -940,7 +994,7 @@ export type ReportRuntimeHealthRequest = Message<"deepnavy.v1.ReportRuntimeHealt
  * Use `create(ReportRuntimeHealthRequestSchema)` to create a new message.
  */
 export const ReportRuntimeHealthRequestSchema: GenMessage<ReportRuntimeHealthRequest> = /*@__PURE__*/
-  messageDesc(file_deepnavy_v1_provisioning, 20);
+  messageDesc(file_deepnavy_v1_provisioning, 21);
 
 /**
  * @generated from message deepnavy.v1.ReportRuntimeHealthResponse
@@ -965,7 +1019,126 @@ export type ReportRuntimeHealthResponse = Message<"deepnavy.v1.ReportRuntimeHeal
  * Use `create(ReportRuntimeHealthResponseSchema)` to create a new message.
  */
 export const ReportRuntimeHealthResponseSchema: GenMessage<ReportRuntimeHealthResponse> = /*@__PURE__*/
-  messageDesc(file_deepnavy_v1_provisioning, 21);
+  messageDesc(file_deepnavy_v1_provisioning, 22);
+
+/**
+ * @generated from message deepnavy.v1.ReportTeamSuspensionRequest
+ */
+export type ReportTeamSuspensionRequest = Message<"deepnavy.v1.ReportTeamSuspensionRequest"> & {
+  /**
+   * @generated from field: string team_id = 1;
+   */
+  teamId: string;
+
+  /**
+   * @generated from field: deepnavy.v1.TeamSuspensionReason reason = 2;
+   */
+  reason: TeamSuspensionReason;
+
+  /**
+   * A short operator-facing sentence. Customer-safe: it reaches the console's
+   * activity log, so it must never carry tokens, internal endpoints or stack
+   * detail - name what happened and what the customer can do.
+   *
+   * @generated from field: string safe_detail = 3;
+   */
+  safeDetail: string;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp occurred_at = 4;
+   */
+  occurredAt?: Timestamp | undefined;
+};
+
+/**
+ * Describes the message deepnavy.v1.ReportTeamSuspensionRequest.
+ * Use `create(ReportTeamSuspensionRequestSchema)` to create a new message.
+ */
+export const ReportTeamSuspensionRequestSchema: GenMessage<ReportTeamSuspensionRequest> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_provisioning, 23);
+
+/**
+ * ReportWorkspaceStorage carries the provisioner's recorded per-team storage
+ * measurement to the platform, so consoles can stream it live. The
+ * provisioner remains the system of record on the workspace claim; this is a
+ * projection for the customer's eyes, reported best-effort after each clean
+ * inventory sweep and idempotent per (team, report).
+ *
+ * @generated from message deepnavy.v1.ReportWorkspaceStorageRequest
+ */
+export type ReportWorkspaceStorageRequest = Message<"deepnavy.v1.ReportWorkspaceStorageRequest"> & {
+  /**
+   * @generated from field: string team_id = 1;
+   */
+  teamId: string;
+
+  /**
+   * @generated from field: int64 current_bytes = 2;
+   */
+  currentBytes: bigint;
+
+  /**
+   * @generated from field: int64 current_objects = 3;
+   */
+  currentObjects: bigint;
+
+  /**
+   * measured_at is when AWS began scanning the bucket, from the report
+   * manifest - not when the provisioner read it.
+   *
+   * @generated from field: google.protobuf.Timestamp measured_at = 4;
+   */
+  measuredAt?: Timestamp | undefined;
+
+  /**
+   * report_id identifies the inventory snapshot, for idempotence. It is a
+   * date-shaped directory name, never a path or credential.
+   *
+   * @generated from field: string report_id = 5;
+   */
+  reportId: string;
+};
+
+/**
+ * Describes the message deepnavy.v1.ReportWorkspaceStorageRequest.
+ * Use `create(ReportWorkspaceStorageRequestSchema)` to create a new message.
+ */
+export const ReportWorkspaceStorageRequestSchema: GenMessage<ReportWorkspaceStorageRequest> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_provisioning, 24);
+
+/**
+ * @generated from message deepnavy.v1.ReportWorkspaceStorageResponse
+ */
+export type ReportWorkspaceStorageResponse = Message<"deepnavy.v1.ReportWorkspaceStorageResponse"> & {
+};
+
+/**
+ * Describes the message deepnavy.v1.ReportWorkspaceStorageResponse.
+ * Use `create(ReportWorkspaceStorageResponseSchema)` to create a new message.
+ */
+export const ReportWorkspaceStorageResponseSchema: GenMessage<ReportWorkspaceStorageResponse> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_provisioning, 25);
+
+/**
+ * @generated from message deepnavy.v1.ReportTeamSuspensionResponse
+ */
+export type ReportTeamSuspensionResponse = Message<"deepnavy.v1.ReportTeamSuspensionResponse"> & {
+  /**
+   * The team's lifecycle state after the report. SUSPENDED whether this call
+   * performed the transition or an earlier report already had - the report is
+   * idempotent, because the disable path retries.
+   *
+   * @generated from field: deepnavy.v1.LifecycleState state = 1;
+   */
+  state: LifecycleState;
+};
+
+/**
+ * Describes the message deepnavy.v1.ReportTeamSuspensionResponse.
+ * Use `create(ReportTeamSuspensionResponseSchema)` to create a new message.
+ */
+export const ReportTeamSuspensionResponseSchema: GenMessage<ReportTeamSuspensionResponse> = /*@__PURE__*/
+  messageDesc(file_deepnavy_v1_provisioning, 26);
 
 /**
  * @generated from enum deepnavy.v1.ProvisioningOperation
@@ -1303,6 +1476,34 @@ export const RuntimeHealthReasonSchema: GenEnum<RuntimeHealthReason> = /*@__PURE
   enumDesc(file_deepnavy_v1_provisioning, 5);
 
 /**
+ * TeamSuspensionReason is why the provisioner suspended a team on its own,
+ * outside any command the platform issued.
+ *
+ * @generated from enum deepnavy.v1.TeamSuspensionReason
+ */
+export enum TeamSuspensionReason {
+  /**
+   * @generated from enum value: TEAM_SUSPENSION_REASON_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * The team's GitHub credential was revoked and its workload suspended
+   * fail-closed - a credential the refresh loop could not validate, or a
+   * GitHub scope that became unavailable.
+   *
+   * @generated from enum value: TEAM_SUSPENSION_REASON_CREDENTIAL_LOSS = 1;
+   */
+  CREDENTIAL_LOSS = 1,
+}
+
+/**
+ * Describes the enum deepnavy.v1.TeamSuspensionReason.
+ */
+export const TeamSuspensionReasonSchema: GenEnum<TeamSuspensionReason> = /*@__PURE__*/
+  enumDesc(file_deepnavy_v1_provisioning, 6);
+
+/**
  * @generated from service deepnavy.v1.ProvisioningService
  */
 export const ProvisioningService: GenService<{
@@ -1362,6 +1563,46 @@ export const ProvisioningWorkerService: GenService<{
     methodKind: "unary";
     input: typeof RecordProvisioningEventRequestSchema;
     output: typeof RecordProvisioningEventResponseSchema;
+  },
+  /**
+   * ReportTeamSuspension records that the provisioner suspended a team
+   * FAIL-CLOSED, outside any command - today, on credential loss.
+   *
+   * It exists because a cluster-side suspension used to be invisible to the
+   * platform: teams.state stayed "active", the console showed a live-looking
+   * team that was actually dark, and - because every lifecycle control is
+   * gated on that state - offered no Resume. The 2026-08-27 credential
+   * incident left two suspended teams whose owner had no button that could
+   * bring them back.
+   *
+   * The transition is active -> suspended only, and idempotent. It is a
+   * report, not a command channel: the provisioner has already acted, and the
+   * platform's job is to make the console tell the truth and offer Resume -
+   * which re-provisions, re-mints the credential, and lifts the suspension
+   * through the machinery that already exists.
+   *
+   * Called by team-provisioner with the PROVISIONING worker bearer, like
+   * everything else on this service. See conversations.proto for what happens
+   * when a worker service is mounted behind the bearer its caller does not
+   * hold.
+   *
+   * @generated from rpc deepnavy.v1.ProvisioningWorkerService.ReportTeamSuspension
+   */
+  reportTeamSuspension: {
+    methodKind: "unary";
+    input: typeof ReportTeamSuspensionRequestSchema;
+    output: typeof ReportTeamSuspensionResponseSchema;
+  },
+  /**
+   * ReportWorkspaceStorage records the latest measured workspace storage for
+   * a team. Idempotent per (team_id, report_id); the newest measured_at wins.
+   *
+   * @generated from rpc deepnavy.v1.ProvisioningWorkerService.ReportWorkspaceStorage
+   */
+  reportWorkspaceStorage: {
+    methodKind: "unary";
+    input: typeof ReportWorkspaceStorageRequestSchema;
+    output: typeof ReportWorkspaceStorageResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_deepnavy_v1_provisioning, 1);

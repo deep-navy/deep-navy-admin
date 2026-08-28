@@ -2,8 +2,8 @@
 // @generated from file deepnavy/v1/objectives.proto (package deepnavy.v1, syntax proto3)
 /* eslint-disable */
 
-import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
-import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
+import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
+import { enumDesc, fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
 import type { LifecycleState, PageRequest, PageResponse } from "./common_pb.js";
 import { file_deepnavy_v1_common } from "./common_pb.js";
 import type { ObjectiveDispatchStatus } from "./work_pb.js";
@@ -16,7 +16,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file deepnavy/v1/objectives.proto.
  */
 export const file_deepnavy_v1_objectives: GenFile = /*@__PURE__*/
-  fileDesc("ChxkZWVwbmF2eS92MS9vYmplY3RpdmVzLnByb3RvEgtkZWVwbmF2eS52MSL6AgoRQnVzaW5lc3NPYmplY3RpdmUSCgoCaWQYASABKAkSDwoHdGVhbV9pZBgCIAEoCRINCgV0aXRsZRgDIAEoCRITCgtkZXNjcmlwdGlvbhgEIAEoCRIqCgVzdGF0ZRgFIAEoDjIbLmRlZXBuYXZ5LnYxLkxpZmVjeWNsZVN0YXRlEigKBGtwaXMYBiADKAsyGi5kZWVwbmF2eS52MS5LcGlEZWZpbml0aW9uEi4KCmNyZWF0ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjYKCGRpc3BhdGNoGAggASgLMiQuZGVlcG5hdnkudjEuT2JqZWN0aXZlRGlzcGF0Y2hTdGF0dXMSMAoMc2F0aXNmaWVkX2F0GAkgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBI0CgphY2NlcHRhbmNlGAogASgLMiAuZGVlcG5hdnkudjEuT2JqZWN0aXZlQWNjZXB0YW5jZSKbAQoNS3BpRGVmaW5pdGlvbhIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEgwKBHVuaXQYAyABKAkSEQoJZGlyZWN0aW9uGAQgASgJEhAKCGJhc2VsaW5lGAUgASgBEg4KBnRhcmdldBgGIAEoARIRCglndWFyZHJhaWwYByABKAgSGgoSbWVhc3VyZW1lbnRfc291cmNlGAggASgJIrIBChNPYmplY3RpdmVBY2NlcHRhbmNlEhYKDmNoZWNrX3J1bl9uYW1lGAEgASgJEhAKCGhlYWRfc2hhGAIgASgJEhIKCmNvbmNsdXNpb24YAyABKAkSFQoNY2hlY2tfcnVuX3VybBgEIAEoCRIvCgtvYnNlcnZlZF9hdBgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASFQoNcmVwb3NpdG9yeV9pZBgGIAEoAyJuCh5DcmVhdGVCdXNpbmVzc09iamVjdGl2ZVJlcXVlc3QSDwoHdGVhbV9pZBgBIAEoCRINCgV0aXRsZRgCIAEoCRITCgtkZXNjcmlwdGlvbhgDIAEoCRIXCg9pZGVtcG90ZW5jeV9rZXkYBCABKAkiVAofQ3JlYXRlQnVzaW5lc3NPYmplY3RpdmVSZXNwb25zZRIxCglvYmplY3RpdmUYASABKAsyHi5kZWVwbmF2eS52MS5CdXNpbmVzc09iamVjdGl2ZSJYCh1MaXN0QnVzaW5lc3NPYmplY3RpdmVzUmVxdWVzdBIPCgd0ZWFtX2lkGAEgASgJEiYKBHBhZ2UYAiABKAsyGC5kZWVwbmF2eS52MS5QYWdlUmVxdWVzdCJ9Ch5MaXN0QnVzaW5lc3NPYmplY3RpdmVzUmVzcG9uc2USMgoKb2JqZWN0aXZlcxgBIAMoCzIeLmRlZXBuYXZ5LnYxLkJ1c2luZXNzT2JqZWN0aXZlEicKBHBhZ2UYAiABKAsyGS5kZWVwbmF2eS52MS5QYWdlUmVzcG9uc2Uy+wEKEE9iamVjdGl2ZVNlcnZpY2USdAoXQ3JlYXRlQnVzaW5lc3NPYmplY3RpdmUSKy5kZWVwbmF2eS52MS5DcmVhdGVCdXNpbmVzc09iamVjdGl2ZVJlcXVlc3QaLC5kZWVwbmF2eS52MS5DcmVhdGVCdXNpbmVzc09iamVjdGl2ZVJlc3BvbnNlEnEKFkxpc3RCdXNpbmVzc09iamVjdGl2ZXMSKi5kZWVwbmF2eS52MS5MaXN0QnVzaW5lc3NPYmplY3RpdmVzUmVxdWVzdBorLmRlZXBuYXZ5LnYxLkxpc3RCdXNpbmVzc09iamVjdGl2ZXNSZXNwb25zZUJEWkJnaXRodWIuY29tL2RlZXAtbmF2eS9wbGF0Zm9ybS1wcm90b3MvZ2VuL2dvL2RlZXBuYXZ5L3YxO2RlZXBuYXZ5djFiBnByb3RvMw", [file_deepnavy_v1_common, file_deepnavy_v1_work, file_google_protobuf_timestamp]);
+  fileDesc("ChxkZWVwbmF2eS92MS9vYmplY3RpdmVzLnByb3RvEgtkZWVwbmF2eS52MSKoAwoRQnVzaW5lc3NPYmplY3RpdmUSCgoCaWQYASABKAkSDwoHdGVhbV9pZBgCIAEoCRINCgV0aXRsZRgDIAEoCRITCgtkZXNjcmlwdGlvbhgEIAEoCRIqCgVzdGF0ZRgFIAEoDjIbLmRlZXBuYXZ5LnYxLkxpZmVjeWNsZVN0YXRlEigKBGtwaXMYBiADKAsyGi5kZWVwbmF2eS52MS5LcGlEZWZpbml0aW9uEi4KCmNyZWF0ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjYKCGRpc3BhdGNoGAggASgLMiQuZGVlcG5hdnkudjEuT2JqZWN0aXZlRGlzcGF0Y2hTdGF0dXMSMAoMc2F0aXNmaWVkX2F0GAkgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBI0CgphY2NlcHRhbmNlGAogASgLMiAuZGVlcG5hdnkudjEuT2JqZWN0aXZlQWNjZXB0YW5jZRIsCgZvcmlnaW4YCyABKA4yHC5kZWVwbmF2eS52MS5PYmplY3RpdmVPcmlnaW4imwEKDUtwaURlZmluaXRpb24SCgoCaWQYASABKAkSDAoEbmFtZRgCIAEoCRIMCgR1bml0GAMgASgJEhEKCWRpcmVjdGlvbhgEIAEoCRIQCghiYXNlbGluZRgFIAEoARIOCgZ0YXJnZXQYBiABKAESEQoJZ3VhcmRyYWlsGAcgASgIEhoKEm1lYXN1cmVtZW50X3NvdXJjZRgIIAEoCSKyAQoTT2JqZWN0aXZlQWNjZXB0YW5jZRIWCg5jaGVja19ydW5fbmFtZRgBIAEoCRIQCghoZWFkX3NoYRgCIAEoCRISCgpjb25jbHVzaW9uGAMgASgJEhUKDWNoZWNrX3J1bl91cmwYBCABKAkSLwoLb2JzZXJ2ZWRfYXQYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhUKDXJlcG9zaXRvcnlfaWQYBiABKAMibgoeQ3JlYXRlQnVzaW5lc3NPYmplY3RpdmVSZXF1ZXN0Eg8KB3RlYW1faWQYASABKAkSDQoFdGl0bGUYAiABKAkSEwoLZGVzY3JpcHRpb24YAyABKAkSFwoPaWRlbXBvdGVuY3lfa2V5GAQgASgJIlQKH0NyZWF0ZUJ1c2luZXNzT2JqZWN0aXZlUmVzcG9uc2USMQoJb2JqZWN0aXZlGAEgASgLMh4uZGVlcG5hdnkudjEuQnVzaW5lc3NPYmplY3RpdmUiWAodTGlzdEJ1c2luZXNzT2JqZWN0aXZlc1JlcXVlc3QSDwoHdGVhbV9pZBgBIAEoCRImCgRwYWdlGAIgASgLMhguZGVlcG5hdnkudjEuUGFnZVJlcXVlc3QifQoeTGlzdEJ1c2luZXNzT2JqZWN0aXZlc1Jlc3BvbnNlEjIKCm9iamVjdGl2ZXMYASADKAsyHi5kZWVwbmF2eS52MS5CdXNpbmVzc09iamVjdGl2ZRInCgRwYWdlGAIgASgLMhkuZGVlcG5hdnkudjEuUGFnZVJlc3BvbnNlKnEKD09iamVjdGl2ZU9yaWdpbhIgChxPQkpFQ1RJVkVfT1JJR0lOX1VOU1BFQ0lGSUVEEAASHQoZT0JKRUNUSVZFX09SSUdJTl9DVVNUT01FUhABEh0KGU9CSkVDVElWRV9PUklHSU5fRElTUEFUQ0gQAjL7AQoQT2JqZWN0aXZlU2VydmljZRJ0ChdDcmVhdGVCdXNpbmVzc09iamVjdGl2ZRIrLmRlZXBuYXZ5LnYxLkNyZWF0ZUJ1c2luZXNzT2JqZWN0aXZlUmVxdWVzdBosLmRlZXBuYXZ5LnYxLkNyZWF0ZUJ1c2luZXNzT2JqZWN0aXZlUmVzcG9uc2UScQoWTGlzdEJ1c2luZXNzT2JqZWN0aXZlcxIqLmRlZXBuYXZ5LnYxLkxpc3RCdXNpbmVzc09iamVjdGl2ZXNSZXF1ZXN0GisuZGVlcG5hdnkudjEuTGlzdEJ1c2luZXNzT2JqZWN0aXZlc1Jlc3BvbnNlQkRaQmdpdGh1Yi5jb20vZGVlcC1uYXZ5L3BsYXRmb3JtLXByb3Rvcy9nZW4vZ28vZGVlcG5hdnkvdjE7ZGVlcG5hdnl2MWIGcHJvdG8z", [file_deepnavy_v1_common, file_deepnavy_v1_work, file_google_protobuf_timestamp]);
 
 /**
  * @generated from message deepnavy.v1.BusinessObjective
@@ -81,6 +81,20 @@ export type BusinessObjective = Message<"deepnavy.v1.BusinessObjective"> & {
    * @generated from field: deepnavy.v1.ObjectiveAcceptance acceptance = 10;
    */
   acceptance?: ObjectiveAcceptance | undefined;
+
+  /**
+   * origin says who this objective speaks to. CUSTOMER rows are the business
+   * objectives the customer stated or signed off on, written in their terms.
+   * DISPATCH rows are created by the platform to carry a routing wake (a
+   * GitHub event turned into agent work); their descriptions are written FOR
+   * the agent - tool names, delivery markers - and consoles must not feature
+   * them as "what your team is working toward". The work a dispatch produces
+   * still reaches the customer through the issues and pull requests it opens.
+   * UNSPECIFIED is read as CUSTOMER so old servers stay honest by default.
+   *
+   * @generated from field: deepnavy.v1.ObjectiveOrigin origin = 11;
+   */
+  origin: ObjectiveOrigin;
 };
 
 /**
@@ -291,6 +305,32 @@ export type ListBusinessObjectivesResponse = Message<"deepnavy.v1.ListBusinessOb
  */
 export const ListBusinessObjectivesResponseSchema: GenMessage<ListBusinessObjectivesResponse> = /*@__PURE__*/
   messageDesc(file_deepnavy_v1_objectives, 6);
+
+/**
+ * @generated from enum deepnavy.v1.ObjectiveOrigin
+ */
+export enum ObjectiveOrigin {
+  /**
+   * @generated from enum value: OBJECTIVE_ORIGIN_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * @generated from enum value: OBJECTIVE_ORIGIN_CUSTOMER = 1;
+   */
+  CUSTOMER = 1,
+
+  /**
+   * @generated from enum value: OBJECTIVE_ORIGIN_DISPATCH = 2;
+   */
+  DISPATCH = 2,
+}
+
+/**
+ * Describes the enum deepnavy.v1.ObjectiveOrigin.
+ */
+export const ObjectiveOriginSchema: GenEnum<ObjectiveOrigin> = /*@__PURE__*/
+  enumDesc(file_deepnavy_v1_objectives, 0);
 
 /**
  * @generated from service deepnavy.v1.ObjectiveService

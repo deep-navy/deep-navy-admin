@@ -14,7 +14,7 @@ import {
 // failure. The operator surface is AdminService, and it is the only surface this
 // client can reach, so there is no path from the admin console to a customer one.
 
-export const PLATFORM_PROTOS_REVISION = "5a3d34b92328aa4d222ae74ac70cb7699985e09d";
+export const PLATFORM_PROTOS_REVISION = "911fc5f36a95fcb9992eb710080f376dbf7376f0";
 export const SUPPORTED_PROCEDURES = Object.freeze([
   // The operator's own identity. It is first because it is the first call the
   // console makes: it is the authorization probe, and its answer is what the
@@ -272,6 +272,8 @@ export function createAdminApi(options: AdminApiOptions) {
           }, callOptions);
         case "admin_fleet":
           return await admin.getAdminFleet({}, callOptions);
+        case "admin_cost_truth":
+          return await admin.getAdminCostTruth({}, callOptions);
         case "admin_runtimes":
           return await admin.listAdminRuntimeInstances({ page: pageRequest(payload.page) }, callOptions);
         case "admin_billing":

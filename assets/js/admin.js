@@ -158,7 +158,7 @@
   }
 
   function createAdminApi() {
-    if (!apiBaseUrl || generated?.PLATFORM_PROTOS_REVISION !== "5a3d34b92328aa4d222ae74ac70cb7699985e09d" || typeof generated.createAdminApi !== "function") return null;
+    if (!apiBaseUrl || generated?.PLATFORM_PROTOS_REVISION !== "911fc5f36a95fcb9992eb710080f376dbf7376f0" || typeof generated.createAdminApi !== "function") return null;
     try {
       return generated.createAdminApi({ baseUrl: apiBaseUrl, defaultTimeoutMs: 12_000 });
     } catch {
@@ -2072,12 +2072,89 @@
     });
   }
 
+  // One ground-truth source's card: absent message renders unavailable -
+  // never zero - and each card fails alone.
+  function renderTruthCard(name, message, rows) {
+    const note = document.querySelector(`[data-truth-note="${name}"]`);
+    const list = document.querySelector(`[data-truth-list="${name}"]`);
+    if (!note || !list) return;
+    list.replaceChildren();
+    if (!message) {
+      note.textContent = "unavailable";
+      return;
+    }
+    note.textContent = message;
+    for (const [label, value] of rows) {
+      const item = document.createElement("li");
+      item.className = "ad-row";
+      const labelSpan = document.createElement("span");
+      labelSpan.textContent = label;
+      const valueSpan = document.createElement("span");
+      valueSpan.className = "ad-row__end";
+      valueSpan.textContent = value;
+      item.append(labelSpan, valueSpan);
+      list.append(item);
+    }
+  }
+
+  function usdNanos(value) {
+    const nanos = typeof value === "bigint" ? value : BigInt(Number(value || 0));
+    const cents = nanos / 10_000_000n;
+    return `$${(Number(cents) / 100).toFixed(2)}`;
+  }
+
+  function renderCostTruth(response) {
+    const aws = response?.aws;
+    if (aws && Array.isArray(aws.daily)) {
+      // The latest day Cost Explorer has, by service - its data lags about a
+      // day, and naming the day is what keeps the panel honest about that.
+      const latestDate = aws.daily.reduce((latest, row) => (row.date > latest ? row.date : latest), "");
+      const latest = aws.daily.filter((row) => row.date === latestDate)
+        .sort((a, b) => Number((b.costNanos || 0n) - (a.costNanos || 0n))).slice(0, 6);
+      const total = latest.reduce((sum, row) => sum + (typeof row.costNanos === "bigint" ? row.costNanos : 0n), 0n);
+      renderTruthCard("aws", latestDate ? `${latestDate} · ${usdNanos(total)}` : "no rows",
+        latest.map((row) => [String(row.service || ""), usdNanos(row.costNanos)]));
+    } else {
+      renderTruthCard("aws", "");
+    }
+    const litellm = response?.litellm;
+    if (litellm) {
+      const teams = (litellm.teams || [])
+        .sort((a, b) => Number((b.spendNanos || 0n) - (a.spendNanos || 0n))).slice(0, 6);
+      renderTruthCard("litellm", `total ${usdNanos(litellm.totalSpendNanos)}`,
+        teams.map((team) => [String(team.teamAlias || "unnamed"), usdNanos(team.spendNanos)]));
+    } else {
+      renderTruthCard("litellm", "");
+    }
+    const langfuse = response?.langfuse;
+    if (langfuse) {
+      renderTruthCard("langfuse", "live", [
+        ["traces", String(langfuse.traces_24H ?? langfuse.traces24h ?? 0n)],
+        ["observations", String(langfuse.observations_24H ?? langfuse.observations24h ?? 0n)]
+      ]);
+    } else {
+      renderTruthCard("langfuse", "");
+    }
+  }
+
   async function loadEconomics(signal) {
     setSectionState("economics", "Loading", "pending");
-    const [economicsResult, slicesResult] = await Promise.allSettled([
+    const [economicsResult, slicesResult, truthResult] = await Promise.allSettled([
       adminRequest("admin_economics", {}, signal),
-      adminListRequest("admin_team_economics", "economicsSlices", { dimension: economicsState.dimension }, signal)
+      adminListRequest("admin_team_economics", "economicsSlices", { dimension: economicsState.dimension }, signal),
+      adminRequest("admin_cost_truth", {}, signal)
     ]);
+    // Ground truth renders independently and never gates the section state:
+    // its absence is information, not a failure of the ledger panels.
+    if (truthResult.status === "fulfilled") {
+      try {
+        renderCostTruth(truthResult.value);
+      } catch {
+        renderCostTruth(null);
+      }
+    } else {
+      renderCostTruth(null);
+    }
     const errors = [];
     let loaded = 0;
     let economicsProjection = "";
