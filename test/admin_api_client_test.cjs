@@ -44,7 +44,7 @@ test("the browser bundle exposes the pinned read-only admin launch procedures", 
   assert.deepEqual([...generated.SUPPORTED_PROCEDURES], [
     "admin_identity",
     "admin_overview", "admin_customers", "admin_customer",
-    "admin_customer_reliability", "admin_economics", "admin_team_economics",
+    "admin_customer_reliability", "admin_economics", "admin_cost_truth", "admin_team_economics",
     "admin_fleet", "admin_runtimes", "admin_billing", "admin_billing_accounts",
     "admin_reconciliation_issues", "admin_alerts", "admin_audit_events"
   ]);
