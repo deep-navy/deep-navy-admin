@@ -6,7 +6,7 @@
     "build": "node scripts/build_admin_client.mjs",
     "check:vendor": "node scripts/check_vendored_platform_protos.mjs",
     "typecheck": "tsc --project tsconfig.json --noEmit",
-    "test": "node --test test/callback_scrubber_test.cjs test/admin_api_client_test.cjs test/admin_app_security_test.cjs test/admin_operator_authorization_test.cjs test/admin_launch_surface_test.cjs test/admin_console_structure_test.cjs test/icon_motion_test.cjs",
+    "test": "node --test test/callback_scrubber_test.cjs test/admin_api_client_test.cjs test/admin_app_security_test.cjs test/admin_operator_authorization_test.cjs test/admin_launch_surface_test.cjs test/admin_console_structure_test.cjs test/admin_platform_health_test.cjs test/icon_motion_test.cjs",
     "check": "npm run check:vendor && npm run check:ds && npm run typecheck && npm run build && npm test",
     "check:ds": "node scripts/check_vendored_design_system.mjs"
   },
