@@ -47,6 +47,8 @@
     <symbol id="i-warn" viewBox="0 0 24 24"><path pathLength="1" d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path pathLength="1" d="M12 9v4"/><path pathLength="1" d="M12 17h.01"/></symbol>
     <symbol id="i-critical" viewBox="0 0 24 24"><path pathLength="1" d="M15.312 2a2 2 0 0 1 1.414.586l4.688 4.688A2 2 0 0 1 22 8.688v6.624a2 2 0 0 1-.586 1.414l-4.688 4.688a2 2 0 0 1-1.414.586H8.688a2 2 0 0 1-1.414-.586l-4.688-4.688A2 2 0 0 1 2 15.312V8.688a2 2 0 0 1 .586-1.414l4.688-4.688A2 2 0 0 1 8.688 2z"/><path pathLength="1" d="M12 8v4"/><path pathLength="1" d="M12 16h.01"/></symbol>
     <symbol id="i-monitor" viewBox="0 0 24 24"><rect pathLength="1" width="20" height="14" x="2" y="3" rx="2"/><path pathLength="1" d="M8 21h8"/><path pathLength="1" d="M12 17v4"/></symbol>
+    <symbol id="i-circle-x" viewBox="0 0 24 24"><circle pathLength="1" cx="12" cy="12" r="10"/><path pathLength="1" d="m15 9-6 6"/><path pathLength="1" d="m9 9 6 6"/></symbol>
+    <symbol id="i-circle-check-big" viewBox="0 0 24 24"><path pathLength="1" d="M21.801 10A10 10 0 1 1 17 3.335"/><path pathLength="1" d="m9 11 3 3L22 4"/></symbol>
     <symbol id="i-moon" viewBox="0 0 24 24"><path pathLength="1" d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9"/></symbol>
     <symbol id="i-sun" viewBox="0 0 24 24"><circle pathLength="1" cx="12" cy="12" r="4"/><path pathLength="1" d="M12 2v2"/><path pathLength="1" d="M12 20v2"/><path pathLength="1" d="m4.93 4.93 1.41 1.41"/><path pathLength="1" d="m17.66 17.66 1.41 1.41"/><path pathLength="1" d="M2 12h2"/><path pathLength="1" d="M20 12h2"/><path pathLength="1" d="m6.34 17.66-1.41 1.41"/><path pathLength="1" d="m19.07 4.93-1.41 1.41"/></symbol>
   </defs>
@@ -477,6 +479,21 @@
           <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm"><span class="dn-stat__label">Stale heartbeat</span><span class="dn-stat__value" data-fleet-metric="stale-heartbeat">—</span></div>
           <div class="dn-card dn-card--pad-sm dn-stat dn-stat--sm"><span class="dn-stat__label">Backup overdue</span><span class="dn-stat__value" data-fleet-metric="backup-overdue">—</span></div>
         </div>
+
+        {%- comment -%}
+          The platform's own services, one card each, populated entirely from
+          authenticated data — no service is named in this public markup. A
+          service that could not be observed says so in words; it is never left
+          blank, because a blank card beside healthy cards reads as healthy.
+        {%- endcomment -%}
+        <section class="ad-section">
+          <div class="ad-section__head">
+            <span class="dn-eyebrow">Platform services</span>
+            <span class="ad-section__count">Health as the platform observes itself. A service that cannot be observed reports unknown, never healthy.</span>
+          </div>
+          <div class="ad-3" data-platform-services></div>
+          <p class="ad-note" data-platform-empty>Waiting for the first platform health observation.</p>
+        </section>
 
         <section class="ad-section">
           <span class="dn-eyebrow">Team runtimes</span>

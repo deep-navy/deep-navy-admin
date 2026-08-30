@@ -14,7 +14,7 @@ import {
 // failure. The operator surface is AdminService, and it is the only surface this
 // client can reach, so there is no path from the admin console to a customer one.
 
-export const PLATFORM_PROTOS_REVISION = "911fc5f36a95fcb9992eb710080f376dbf7376f0";
+export const PLATFORM_PROTOS_REVISION = "eb822dee4f0ca0d29573e6ddd5040f2b03b12549";
 export const SUPPORTED_PROCEDURES = Object.freeze([
   // The operator's own identity. It is first because it is the first call the
   // console makes: it is the authorization probe, and its answer is what the
@@ -32,6 +32,7 @@ export const SUPPORTED_PROCEDURES = Object.freeze([
   "admin_cost_truth",
   "admin_team_economics",
   "admin_fleet",
+  "admin_platform_health",
   "admin_runtimes",
   "admin_billing",
   "admin_billing_accounts",
@@ -45,7 +46,8 @@ type ProcedureName = (typeof SUPPORTED_PROCEDURES)[number];
 export const STREAM_PROCEDURES = Object.freeze([
   "admin_runtimes_stream",
   "admin_alerts_stream",
-  "admin_audit_events_stream"
+  "admin_audit_events_stream",
+  "admin_platform_health_stream"
 ] as const);
 type StreamName = (typeof STREAM_PROCEDURES)[number];
 
@@ -273,6 +275,12 @@ export function createAdminApi(options: AdminApiOptions) {
           }, callOptions);
         case "admin_fleet":
           return await admin.getAdminFleet({}, callOptions);
+        // The environment is deliberately left UNSPECIFIED, which the contract
+        // defines as "this API deployment's environment". The console talks to
+        // exactly one deployment, so naming an environment here could only ever
+        // restate that or lie about it.
+        case "admin_platform_health":
+          return await admin.getAdminPlatformHealth({}, callOptions);
         case "admin_cost_truth":
           return await admin.getAdminCostTruth({}, callOptions);
         case "admin_runtimes":
@@ -340,6 +348,13 @@ export function createAdminApi(options: AdminApiOptions) {
         // filter's clothes. Narrowing belongs to the view.
         case "admin_audit_events_stream":
           iterable = admin.streamAdminAuditEvents({ afterSequence }, callOptions);
+          break;
+        // Health carries no cursor, by contract: it is a state, not a log. On
+        // connect the server emits every service once and re-emits a service
+        // whenever its report changes, so a reconnect simply replays the current
+        // truth — there is no position to resume from and none is sent.
+        case "admin_platform_health_stream":
+          iterable = admin.streamAdminPlatformHealth({}, callOptions);
           break;
         default:
           throw new AdminClientError("Unsupported administrator stream.", "invalid_argument", 400, requestId);

@@ -40,12 +40,12 @@ function parseStreamRequestBody(body) {
 }
 
 test("the browser bundle exposes the pinned read-only admin launch procedures", () => {
-  assert.equal(generated.PLATFORM_PROTOS_REVISION, "911fc5f36a95fcb9992eb710080f376dbf7376f0");
+  assert.equal(generated.PLATFORM_PROTOS_REVISION, "eb822dee4f0ca0d29573e6ddd5040f2b03b12549");
   assert.deepEqual([...generated.SUPPORTED_PROCEDURES], [
     "admin_identity",
     "admin_overview", "admin_customers", "admin_customer",
     "admin_customer_reliability", "admin_economics", "admin_cost_truth", "admin_team_economics",
-    "admin_fleet", "admin_runtimes", "admin_billing", "admin_billing_accounts",
+    "admin_fleet", "admin_platform_health", "admin_runtimes", "admin_billing", "admin_billing_accounts",
     "admin_reconciliation_issues", "admin_alerts", "admin_audit_events"
   ]);
 });
@@ -80,7 +80,7 @@ test("an unsupported procedure reaches no network at all", async () => {
 
 test("the browser bundle exposes the live admin streaming procedures", () => {
   assert.deepEqual([...generated.STREAM_PROCEDURES],
-    ["admin_runtimes_stream", "admin_alerts_stream", "admin_audit_events_stream"]);
+    ["admin_runtimes_stream", "admin_alerts_stream", "admin_audit_events_stream", "admin_platform_health_stream"]);
   const api = generated.createAdminApi({ baseUrl: "https://dev.api.deep.navy", fetch: async () => new Response(null, { status: 200 }) });
   assert.equal(typeof api.stream, "function");
 });
@@ -106,6 +106,48 @@ test("the generated client resumes the runtime stream past a cursor and delivers
   assert.equal(messages[0].resourceId, "runtime-1");
   assert.equal(messages[0].sequence, 7n);
   assert.equal(messages[0].runtimeInstance.id, "runtime-1");
+});
+
+// The platform's own health. The unary read routes to GetAdminPlatformHealth
+// and decodes the check-status enum; the stream routes to
+// StreamAdminPlatformHealth and — unlike every other admin stream — sends NO
+// cursor, because the contract says health is a state, not a log: on connect
+// the server emits every service once and re-emits on change.
+test("the generated client fetches and streams the platform's own health without a cursor", async () => {
+  const calls = [];
+  const api = generated.createAdminApi({
+    baseUrl: "https://dev.api.deep.navy",
+    fetch: async (input, init) => {
+      calls.push({ input: String(input), init });
+      if (String(input).endsWith("GetAdminPlatformHealth")) {
+        return new Response(JSON.stringify({ services: [{
+          service: "platform-api",
+          status: "ADMIN_PLATFORM_CHECK_STATUS_DEGRADED",
+          observed: true,
+          checks: [{ name: "database", status: "ADMIN_PLATFORM_CHECK_STATUS_DEGRADED", detail: "slow reads", latencyMs: "412" }]
+        }] }), { status: 200, headers: { "Content-Type": "application/json" } });
+      }
+      return new Response(connectStreamResponseBody([
+        { service: { service: "economics-service", status: "ADMIN_PLATFORM_CHECK_STATUS_FAILED", observed: false, checks: [] } }
+      ]), { status: 200, headers: { "Content-Type": "application/connect+json" } });
+    }
+  });
+
+  const response = await api.request("admin_platform_health", {}, { bearerToken: "id-token", requestId: "health-1" });
+  assert.equal(calls[0].input, "https://dev.api.deep.navy/deepnavy.v1.AdminService/GetAdminPlatformHealth");
+  assert.equal(parseRequestBody(calls[0].init.body).afterSequence, undefined);
+  assert.equal(response.services[0].service, "platform-api");
+  assert.equal(response.services[0].status, 2, "DEGRADED decodes to its enum number");
+  assert.equal(response.services[0].checks[0].latencyMs, 412n);
+
+  const messages = [];
+  await api.stream("admin_platform_health_stream", {}, { bearerToken: "id-token", requestId: "health-2" }, (message) => messages.push(message));
+  assert.equal(calls[1].input, "https://dev.api.deep.navy/deepnavy.v1.AdminService/StreamAdminPlatformHealth");
+  assert.deepEqual(parseStreamRequestBody(calls[1].init.body), {}, "the health stream must carry no cursor");
+  assert.equal(messages.length, 1);
+  assert.equal(messages[0].service.service, "economics-service");
+  assert.equal(messages[0].service.status, 3, "FAILED decodes to its enum number");
+  assert.equal(messages[0].service.observed, false, "an unobserved service arrives saying so");
 });
 
 test("the generated stream rejects an unauthenticated caller before opening a connection", async () => {

@@ -67,9 +67,13 @@
     runtimeCursor: 0n,
     alertInstances: new Map(),
     alertCursor: 0n,
+    // Keyed by the service's own name — the health stream re-emits a service's
+    // whole report on change, so the name is the identity and there is no cursor.
+    platformHealth: new Map(),
     streamController: null,
     runtimeRenderQueued: false,
-    alertRenderQueued: false
+    alertRenderQueued: false,
+    platformHealthRenderQueued: false
   };
   const environment = stringValue(config.environment) || "local";
   const oauthStorageKey = `deep-navy.admin.oauth.${stringValue(config.cognito_client_id) || environment}`;
@@ -158,7 +162,7 @@
   }
 
   function createAdminApi() {
-    if (!apiBaseUrl || generated?.PLATFORM_PROTOS_REVISION !== "911fc5f36a95fcb9992eb710080f376dbf7376f0" || typeof generated.createAdminApi !== "function") return null;
+    if (!apiBaseUrl || generated?.PLATFORM_PROTOS_REVISION !== "eb822dee4f0ca0d29573e6ddd5040f2b03b12549" || typeof generated.createAdminApi !== "function") return null;
     try {
       return generated.createAdminApi({ baseUrl: apiBaseUrl, defaultTimeoutMs: 12_000 });
     } catch {
@@ -1206,6 +1210,61 @@
 
   function statusText(label) {
     return toneBadge(label, statusTone(label));
+  }
+
+  // The platform health enum resolves onto the NOTICE_LEVELS ladder rather than
+  // onto a private palette: FAILED is the ladder's error, DEGRADED its warning,
+  // OK its success. UNSPECIFIED falls to the ladder's lowest rung, because a
+  // status the server did not grade is information, never health.
+  const PLATFORM_STATUS_LEVELS = { 1: "success", 2: "warning", 3: "error" };
+
+  function platformStatusLevel(status) {
+    return PLATFORM_STATUS_LEVELS[Number(status)] || "info";
+  }
+
+  // The ladder speaks in badge tones too. dn-badge's base state is already the
+  // achromatic idle, which is what 'tip' and 'idle' resolve to by mapping to
+  // nothing here — the same shape as CALLOUT_FOR_LEVEL_TONE above.
+  const BADGE_FOR_LADDER_TONE = { danger: " dn-badge--danger", attention: " dn-badge--attention", live: " dn-badge--live", success: " dn-badge--success" };
+
+  // The ladder names glyphs the way Lucide does; the sprite names some of them
+  // for the operator's concept instead. This is the ladder→sprite translation,
+  // and "info" is the honest fallback for a glyph the sprite does not carry.
+  const SPRITE_FOR_LADDER_GLYPH = { "circle-x": "circle-x", "triangle-alert": "warn", "circle-check-big": "circle-check-big", "octagon-alert": "critical", info: "info" };
+
+  // A ladder level as a badge: the level's word beside the level's glyph in the
+  // level's tone. All three cues travel together, so the badge still reads in
+  // grayscale — the colour is never the only thing saying "failed".
+  function ladderBadge(levelName) {
+    const level = noticeLevels.level(levelName);
+    const badge = document.createElement("span");
+    badge.className = `dn-badge${BADGE_FOR_LADDER_TONE[level.tone] || ""}`;
+    const svgNamespace = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(svgNamespace, "svg");
+    svg.setAttribute("class", "dn-icon");
+    svg.setAttribute("width", "12");
+    svg.setAttribute("height", "12");
+    svg.setAttribute("aria-hidden", "true");
+    const use = document.createElementNS(svgNamespace, "use");
+    use.setAttribute("href", `#i-${SPRITE_FOR_LADDER_GLYPH[level.glyph] || "info"}`);
+    svg.append(use);
+    badge.append(svg, document.createTextNode(level.word));
+    return badge;
+  }
+
+  // An observation's age, not its wall-clock stamp: "41 seconds ago" says at a
+  // glance whether the poller is alive, where an absolute time makes the
+  // operator do the subtraction. The absolute stamp rides on the title instead.
+  function formatRelativeTime(value) {
+    const milliseconds = timestampMilliseconds(value);
+    if (milliseconds === null) return UNAVAILABLE;
+    const format = new Intl.RelativeTimeFormat(undefined, { numeric: "auto" });
+    const elapsedSeconds = (milliseconds - Date.now()) / 1000;
+    const magnitude = Math.abs(elapsedSeconds);
+    if (magnitude < 60) return format.format(Math.round(elapsedSeconds), "second");
+    if (magnitude < 3600) return format.format(Math.round(elapsedSeconds / 60), "minute");
+    if (magnitude < 86400) return format.format(Math.round(elapsedSeconds / 3600), "hour");
+    return format.format(Math.round(elapsedSeconds / 86400), "day");
   }
 
   function renderOverview(response) {
@@ -2764,11 +2823,133 @@
     return !anyFailure;
   }
 
+  // --- Platform health (the platform's own services) ---
+  // One card per service, straight from GetAdminPlatformHealth and then kept
+  // live by its stream. The report is observation, not aspiration: a service
+  // whose health surface could not be reached arrives with observed=false and
+  // renders as the unavailable kind of empty — never as blank health, because
+  // a blank row next to healthy rows reads as healthy.
+
+  function platformCheckTable(checks) {
+    const wrap = document.createElement("div");
+    wrap.className = "ad-scroll";
+    const table = document.createElement("table");
+    table.className = "dn-table dn-table--dense";
+    const caption = document.createElement("caption");
+    caption.className = "visually-hidden";
+    caption.textContent = "Component checks for this service";
+    const head = document.createElement("thead");
+    const headRow = document.createElement("tr");
+    ["Check", "Status", "Latency", "Detail"].forEach((label) => {
+      const th = document.createElement("th");
+      th.scope = "col";
+      th.textContent = label;
+      headRow.append(th);
+    });
+    head.append(headRow);
+    const body = document.createElement("tbody");
+    checks.forEach((check) => {
+      const row = document.createElement("tr");
+      const name = cell(row, stringValue(check?.name), true);
+      name.className = "ad-cell-mono";
+      const status = cell(row, "");
+      status.replaceChildren(ladderBadge(platformStatusLevel(check?.status)));
+      const latency = countOrUnavailable(check?.latencyMs);
+      numericCell(row, latency === UNAVAILABLE ? latency : `${latency} ms`);
+      // The detail is one safe sentence when the check is not OK and empty when
+      // it is. An empty detail is a designed absence — "nothing to report" —
+      // so it renders as nothing rather than through cell(), whose empty-means-
+      // unavailable rule states the wrong fact here. It is always textContent:
+      // whatever the sentence carries, it lands as data, never as markup.
+      const detail = document.createElement("td");
+      detail.className = "ad-cell-quiet";
+      detail.textContent = stringValue(check?.detail);
+      row.append(detail);
+      body.append(row);
+    });
+    table.append(caption, head, body);
+    wrap.append(table);
+    return wrap;
+  }
+
+  function platformServiceCard(service) {
+    const card = document.createElement("div");
+    card.className = "dn-card dn-card--pad-sm ad-stack";
+    const head = document.createElement("div");
+    head.className = "ad-section__head";
+    const name = document.createElement("span");
+    name.className = "ad-cell-mono";
+    name.textContent = stringValue(service?.service) || UNAVAILABLE;
+    const observedAt = document.createElement("span");
+    observedAt.className = "ad-section__count ad-row__end";
+    observedAt.textContent = formatRelativeTime(service?.observedAt);
+    observedAt.title = formatTimestamp(service?.observedAt);
+    head.append(name, ladderBadge(platformStatusLevel(service?.status)), observedAt);
+    card.append(head);
+
+    if (service?.observed !== true) {
+      // The unavailable kind of empty, said in words: the poller could not
+      // observe this service, and unknown is not healthy. The FAILED status and
+      // the reachability check above and below still say what was attempted.
+      const note = document.createElement("p");
+      note.className = "ad-note";
+      note.textContent = "We could not observe this service. Its health is unknown — unknown is not healthy, and none was inferred.";
+      card.append(note);
+    }
+    const checks = Array.isArray(service?.checks) ? service.checks : [];
+    if (checks.length) card.append(platformCheckTable(checks));
+    return card;
+  }
+
+  function renderPlatformServices() {
+    const host = document.querySelector("[data-platform-services]");
+    const empty = document.querySelector("[data-platform-empty]");
+    if (!host) return;
+    host.replaceChildren();
+    // Loudest first, then by name: the ladder already says what outranks what,
+    // and at equal loudness an alphabetical order stays put between re-renders.
+    const services = [...state.platformHealth.values()].sort((left, right) => {
+      const rank = noticeLevels.level(platformStatusLevel(left?.status)).rank - noticeLevels.level(platformStatusLevel(right?.status)).rank;
+      if (rank !== 0) return rank;
+      return stringValue(left?.service).localeCompare(stringValue(right?.service));
+    });
+    services.forEach((service) => host.append(platformServiceCard(service)));
+    if (empty) empty.hidden = services.length > 0;
+    window.deepNavyIconMotion?.applyIconMotion(host);
+  }
+
+  function clearPlatformHealth(message) {
+    state.platformHealth = new Map();
+    document.querySelector("[data-platform-services]")?.replaceChildren();
+    const empty = document.querySelector("[data-platform-empty]");
+    if (empty) {
+      empty.textContent = message;
+      empty.hidden = false;
+    }
+  }
+
+  function renderPlatformHealth(response) {
+    const services = Array.isArray(response?.services) ? response.services : [];
+    state.platformHealth = new Map();
+    services.forEach((service) => {
+      const name = stringValue(service?.service);
+      if (name) state.platformHealth.set(name, service);
+    });
+    if (!state.platformHealth.size) {
+      // The call succeeded and reported nothing — a different fact from the
+      // call failing, and it must not wear the failure's words.
+      clearPlatformHealth("The health surface answered with no service reports.");
+      return;
+    }
+    renderPlatformServices();
+  }
+
   async function loadOperations(signal) {
     setSectionState("operations", "Loading", "pending");
-    const [fleetResult, runtimesResult] = await Promise.allSettled([
+    const [fleetResult, runtimesResult, platformResult] = await Promise.allSettled([
       adminRequest("admin_fleet", {}, signal),
-      adminListRequest("admin_runtimes", "runtimeInstances", {}, signal)
+      adminListRequest("admin_runtimes", "runtimeInstances", {}, signal),
+      adminRequest("admin_platform_health", {}, signal)
     ]);
     const errors = [];
     let loaded = 0;
@@ -2802,11 +2983,24 @@
       clearTable("runtimes", "Runtime projection unavailable. Public health probes remain separate below.");
     }
 
+    if (platformResult.status === "fulfilled") {
+      try {
+        renderPlatformHealth(platformResult.value);
+        loaded += 1;
+      } catch (error) {
+        errors.push(error);
+        clearPlatformHealth("Platform health is unavailable. No service status was inferred; unknown is not healthy.");
+      }
+    } else {
+      errors.push(platformResult.reason);
+      clearPlatformHealth("Platform health is unavailable. No service status was inferred; unknown is not healthy.");
+    }
+
     if (errors.some((error) => stringValue(error?.code) === "unauthenticated")) {
       expireSession();
       return false;
     }
-    if (loaded === 2) {
+    if (loaded === 3) {
       const current = fleetProjection.startsWith("complete");
       setSectionState("operations", current ? "Observed" : fleetProjection, current ? "positive" : "neutral", fleetProjection);
       return true;
@@ -2973,6 +3167,28 @@
     if (applyStreamUpsert(state.alertInstances, message?.alert, message, "alertCursor")) scheduleAlertRender();
   }
 
+  // The health stream carries whole reports, not deltas: each message is one
+  // service's full current state, keyed by the service's own name, with no
+  // sequence and no delete — a service that stops being observed keeps arriving,
+  // as observed=false. Re-delivery on reconnect is idempotent by construction.
+  function applyPlatformHealthUpsert(message) {
+    const service = message?.service;
+    const name = stringValue(service?.service);
+    if (!name) return;
+    state.platformHealth.set(name, service);
+    schedulePlatformHealthRender();
+  }
+
+  function schedulePlatformHealthRender() {
+    if (state.platformHealthRenderQueued) return;
+    state.platformHealthRenderQueued = true;
+    window.requestAnimationFrame(() => {
+      state.platformHealthRenderQueued = false;
+      try { renderPlatformServices(); }
+      catch { clearPlatformHealth("Platform health is unavailable. No service status was inferred; unknown is not healthy."); }
+    });
+  }
+
   // An audit record is immutable and append-only, so this map only ever grows
   // within a session and UPSERT is the only change type the stream can send.
   // The shared helper still applies: it is the cursor discipline that matters,
@@ -3031,8 +3247,11 @@
     let backoff = streamBaseBackoff;
     while (state.authorized && !controller.signal.aborted && Date.now() < state.deadline) {
       try {
+        // A cursorless stream (health) sends an empty request: it has no
+        // position to resume from, and the server replays every current report
+        // on connect. Everything else resumes past its own cursor.
         await adminApi.stream(streamName,
-          { afterSequence: state[cursorKey].toString() },
+          cursorKey ? { afterSequence: state[cursorKey].toString() } : {},
           { bearerToken: state.bearerToken, requestId: requestId(), signal: controller.signal },
           apply);
         backoff = streamBaseBackoff;
@@ -3060,6 +3279,7 @@
     void runStream("admin_runtimes_stream", "runtimeCursor", controller, applyRuntimeUpsert);
     void runStream("admin_alerts_stream", "alertCursor", controller, applyAlertUpsert);
     void runStream("admin_audit_events_stream", "auditCursor", controller, applyAuditUpsert);
+    void runStream("admin_platform_health_stream", "", controller, applyPlatformHealthUpsert);
   }
 
   async function loadAlerts(signal) {
@@ -3509,6 +3729,7 @@
     state.alertCursor = 0n;
     state.auditEvents = new Map();
     state.auditCursor = 0n;
+    state.platformHealth = new Map();
     closeCustomerDetail();
     state.refreshController = new AbortController();
     ui.refresh.disabled = true;
